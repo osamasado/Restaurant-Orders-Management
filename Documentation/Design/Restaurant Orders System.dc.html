@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><script src="./image-slot.js"></script><style>
+*{box-sizing:border-box}
+body{margin:0;background:#131211;font-family:'Bricolage Grotesque',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F4D3A}a:hover{color:#2C6B51}
+button{font-family:inherit;cursor:pointer;border:0}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(128,128,128,.35);border-radius:8px}
+@keyframes rosBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes rosRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style></helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#131211;color:#F5F0E8">
+  <header style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:14px 22px;border-bottom:1px solid rgba(245,240,232,.14);background:#131211;position:sticky;top:0;z-index:40">
+    <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+      <span style="font-family:'DM Serif Display',serif;font-size:19px;line-height:1.1;letter-spacing:-.01em">Restaurant Orders System</span>
+      <span style="font:500 10px/1.2 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.45)">Interactive mockup · four connected screens</span>
+    </div>
+    <nav style="display:flex;gap:6px;flex-wrap:wrap;padding:4px;border-radius:12px;background:rgba(245,240,232,.07)">
+      <button onClick="{{ toGuest }}" style="padding:8px 14px;border-radius:9px;font:600 13px/1 'Bricolage Grotesque',sans-serif;background:{{ tabGuestBg }};color:{{ tabGuestFg }}">Guest ordering</button>
+      <button onClick="{{ toKitchen }}" style="padding:8px 14px;border-radius:9px;font:600 13px/1 'Bricolage Grotesque',sans-serif;background:{{ tabKitchenBg }};color:{{ tabKitchenFg }}">Kitchen display</button>
+      <button onClick="{{ toHall }}" style="padding:8px 14px;border-radius:9px;font:600 13px/1 'Bricolage Grotesque',sans-serif;background:{{ tabHallBg }};color:{{ tabHallFg }}">Hall board</button>
+      <button onClick="{{ toAdmin }}" style="padding:8px 14px;border-radius:9px;font:600 13px/1 'Bricolage Grotesque',sans-serif;background:{{ tabAdminBg }};color:{{ tabAdminFg }}">Management</button>
+    </nav>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="display:flex;align-items:center;gap:7px;font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.55)"><i style="width:7px;height:7px;border-radius:50%;background:#7DBE9B;animation:rosBlink 2s infinite"></i>shared live state</span>
+      <button onClick="{{ resetDemo }}" style="padding:7px 12px;border-radius:9px;background:transparent;box-shadow:inset 0 0 0 1px rgba(245,240,232,.22);color:rgba(245,240,232,.8);font:600 12px/1 'Bricolage Grotesque',sans-serif">Reset demo</button>
+    </div>
+  </header>
+  <div id="ros-stage" style="flex:1;display:flex;flex-direction:column;min-height:0">
+    <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}"><div style="flex:1;display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start;justify-content:center;padding:34px 22px 48px;background:#F5F0E8;background-image:radial-gradient(circle at 1px 1px,rgba(19,18,17,.07) 1px,transparent 0);background-size:22px 22px">
+  <div id="ros-device" style="width:{{ deviceW }};max-width:100%;padding:14px;border-radius:40px;background:#1a1917;box-shadow:0 30px 60px -20px rgba(19,18,17,.55),inset 0 0 0 1px rgba(245,240,232,.09)">
+    <div style="height:716px;min-height:560px;max-height:calc(100vh - 160px);border-radius:28px;overflow:hidden;background:#FBF8F2;color:#131211;display:flex;flex-direction:column;position:relative">
+
+      <sc-if value="{{ stepWelcome }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:40px 28px 28px;background:#1F4D3A;color:#F5F0E8">
+          <div>
+            <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.55)">Table 9 · Garden room</span>
+            <h1 style="margin:14px 0 0;font-family:'DM Serif Display',serif;font-weight:400;font-size:44px;line-height:1.02;letter-spacing:-.02em">Gasthaus<br>Lindenhof</h1>
+            <p style="margin:16px 0 0;max-width:24ch;font-size:14px;line-height:1.5;color:rgba(245,240,232,.7)">Order from your table. The kitchen sees it the moment you confirm.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.5);margin-bottom:3px">Sprache · Language · اللغة</span>
+            <button onClick="{{ pickDe }}" style="display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-radius:14px;background:rgba(245,240,232,.1);color:#F5F0E8;font:600 16px/1 'Bricolage Grotesque',sans-serif" style-hover="background:rgba(245,240,232,.18)"><span>Deutsch</span><span style="font:500 12px 'IBM Plex Mono',monospace;opacity:.6">DE</span></button>
+            <button onClick="{{ pickEn }}" style="display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-radius:14px;background:#F5F0E8;color:#1F4D3A;font:600 16px/1 'Bricolage Grotesque',sans-serif"><span>English</span><span style="font:500 12px 'IBM Plex Mono',monospace;opacity:.5">EN</span></button>
+            <button onClick="{{ pickAr }}" style="display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-radius:14px;background:rgba(245,240,232,.1);color:#F5F0E8;font:600 16px/1 'Bricolage Grotesque',sans-serif" style-hover="background:rgba(245,240,232,.18)"><span style="font-size:18px">العربية</span><span style="font:500 12px 'IBM Plex Mono',monospace;opacity:.6">AR ←</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ stepMenu }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px 12px;border-bottom:1px solid rgba(19,18,17,.1);background:#FBF8F2">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-family:'DM Serif Display',serif;font-size:20px;line-height:1">Menu</span>
+              <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(19,18,17,.45)">Table 9</span>
+            </div>
+            <button onClick="{{ toWelcome }}" style="padding:7px 11px;border-radius:20px;background:rgba(19,18,17,.06);color:#131211;font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.06em">EN ▾</button>
+          </div>
+          <div style="flex:1;overflow:auto;padding:6px 20px 120px">
+            <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="3">
+              <div style="padding:18px 0 4px">
+                <h2 style="margin:0 0 12px;font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.42)">{{ cat.name }}</h2>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ cat.items }}" as="dish" hint-placeholder-count="2">
+                    <button onClick="{{ dish.open }}" style="display:flex;gap:14px;align-items:stretch;width:100%;text-align:left;padding:10px;border-radius:16px;background:#fff;box-shadow:0 1px 2px rgba(19,18,17,.07),inset 0 0 0 1px rgba(19,18,17,.07);opacity:{{ dish.dim }}" style-hover="box-shadow:0 6px 18px -8px rgba(19,18,17,.3),inset 0 0 0 1px rgba(31,77,58,.3)">
+                      <div style="width:78px;height:78px;flex:none;border-radius:11px;overflow:hidden;background:rgba(19,18,17,.06)"><image-slot id="{{ dish.slot }}" shape="rounded" radius="11" placeholder="Photo"></image-slot></div>
+                      <span style="flex:1;display:block;padding:3px 2px 3px 0;min-width:0">
+                        <span style="display:block;font:600 15.5px/1.3 'Bricolage Grotesque',sans-serif;color:#131211">{{ dish.name }}</span>
+                        <span style="display:block;font:500 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#B3402C">{{ dish.badge }}</span>
+                        <span style="display:block;margin-top:4px;font-size:12.5px;line-height:1.4;max-height:36px;overflow:hidden;color:rgba(19,18,17,.55)">{{ dish.desc }}</span>
+                        <span style="display:block;margin-top:5px;font:600 13px/1.3 'IBM Plex Mono',monospace;color:#1F4D3A">from {{ dish.from }}</span>
+                      </span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasCart }}">
+            <button onClick="{{ toCart }}" style="position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-radius:18px;background:#1F4D3A;color:#F5F0E8;box-shadow:0 16px 30px -14px rgba(31,77,58,.8);animation:rosRise .25s ease">
+              <span style="display:flex;align-items:center;gap:10px;font:600 14px/1 'Bricolage Grotesque',sans-serif"><span style="display:grid;place-items:center;min-width:23px;height:23px;border-radius:12px;background:rgba(245,240,232,.2);font:600 12px/1 'IBM Plex Mono',monospace">{{ cartCount }}</span>Review order</span>
+              <span style="font:600 15px/1 'IBM Plex Mono',monospace">{{ runningTotal }}</span>
+            </button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ stepDetail }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div style="position:relative;height:196px;flex:none;background:rgba(19,18,17,.08)">
+            <image-slot id="detail-hero" shape="rect" placeholder="Dish photo"></image-slot>
+            <button onClick="{{ toMenu }}" style="position:absolute;top:14px;left:14px;width:36px;height:36px;border-radius:50%;background:rgba(19,18,17,.6);color:#F5F0E8;font-size:16px;line-height:1;backdrop-filter:blur(6px)">←</button>
+          </div>
+          <div style="flex:1;overflow:auto;padding:20px 20px 24px">
+            <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:27px;line-height:1.1;letter-spacing:-.01em">{{ selName }}</h2>
+            <p style="margin:9px 0 0;font-size:13.5px;line-height:1.55;color:rgba(19,18,17,.65)">{{ selDesc }}</p>
+            <div style="margin:18px 0 0;padding:14px 16px;border-radius:13px;background:rgba(31,77,58,.07)">
+              <span style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#1F4D3A">Preparation</span>
+              <p style="margin:7px 0 0;font-size:12.5px;line-height:1.5;color:rgba(19,18,17,.7)">{{ selPrep }}</p>
+            </div>
+            <span style="display:block;margin:20px 0 9px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Ingredients</span>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ selIng }}" as="ing" hint-placeholder-count="5"><span style="padding:6px 10px;border-radius:20px;background:rgba(19,18,17,.05);font-size:11.5px;color:rgba(19,18,17,.7)">{{ ing }}</span></sc-for>
+            </div>
+            <span style="display:block;margin:22px 0 9px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Size</span>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ selSizes }}" as="sz" hint-placeholder-count="2">
+                <button onClick="{{ sz.pick }}" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:13px;background:{{ sz.bg }};color:{{ sz.fg }};box-shadow:inset 0 0 0 {{ sz.ring }}"><span style="font:600 14px/1 'Bricolage Grotesque',sans-serif">{{ sz.label }}</span><span style="font:600 14px/1 'IBM Plex Mono',monospace">{{ sz.price }}</span></button>
+              </sc-for>
+            </div>
+            <span style="display:block;margin:22px 0 9px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Quantity</span>
+            <div style="display:flex;align-items:center;gap:14px">
+              <button onClick="{{ qtyDown }}" style="width:44px;height:44px;border-radius:13px;background:rgba(19,18,17,.06);font-size:20px;line-height:1;color:#131211">−</button>
+              <span style="min-width:28px;text-align:center;font:600 19px/1 'IBM Plex Mono',monospace">{{ qty }}</span>
+              <button onClick="{{ qtyUp }}" style="width:44px;height:44px;border-radius:13px;background:rgba(19,18,17,.06);font-size:20px;line-height:1;color:#131211">+</button>
+            </div>
+            <span style="display:block;margin:22px 0 9px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Note for the kitchen</span>
+            <textarea onChange="{{ setNote }}" placeholder="e.g. no onions, serve without sauce" style="width:100%;min-height:72px;padding:13px 14px;border-radius:13px;border:1px solid rgba(19,18,17,.14);background:#fff;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;line-height:1.5;resize:none"></textarea>
+          </div>
+          <div style="flex:none;padding:14px 16px 18px;border-top:1px solid rgba(19,18,17,.1);background:#FBF8F2">
+            <button onClick="{{ addLine }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;padding:17px 20px;border-radius:16px;background:#1F4D3A;color:#F5F0E8"><span style="font:600 15px/1 'Bricolage Grotesque',sans-serif">Add to order</span><span style="font:600 15px/1 'IBM Plex Mono',monospace">{{ addPrice }}</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ stepCart }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid rgba(19,18,17,.1)">
+            <button onClick="{{ toMenu }}" style="width:34px;height:34px;border-radius:50%;background:rgba(19,18,17,.06);font-size:16px;line-height:1">←</button>
+            <span style="font-family:'DM Serif Display',serif;font-size:21px;line-height:1">Your order</span>
+          </div>
+          <div style="flex:1;overflow:auto;padding:16px 20px 24px">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="2">
+                <div style="padding:14px;border-radius:15px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+                  <div style="display:flex;justify-content:space-between;gap:12px">
+                    <span style="display:flex;flex-direction:column;gap:3px">
+                      <span style="font:600 14.5px/1.2 'Bricolage Grotesque',sans-serif">{{ l.name }}</span>
+                      <span style="font:500 11px/1 'IBM Plex Mono',monospace;color:rgba(19,18,17,.5)">{{ l.size }} · {{ l.each }}</span>
+                    </span>
+                    <span style="font:600 14.5px/1 'IBM Plex Mono',monospace">{{ l.total }}</span>
+                  </div>
+                  <sc-if value="{{ l.hasNote }}"><p style="margin:10px 0 0;padding:9px 11px;border-radius:10px;background:rgba(217,143,0,.12);font-size:12px;line-height:1.4;color:#8a5c00">“{{ l.note }}”</p></sc-if>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+                    <button onClick="{{ l.dec }}" style="width:36px;height:36px;border-radius:11px;background:rgba(19,18,17,.06);font-size:17px;line-height:1">−</button>
+                    <span style="min-width:22px;text-align:center;font:600 15px/1 'IBM Plex Mono',monospace">{{ l.qty }}</span>
+                    <button onClick="{{ l.inc }}" style="width:36px;height:36px;border-radius:11px;background:rgba(19,18,17,.06);font-size:17px;line-height:1">+</button>
+                    <div style="flex:1"></div>
+                    <button onClick="{{ l.remove }}" style="padding:9px 13px;border-radius:11px;background:transparent;box-shadow:inset 0 0 0 1px rgba(179,64,44,.35);color:#B3402C;font:600 12px/1 'Bricolage Grotesque',sans-serif">Remove</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin:20px 0 0;padding:16px;border-radius:15px;background:rgba(19,18,17,.04);display:flex;flex-direction:column;gap:9px">
+              <span style="display:flex;justify-content:space-between;font-size:13px;color:rgba(19,18,17,.6)"><span>Subtotal</span><span style="font-family:'IBM Plex Mono',monospace">{{ sumSub }}</span></span>
+              <span style="display:flex;justify-content:space-between;font-size:13px;color:rgba(19,18,17,.6)"><span>{{ taxLabel }}</span><span style="font-family:'IBM Plex Mono',monospace">{{ sumTax }}</span></span>
+              <span style="height:1px;background:rgba(19,18,17,.12)"></span>
+              <span style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 15px/1 'Bricolage Grotesque',sans-serif">Total</span><span style="font:600 19px/1 'IBM Plex Mono',monospace;color:#1F4D3A">{{ sumTotal }}</span></span>
+              <span style="font-size:11px;line-height:1.4;color:rgba(19,18,17,.45)">Calculated and verified on the server before the order is accepted.</span>
+            </div>
+            <button onClick="{{ toMenu }}" style="margin:14px 0 0;width:100%;padding:13px;border-radius:13px;background:transparent;box-shadow:inset 0 0 0 1px rgba(19,18,17,.16);font:600 13px/1 'Bricolage Grotesque',sans-serif;color:#131211">Add more items</button>
+          </div>
+          <div style="flex:none;padding:14px 16px 18px;border-top:1px solid rgba(19,18,17,.1)">
+            <button onClick="{{ toPay }}" style="display:flex;width:100%;align-items:center;justify-content:center;gap:10px;padding:17px 20px;border-radius:16px;background:#1F4D3A;color:#F5F0E8;font:600 15px/1 'Bricolage Grotesque',sans-serif">Choose payment →</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ stepPay }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid rgba(19,18,17,.1)">
+            <button onClick="{{ toCart }}" style="width:34px;height:34px;border-radius:50%;background:rgba(19,18,17,.06);font-size:16px;line-height:1">←</button>
+            <span style="font-family:'DM Serif Display',serif;font-size:21px;line-height:1">Payment</span>
+          </div>
+          <div style="flex:1;overflow:auto;padding:18px 20px 24px">
+            <span style="display:block;margin:0 0 12px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Offered at this restaurant</span>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ payOptions }}" as="p" hint-placeholder-count="4">
+                <button onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:13px;text-align:left;padding:15px 16px;border-radius:14px;background:{{ p.bg }};color:{{ p.fg }};box-shadow:inset 0 0 0 {{ p.ring }}">
+                  <span style="display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:10px;background:{{ p.iconBg }};font:600 11px/1 'IBM Plex Mono',monospace">{{ p.tag }}</span>
+                  <span style="display:flex;flex-direction:column;gap:3px"><span style="font:600 14.5px/1 'Bricolage Grotesque',sans-serif">{{ p.name }}</span><span style="font-size:11.5px;line-height:1.3;opacity:.65">{{ p.note }}</span></span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="margin:20px 0 0;padding:16px;border-radius:15px;background:rgba(19,18,17,.04);display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font:600 14px/1 'Bricolage Grotesque',sans-serif">Total to pay</span>
+              <span style="font:600 19px/1 'IBM Plex Mono',monospace;color:#1F4D3A">{{ sumTotal }}</span>
+            </div>
+          </div>
+          <div style="flex:none;padding:14px 16px 18px;border-top:1px solid rgba(19,18,17,.1)">
+            <button onClick="{{ confirmOrder }}" style="display:flex;width:100%;align-items:center;justify-content:center;padding:17px 20px;border-radius:16px;background:{{ confirmBg }};color:#F5F0E8;font:600 15px/1 'Bricolage Grotesque',sans-serif">{{ confirmLabel }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ stepStatus }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#FBF8F2">
+          <div style="padding:34px 24px 26px;background:#1F4D3A;color:#F5F0E8;text-align:center">
+            <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.6)">Your order number</span>
+            <div style="margin:10px 0 0;font:600 76px/1 'IBM Plex Mono',monospace;letter-spacing:-.03em">{{ myNo }}</div>
+            <p style="margin:12px 0 0;font-size:13.5px;line-height:1.5;color:rgba(245,240,232,.75)">Watch for this number on the board in the dining hall.</p>
+          </div>
+          <div style="flex:1;overflow:auto;padding:24px 24px 28px">
+            <span style="display:block;margin:0 0 16px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.42)">Status</span>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ mineSteps }}" as="st" hint-placeholder-count="4">
+                <div style="display:flex;gap:14px">
+                  <span style="display:flex;flex-direction:column;align-items:center;flex:none">
+                    <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:{{ st.dotBg }};color:{{ st.dotFg }};font:600 11px/1 'IBM Plex Mono',monospace">✓</span>
+                    <span style="width:2px;flex:1;min-height:26px;background:{{ st.lineBg }}"></span>
+                  </span>
+                  <span style="display:flex;justify-content:space-between;flex:1;padding-bottom:18px;gap:10px">
+                    <span style="font:600 14.5px/1.3 'Bricolage Grotesque',sans-serif">{{ st.label }}</span>
+                    <span style="font:500 12px/1.4 'IBM Plex Mono',monospace;color:rgba(19,18,17,.45)">{{ st.time }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin:6px 0 0;padding:15px;border-radius:14px;background:rgba(217,143,0,.1);font-size:12.5px;line-height:1.5;color:#7a5200">Advance this order from the <strong>Kitchen display</strong> tab above and this timeline updates live — same state, four screens.</div>
+            <button onClick="{{ toMenu }}" style="margin:14px 0 0;width:100%;padding:14px;border-radius:13px;background:transparent;box-shadow:inset 0 0 0 1px rgba(19,18,17,.16);font:600 13px/1 'Bricolage Grotesque',sans-serif;color:#131211">Order something else</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+  <aside style="width:266px;max-width:100%;display:flex;flex-direction:column;gap:18px;padding-top:6px;color:#131211">
+    <div>
+      <span style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.45)">Guest ordering</span>
+      <p style="margin:10px 0 0;font-size:13px;line-height:1.55;color:rgba(19,18,17,.68)">Runs on the tablet clipped to the table, or on the guest’s own phone. Seven states: welcome and language, menu, meal detail, cart, payment, and the live order number.</p>
+    </div>
+    <div style="height:1px;background:rgba(19,18,17,.12)"></div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <sc-for list="{{ stepJump }}" as="j" hint-placeholder-count="6">
+        <button onClick="{{ j.go }}" style="display:flex;align-items:center;gap:10px;text-align:left;padding:9px 11px;min-height:38px;border-radius:10px;background:{{ j.bg }};color:{{ j.fg }};font:600 12.5px/1.3 'Bricolage Grotesque',sans-serif"><span style="font:500 10px/1 'IBM Plex Mono',monospace;opacity:.6;white-space:nowrap">{{ j.n }}</span><span style="line-height:1.3">{{ j.label }}</span></button>
+      </sc-for>
+    </div>
+    <p style="margin:0;font-size:11.5px;line-height:1.5;color:rgba(19,18,17,.45)">Dish photos are empty slots — drop your own images onto them and they stick.</p>
+  </aside>
+</div></sc-if>
+    <sc-if value="{{ isKitchen }}"><div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#0E0D0C;color:#F5F0E8;padding:20px 22px 26px">
+  <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:16px">
+    <span style="font-family:'DM Serif Display',serif;font-size:23px;line-height:1">Kitchen display</span>
+    <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.42)">Wall monitor · station 1 · M. Behr on shift</span>
+    <div style="flex:1"></div>
+    <span style="font:500 11px/1 'IBM Plex Mono',monospace;color:rgba(245,240,232,.5)">{{ clock }}</span>
+  </div>
+  <sc-if value="{{ hasCancelled }}">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <sc-for list="{{ cancelled }}" as="c" hint-placeholder-count="1">
+        <div style="display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;background:rgba(179,64,44,.16);box-shadow:inset 0 0 0 1.5px #B3402C">
+          <span style="font:600 19px/1 'IBM Plex Mono',monospace;color:#FF8E75">#{{ c.no }}</span>
+          <span style="font:600 13px/1 'Bricolage Grotesque',sans-serif;color:#FFC6B6">Cancelled by admin · table {{ c.table }} · stop work</span>
+          <div style="flex:1"></div>
+          <button onClick="{{ c.ack }}" style="padding:9px 14px;border-radius:10px;background:#B3402C;color:#fff;font:600 12px/1 'Bricolage Grotesque',sans-serif">Acknowledge</button>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;min-height:0">
+    <sc-for list="{{ columns }}" as="col" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;min-height:0;border-radius:16px;background:rgba(245,240,232,.04);box-shadow:inset 0 0 0 1px rgba(245,240,232,.09)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(245,240,232,.1)">
+          <span style="display:flex;align-items:center;gap:9px;font:600 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:{{ col.tint }}"><i style="width:8px;height:8px;border-radius:50%;background:{{ col.tint }}"></i>{{ col.title }}</span>
+          <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:rgba(245,240,232,.45)">{{ col.count }}</span>
+        </div>
+        <div style="flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:11px">
+          <sc-for list="{{ col.cards }}" as="o" hint-placeholder-count="2">
+            <div style="padding:14px;border-radius:13px;background:#1A1918;box-shadow:inset 0 0 0 1px rgba(245,240,232,.1)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <span style="display:flex;align-items:baseline;gap:9px"><span style="font:600 27px/1 'IBM Plex Mono',monospace;letter-spacing:-.02em">{{ o.no }}</span><span style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.5)">table {{ o.table }}</span></span>
+                <sc-if value="{{ showTimers }}" hint-placeholder-val="{{ true }}"><span style="padding:6px 9px;border-radius:8px;background:{{ o.timerBg }};font:600 11px/1 'IBM Plex Mono',monospace;color:#F5F0E8">{{ o.ago }}</span></sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px;margin:13px 0 0">
+                <sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2">
+                  <span style="display:flex;flex-direction:column;gap:4px">
+                    <span style="display:flex;flex-wrap:wrap;gap:4px 9px;align-items:baseline;line-height:1.35"><span style="font:600 13px/1.35 'IBM Plex Mono',monospace;color:#7DBE9B;white-space:nowrap">{{ l.q }}</span><span style="font:600 14px/1.3 'Bricolage Grotesque',sans-serif">{{ l.name }}</span><span style="font-size:11.5px;line-height:1.35;color:rgba(245,240,232,.45);white-space:nowrap">{{ l.size }}</span></span>
+                    <sc-if value="{{ l.hasNote }}"><span style="padding:7px 10px;border-radius:8px;background:rgba(217,143,0,.16);font-size:11.5px;line-height:1.35;color:#F3C77A">{{ l.note }}</span></sc-if>
+                  </span>
+                </sc-for>
+              </div>
+              <sc-if value="{{ col.isNew }}"><button onClick="{{ o.start }}" style="width:100%;margin-top:14px;padding:13px;border-radius:11px;background:#1F4D3A;color:#F5F0E8;font:600 13.5px/1 'Bricolage Grotesque',sans-serif">Start</button></sc-if>
+              <sc-if value="{{ col.isPrep }}"><button onClick="{{ o.done }}" style="width:100%;margin-top:14px;padding:13px;border-radius:11px;background:#D98F00;color:#131211;font:600 13.5px/1 'Bricolage Grotesque',sans-serif">Ready</button></sc-if>
+              <sc-if value="{{ col.isReady }}"><button onClick="{{ o.serve }}" style="width:100%;margin-top:14px;padding:13px;border-radius:11px;background:transparent;box-shadow:inset 0 0 0 1px rgba(245,240,232,.25);color:rgba(245,240,232,.85);font:600 13.5px/1 'Bricolage Grotesque',sans-serif">Picked up by waiter</button></sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{ col.empty }}"><span style="padding:18px 4px;font:500 12px/1.5 'IBM Plex Mono',monospace;color:rgba(245,240,232,.3)">Nothing here.</span></sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(245,240,232,.1)">
+    <span style="font:500 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.4)">Ran out?</span>
+    <sc-for list="{{ availToggles }}" as="a" hint-placeholder-count="4">
+      <button onClick="{{ a.toggle }}" style="padding:9px 12px;border-radius:10px;background:{{ a.bg }};color:{{ a.fg }};box-shadow:inset 0 0 0 1px rgba(245,240,232,.14);font:600 12px/1 'Bricolage Grotesque',sans-serif">{{ a.name }} · {{ a.state }}</button>
+    </sc-for>
+    <span style="font-size:11.5px;color:rgba(245,240,232,.35)">Marking a meal unavailable removes it from every table device at once.</span>
+  </div>
+</div></sc-if>
+    <sc-if value="{{ isHall }}"><div style="flex:1;display:flex;flex-direction:column;min-height:0;background:#131211;color:#F5F0E8;padding:26px 28px 30px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:22px">
+    <span style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1">Gasthaus Lindenhof</span>
+    <div style="flex:1"></div>
+    <span style="font:600 22px/1 'IBM Plex Mono',monospace;color:rgba(245,240,232,.5)">{{ clock }}</span>
+  </div>
+  <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;min-height:0">
+    <div style="display:flex;flex-direction:column;border-radius:20px;padding:24px;background:rgba(245,240,232,.05);box-shadow:inset 0 0 0 1px rgba(245,240,232,.1)">
+      <span style="display:flex;align-items:center;gap:11px;font:600 15px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#F3C77A"><i style="width:11px;height:11px;border-radius:50%;background:#F3C77A;animation:rosBlink 1.8s infinite"></i>In preparation</span>
+      <div style="flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;gap:16px 26px;margin-top:26px">
+        <sc-for list="{{ hallPrep }}" as="n" hint-placeholder-count="3"><span style="font:600 74px/1 'IBM Plex Mono',monospace;letter-spacing:-.03em;color:rgba(245,240,232,.72)">{{ n.no }}</span></sc-for>
+        <sc-if value="{{ hallPrepEmpty }}"><span style="font:500 15px/1 'IBM Plex Mono',monospace;color:rgba(245,240,232,.25)">—</span></sc-if>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;border-radius:20px;padding:24px;background:#1F4D3A;box-shadow:inset 0 0 0 1px rgba(125,190,155,.35)">
+      <span style="display:flex;align-items:center;gap:11px;font:600 15px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#A8DCC0"><i style="width:11px;height:11px;border-radius:50%;background:#A8DCC0"></i>Ready — please collect</span>
+      <div style="flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;gap:16px 26px;margin-top:26px">
+        <sc-for list="{{ hallReady }}" as="n" hint-placeholder-count="2"><span style="font:600 86px/1 'IBM Plex Mono',monospace;letter-spacing:-.03em;color:#F5F0E8;animation:rosRise .4s ease">{{ n.no }}</span></sc-for>
+        <sc-if value="{{ hallReadyEmpty }}"><span style="font:500 15px/1 'IBM Plex Mono',monospace;color:rgba(245,240,232,.35)">—</span></sc-if>
+      </div>
+    </div>
+  </div>
+  <p style="margin:20px 0 0;font:500 11.5px/1.5 'IBM Plex Mono',monospace;letter-spacing:.06em;color:rgba(245,240,232,.35)">Numbers only — no names, no prices, no table numbers on this screen.</p>
+</div></sc-if>
+    <sc-if value="{{ isAdmin }}"><div style="flex:1;display:flex;flex-wrap:wrap;min-height:0;background:#F5F0E8;color:#131211">
+  <nav style="width:224px;flex:none;display:flex;flex-direction:column;gap:3px;padding:20px 14px;border-right:1px solid rgba(19,18,17,.12);background:#EFE9DF">
+    <span style="padding:0 8px 12px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.4)">Management</span>
+    <sc-for list="{{ adminNav }}" as="n" hint-placeholder-count="6">
+      <button onClick="{{ n.go }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;padding:11px 12px;border-radius:10px;background:{{ n.bg }};color:{{ n.fg }};font:600 13px/1 'Bricolage Grotesque',sans-serif">{{ n.label }}<span style="font:500 10.5px/1 'IBM Plex Mono',monospace;opacity:.55">{{ n.hint }}</span></button>
+    </sc-for>
+    <div style="flex:1;min-height:20px"></div>
+    <div style="padding:12px;border-radius:11px;background:rgba(31,77,58,.09)">
+      <span style="font:600 11px/1 'Bricolage Grotesque',sans-serif;color:#1F4D3A">O. Sado</span>
+      <p style="margin:5px 0 0;font:500 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:rgba(19,18,17,.45)">Role: admin</p>
+    </div>
+  </nav>
+  <div style="flex:1;min-width:300px;display:flex;flex-direction:column;min-height:0;padding:22px 26px 30px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;line-height:1">{{ adminTitle }}</h2>
+      <span style="font-size:12.5px;line-height:1.4;color:rgba(19,18,17,.5)">{{ adminSub }}</span>
+    </div>
+
+    <sc-if value="{{ viewOrders }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ allOrders }}" as="o" hint-placeholder-count="5">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:14px 16px;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+            <span style="font:600 19px/1 'IBM Plex Mono',monospace;min-width:52px">#{{ o.no }}</span>
+            <span style="display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1">
+              <span style="font:600 13px/1.3 'Bricolage Grotesque',sans-serif">{{ o.summary }}</span>
+              <span style="font:500 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:rgba(19,18,17,.45)">Table {{ o.table }} · {{ o.time }} · {{ o.payName }} · {{ o.total }}</span>
+            </span>
+            <span style="padding:6px 10px;border-radius:20px;background:{{ o.pillBg }};color:{{ o.pillFg }};font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase">{{ o.statusLabel }}</span>
+            <span style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ o.actions }}" as="a" hint-placeholder-count="2">
+                <button onClick="{{ a.run }}" style="padding:8px 11px;border-radius:9px;white-space:nowrap;background:{{ a.bg }};color:{{ a.fg }};box-shadow:inset 0 0 0 1px {{ a.ring }};font:600 11.5px/1.2 'Bricolage Grotesque',sans-serif">{{ a.label }}</button>
+              </sc-for>
+              <sc-if value="{{ o.terminal }}"><span style="padding:8px 2px;font:500 11px/1 'IBM Plex Mono',monospace;color:rgba(19,18,17,.35)">no transitions</span></sc-if>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin:18px 0 0;padding:16px;border-radius:13px;background:rgba(19,18,17,.05);font-size:12.5px;line-height:1.55;color:rgba(19,18,17,.6)">Every button here calls the same state machine the kitchen screen calls. Illegal jumps — ready back to new, cancelling a served order — are not offered, and are refused if requested. Each accepted change writes a timestamp and the staff member who made it.</div>
+    </sc-if>
+
+    <sc-if value="{{ viewHistory }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ histRows }}" as="h" hint-placeholder-count="4">
+          <div style="padding:14px 16px;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+            <span style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span style="font:600 16px/1 'IBM Plex Mono',monospace">#{{ h.no }}</span><span style="font-size:12px;color:rgba(19,18,17,.5)">Table {{ h.table }}</span></span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ h.rows }}" as="r" hint-placeholder-count="3">
+                <span style="display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;font-size:12.5px">
+                  <span style="font:500 11px/1 'IBM Plex Mono',monospace;color:rgba(19,18,17,.45);min-width:58px">{{ r.time }}</span>
+                  <span style="font:600 12.5px/1 'Bricolage Grotesque',sans-serif;min-width:110px">{{ r.label }}</span>
+                  <span style="color:rgba(19,18,17,.55)">{{ r.by }}</span>
+                </span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ viewMeals }}">
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <sc-for list="{{ mealRows }}" as="m" hint-placeholder-count="6">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 14px;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+            <div style="width:46px;height:46px;flex:none;border-radius:9px;overflow:hidden;background:rgba(19,18,17,.06)"><image-slot id="{{ m.slot2 }}" shape="rounded" radius="9" placeholder=" "></image-slot></div>
+            <span style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:160px">
+              <span style="font:600 13.5px/1.2 'Bricolage Grotesque',sans-serif">{{ m.name }}</span>
+              <span style="font:500 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:rgba(19,18,17,.45)">{{ m.cat }} · {{ m.sizeList }} · {{ m.ingCount }} raw materials</span>
+            </span>
+            <button onClick="{{ m.toggle }}" style="padding:8px 12px;border-radius:9px;background:{{ m.bg }};color:{{ m.fg }};font:600 11.5px/1 'Bricolage Grotesque',sans-serif">{{ m.state }}</button>
+            <button style="padding:8px 12px;border-radius:9px;background:transparent;box-shadow:inset 0 0 0 1px rgba(19,18,17,.16);font:600 11.5px/1 'Bricolage Grotesque',sans-serif;color:#131211">Edit · DE EN AR</button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ viewTable }}">
+      <div style="border-radius:13px;overflow:hidden;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+        <div style="display:flex;gap:16px;padding:11px 16px;border-bottom:1px solid rgba(19,18,17,.1);background:rgba(19,18,17,.03)">
+          <sc-for list="{{ tableCols }}" as="c" hint-placeholder-count="3"><span style="flex:1;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.45)">{{ c }}</span></sc-for>
+        </div>
+        <sc-for list="{{ tableRows }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;gap:16px;padding:13px 16px;border-bottom:1px solid rgba(19,18,17,.07)">
+            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3"><span style="flex:1;font-size:13px;line-height:1.4;color:rgba(19,18,17,.78)">{{ c }}</span></sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ viewSettings }}">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <div style="flex:1;min-width:260px;padding:18px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+          <span style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.45)">Currency & tax</span>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+            <span style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:13px">Currency code</span><span style="font:600 13px 'IBM Plex Mono',monospace">{{ cfgCode }}</span></span>
+            <span style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:13px">Symbol position</span>
+              <span style="display:flex;gap:6px"><button onClick="{{ posBefore }}" style="padding:7px 10px;border-radius:8px;white-space:nowrap;background:{{ posBeforeBg }};color:{{ posBeforeFg }};font:600 11.5px/1.2 'IBM Plex Mono',monospace">€ 9,80</button><button onClick="{{ posAfter }}" style="padding:7px 10px;border-radius:8px;white-space:nowrap;background:{{ posAfterBg }};color:{{ posAfterFg }};font:600 11.5px/1.2 'IBM Plex Mono',monospace">9,80 €</button></span>
+            </span>
+            <span style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:13px">Tax rate</span>
+              <span style="display:flex;gap:6px"><sc-for list="{{ taxOptions }}" as="tx" hint-placeholder-count="3"><button onClick="{{ tx.pick }}" style="padding:7px 10px;border-radius:8px;background:{{ tx.bg }};color:{{ tx.fg }};font:600 11.5px/1 'IBM Plex Mono',monospace">{{ tx.label }}</button></sc-for></span>
+            </span>
+            <span style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:13px">Default language</span><span style="font:600 12px 'IBM Plex Mono',monospace;color:rgba(19,18,17,.6)">German · then EN, AR</span></span>
+          </div>
+        </div>
+        <div style="flex:1;min-width:260px;padding:18px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.08)">
+          <span style="font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(19,18,17,.45)">Payment methods offered</span>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px">
+            <sc-for list="{{ payToggles }}" as="p" hint-placeholder-count="4">
+              <button onClick="{{ p.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:11px;background:{{ p.bg }};color:{{ p.fg }};box-shadow:inset 0 0 0 1px rgba(19,18,17,.1)"><span style="font:600 13px/1 'Bricolage Grotesque',sans-serif">{{ p.name }}</span><span style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase">{{ p.state }}</span></button>
+            </sc-for>
+          </div>
+          <p style="margin:14px 0 0;font-size:12px;line-height:1.5;color:rgba(19,18,17,.5)">Switching one off removes it from the guest payment step immediately — try it, then open the Guest tab.</p>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div></sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showTimers&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Kitchen display&quot;},&quot;guestDevice&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tablet&quot;,&quot;Phone&quot;],&quot;default&quot;:&quot;Tablet&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Guest ordering&quot;}}">
+const MENU = [
+  {id:'soup',cat:'Starters',name:'Pumpkin Soup',desc:'Hokkaido pumpkin, roasted until sweet, finished with pumpkin-seed oil and crème fraîche.',prep:'Roasted, blended, passed through a fine sieve. Served at 68°C.',ing:['Hokkaido pumpkin','Onion','Vegetable stock','Cream','Pumpkin-seed oil','Nutmeg'],sizes:[{label:'Cup',price:6.5},{label:'Bowl',price:8.9}],avail:true},
+  {id:'flamm',cat:'Starters',name:'Flammkuchen',desc:'Thin Alsatian tart with crème fraîche, smoked bacon and onion, baked on the stone.',prep:'Stone oven, 320°C, 4 minutes. Cut into six pieces.',ing:['Wheat flour','Crème fraîche','Smoked bacon','Onion','Chives'],sizes:[{label:'Half board',price:9.8},{label:'Full board',price:14.5}],avail:true},
+  {id:'schnitzel',cat:'Mains',name:'Wiener Schnitzel',desc:'Veal escalope in a light breadcrumb coating, pan-fried in clarified butter. With potato salad and lingonberry.',prep:'Beaten to 4 mm, breaded in flour, egg and breadcrumbs, fried swimming in clarified butter.',ing:['Veal','Wheat flour','Egg','Breadcrumbs','Clarified butter','Lingonberry'],sizes:[{label:'200 g',price:18.9},{label:'300 g',price:22.5}],avail:true},
+  {id:'spaetzle',cat:'Mains',name:'Käsespätzle',desc:'Hand-scraped spätzle layered with mountain cheese and crowned with dark roasted onions.',prep:'Scraped fresh to order, gratinated for 6 minutes.',ing:['Wheat flour','Egg','Bergkäse','Emmental','Onion','Butter'],sizes:[{label:'Regular',price:14.5},{label:'Large',price:17.9}],avail:true},
+  {id:'roulade',cat:'Mains',name:'Rinderroulade',desc:'Beef roulade with mustard, bacon and pickled cucumber, braised two hours in its own sauce.',prep:'Seared, then braised at 140°C for 120 minutes. Sauce reduced and strained.',ing:['Beef','Mustard','Bacon','Pickled cucumber','Onion','Red wine'],sizes:[{label:'One roll',price:19.8},{label:'Two rolls',price:26.4}],avail:false},
+  {id:'strudel',cat:'Desserts',name:'Apfelstrudel',desc:'Pulled strudel dough, Elstar apples, raisins and cinnamon. Served warm with vanilla sauce.',prep:'Dough pulled by hand, baked 25 minutes, rested 5 minutes before serving.',ing:['Wheat flour','Elstar apple','Raisins','Cinnamon','Butter','Vanilla'],sizes:[{label:'Slice',price:7.2}],avail:true},
+  {id:'schmarrn',cat:'Desserts',name:'Kaiserschmarrn',desc:'Shredded sweet pancake, caramelised in butter, dusted with icing sugar. With plum compote.',prep:'Pan-baked, torn, caramelised. Takes 14 minutes — started on order.',ing:['Wheat flour','Milk','Egg','Butter','Icing sugar','Plum'],sizes:[{label:'For one',price:8.4},{label:'To share',price:13.9}],avail:true},
+  {id:'radler',cat:'Drinks',name:'Radler',desc:'Helles beer cut with cloudy lemonade, poured cold.',prep:'Poured on order, 4°C.',ing:['Helles beer','Cloudy lemonade'],sizes:[{label:'0.3 l',price:4.2},{label:'0.5 l',price:5.6}],avail:true}
+];
+const FLOW = {draft:['submitted','cancelled'],submitted:['preparing','cancelled'],preparing:['ready','cancelled'],ready:['served','cancelled'],served:[],cancelled:[]};
+const LABEL = {draft:'Draft',submitted:'Submitted',preparing:'In preparation',ready:'Ready',served:'Served',cancelled:'Cancelled'};
+const PAY = [
+  {id:'cash',name:'Cash',note:'Paid to the waiter at the table'},
+  {id:'card',name:'Card',note:'Girocard or credit card at the table terminal'},
+  {id:'paypal',name:'PayPal',note:'Opens on the guest’s own phone'},
+  {id:'desk',name:'Cash desk',note:'Guest pays at the counter on the way out'}
+];
+const now = () => Date.now();
+
+class Component extends DCLogic {
+  state = {
+    surface:'guest', step:'welcome', lang:'en', table:9,
+    menu:MENU.map(m=>({...m})), sel:null, size:0, qty:1, note:'',
+    cart:[], payment:null, myOrder:null, cartOpen:false,
+    cfg:{code:'EUR',symbol:'€',pos:'after',tax:19,lang:'English',pay:{cash:true,card:true,paypal:true,desk:true}},
+    adminView:'orders', kitchenFilter:'all', seq:104, tick:0,
+    orders:[
+      {no:101,table:3,status:'served',items:[{name:'Käsespätzle',size:'Regular',qty:2,price:14.5}],at:now()-2.4e6,pay:'card',hist:[['submitted',now()-2.4e6,'Guest · Table 3'],['preparing',now()-2.3e6,'Kitchen · M. Behr'],['ready',now()-2.2e6,'Kitchen · M. Behr'],['served',now()-2.1e6,'Waiter · L. Adler']]},
+      {no:102,table:11,status:'ready',items:[{name:'Wiener Schnitzel',size:'300 g',qty:1,price:22.5},{name:'Radler',size:'0.5 l',qty:2,price:5.6}],at:now()-9.4e5,pay:'cash',hist:[['submitted',now()-9.4e5,'Guest · Table 11'],['preparing',now()-7.2e5,'Kitchen · M. Behr'],['ready',now()-1.1e5,'Kitchen · M. Behr']]},
+      {no:103,table:2,status:'preparing',items:[{name:'Flammkuchen',size:'Full board',qty:1,price:14.5,note:'No bacon — vegetarian guest'},{name:'Pumpkin Soup',size:'Bowl',qty:1,price:8.9}],at:now()-7.8e5,pay:'card',hist:[['submitted',now()-7.8e5,'Guest · Table 2'],['preparing',now()-4.9e5,'Kitchen · J. Kade']]},
+      {no:104,table:7,status:'submitted',items:[{name:'Kaiserschmarrn',size:'To share',qty:1,price:13.9},{name:'Apfelstrudel',size:'Slice',qty:1,price:7.2,note:'Extra vanilla sauce, please'}],at:now()-1.3e5,pay:'paypal',hist:[['submitted',now()-1.3e5,'Guest · Table 7']]},
+      {no:99,table:4,status:'cancelled',items:[{name:'Rinderroulade',size:'One roll',qty:1,price:19.8}],at:now()-1.9e6,pay:'cash',ack:false,hist:[['submitted',now()-1.9e6,'Guest · Table 4'],['cancelled',now()-1.8e6,'Admin · O. Sado']]}
+    ]
+  };
+
+  componentDidMount(){ this.initial = JSON.parse(JSON.stringify(this.state)); this.t = setInterval(()=>this.setState(s=>({tick:s.tick+1})),1000); }
+  componentWillUnmount(){ clearInterval(this.t); }
+
+  money(v){ const c=this.state.cfg, n=v.toFixed(2).replace('.',','); return c.pos==='before'?c.symbol+' '+n:n+' '+c.symbol; }
+  lineTotal(l){ return l.price*l.qty; }
+  totals(){ const sub=this.state.cart.reduce((a,l)=>a+this.lineTotal(l),0), tax=sub*this.state.cfg.tax/100; return {sub,tax,total:sub+tax}; }
+  elapsed(o){ const m=Math.floor((now()-o.at)/60000); return {m,txt:m<1?'just now':m+' min'}; }
+
+  transition(no,to,by){
+    this.setState(s=>({orders:s.orders.map(o=>{
+      if(o.no!==no) return o;
+      if(!FLOW[o.status].includes(to)) { console.warn('blocked transition',o.status,'→',to); return o; }
+      return {...o,status:to,ack:to==='cancelled'?false:o.ack,hist:[...o.hist,[to,now(),by]]};
+    })}), ()=>{ if(this.state.myOrder===no) this.forceUpdate(); });
+  }
+
+  go(step){ this.setState({step}); }
+
+  addToCart(){
+    const m=this.state.sel, sz=m.sizes[this.state.size];
+    const line={id:m.id+sz.label,name:m.name,size:sz.label,qty:this.state.qty,price:sz.price,note:this.state.note||undefined};
+    this.setState(s=>({cart:[...s.cart,line],sel:null,step:'menu',qty:1,note:'',size:0}));
+  }
+
+  submit(){
+    const no=this.state.seq+1, t=now();
+    const order={no,table:this.state.table,status:'submitted',items:this.state.cart,at:t,pay:this.state.payment,hist:[['submitted',t,'Guest · Table '+this.state.table]]};
+    this.setState(s=>({orders:[...s.orders,order],seq:no,myOrder:no,cart:[],step:'status'}));
+  }
+
+  adminVals(s){
+    const V=s.adminView;
+    const nav=[['orders','Orders','live'],['history','Audit history','log'],['meals','Meals','8'],['materials','Raw materials','24'],['tables','Tables & devices','14'],['staff','Staff accounts','7'],['settings','Settings','']];
+    const pill={submitted:['rgba(31,77,58,.12)','#1F4D3A'],preparing:['rgba(217,143,0,.16)','#8a5c00'],ready:['rgba(31,77,58,.9)','#F5F0E8'],served:['rgba(19,18,17,.08)','rgba(19,18,17,.6)'],cancelled:['rgba(179,64,44,.14)','#B3402C']};
+    const payName={cash:'Cash',card:'Card',paypal:'PayPal',desk:'Cash desk'};
+    const allOrders=[...s.orders].sort((a,b)=>b.at-a.at).map(o=>{
+      const total=o.items.reduce((a,l)=>a+l.price*l.qty,0)*(1+s.cfg.tax/100);
+      const acts=FLOW[o.status].map(to=>({label:to==='cancelled'?'Cancel':LABEL[to],
+        bg:to==='cancelled'?'transparent':'#131211', fg:to==='cancelled'?'#B3402C':'#F5F0E8',
+        ring:to==='cancelled'?'rgba(179,64,44,.35)':'transparent',
+        run:()=>this.transition(o.no,to,'Admin · O. Sado')}));
+      return {no:o.no,table:o.table,statusLabel:LABEL[o.status],pillBg:pill[o.status][0],pillFg:pill[o.status][1],
+        summary:o.items.map(l=>l.qty+'× '+l.name).join(', '), total:this.money(total), payName:payName[o.pay]||'—',
+        time:new Date(o.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),
+        actions:acts, terminal:!acts.length};
+    });
+    const histRows=[...s.orders].sort((a,b)=>b.at-a.at).slice(0,4).map(o=>({no:o.no,table:o.table,
+      rows:o.hist.map(h=>({time:new Date(h[1]).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),label:LABEL[h[0]],by:h[2]}))}));
+    const mealRows=s.menu.map(m=>({name:m.name,cat:m.cat,slot2:'adm-'+m.id,
+      sizeList:m.sizes.map(z=>z.label).join(' / '), ingCount:m.ing.length,
+      state:m.avail?'Available':'Unavailable', bg:m.avail?'rgba(31,77,58,.1)':'rgba(179,64,44,.14)', fg:m.avail?'#1F4D3A':'#B3402C',
+      toggle:()=>this.setState(st=>({menu:st.menu.map(y=>y.id===m.id?{...y,avail:!y.avail}:y)}))}));
+    const materials={cols:['Raw material','Unit','In stock','Supplier'],rows:[['Veal loin','kg','14,2','Metzgerei Kern'],['Wheat flour type 405','kg','48,0','Mühle Baur'],['Bergkäse 12 months','kg','9,6','Sennerei Alpsee'],['Hokkaido pumpkin','kg','22,5','Hof Lindner'],['Clarified butter','kg','7,8','Sennerei Alpsee'],['Elstar apples','kg','31,0','Hof Lindner'],['Helles beer','l','180,0','Brauerei Weiss']]};
+    const tables={cols:['Table','Room','Seats','Paired device'],rows:[['1','Front room','2','Tablet A1 · online'],['2','Front room','4','Tablet A2 · online'],['7','Garden room','4','Tablet B3 · online'],['9','Garden room','6','Tablet B5 · online'],['11','Terrace','4','Tablet C1 · offline since 14:02'],['14','Terrace','2','No device — waiter only']]};
+    const staff={cols:['Name','Role','PIN set','Last seen'],rows:[['O. Sado','Admin','Yes','now'],['M. Behr','Kitchen','Yes','2 min ago'],['J. Kade','Kitchen','Yes','18 min ago'],['L. Adler','Waiter','Yes','4 min ago'],['S. Rupp','Waiter','No','yesterday'],['T. Nowak','Cashier','Yes','1 h ago']]};
+    const titles={orders:['Orders','Every order, newest first — move any one to the right status'],history:['Audit history','Who changed what, and when'],meals:['Meals','Title, sizes, prices, recipe and three translations per meal'],materials:['Raw materials','Recipes link each meal size to these'],tables:['Tables & devices','Each table is paired to one device'],staff:['Staff accounts','Role decides which of the four screens a person may open'],settings:['Settings','Currency, tax, language and payment methods']};
+    const tbl=V==='materials'?materials:V==='tables'?tables:V==='staff'?staff:null;
+    return {
+      adminNav:nav.map(n=>({label:n[1],hint:n[2],bg:V===n[0]?'#131211':'transparent',fg:V===n[0]?'#F5F0E8':'rgba(19,18,17,.72)',go:()=>this.setState({adminView:n[0]})})),
+      adminTitle:titles[V][0], adminSub:titles[V][1],
+      viewOrders:V==='orders', viewHistory:V==='history', viewMeals:V==='meals', viewSettings:V==='settings',
+      viewTable:!!tbl, tableCols:tbl?tbl.cols:[], tableRows:tbl?tbl.rows.map(r=>({cells:r})):[],
+      allOrders, histRows, mealRows,
+      cfgCode:s.cfg.code+' '+s.cfg.symbol,
+      posBefore:()=>this.setState({cfg:{...s.cfg,pos:'before'}}), posAfter:()=>this.setState({cfg:{...s.cfg,pos:'after'}}),
+      posBeforeBg:s.cfg.pos==='before'?'#131211':'rgba(19,18,17,.06)', posBeforeFg:s.cfg.pos==='before'?'#F5F0E8':'rgba(19,18,17,.6)',
+      posAfterBg:s.cfg.pos==='after'?'#131211':'rgba(19,18,17,.06)', posAfterFg:s.cfg.pos==='after'?'#F5F0E8':'rgba(19,18,17,.6)',
+      taxOptions:[7,19,0].map(v=>({label:v+'%',bg:s.cfg.tax===v?'#131211':'rgba(19,18,17,.06)',fg:s.cfg.tax===v?'#F5F0E8':'rgba(19,18,17,.6)',pick:()=>this.setState({cfg:{...s.cfg,tax:v}})})),
+      payToggles:PAY.map(p=>({name:p.name,state:s.cfg.pay[p.id]?'on':'off',
+        bg:s.cfg.pay[p.id]?'rgba(31,77,58,.09)':'transparent', fg:s.cfg.pay[p.id]?'#1F4D3A':'rgba(19,18,17,.45)',
+        toggle:()=>this.setState({cfg:{...s.cfg,pay:{...s.cfg.pay,[p.id]:!s.cfg.pay[p.id]}}})}))
+    };
+  }
+
+  renderVals(){
+    const s=this.state, S=this.state.surface;
+    const tab=(k)=>({bg:S===k?'#F5F0E8':'transparent',fg:S===k?'#131211':'rgba(245,240,232,.7)'});
+    const t=this.totals();
+    const cats=[...new Set(s.menu.map(m=>m.cat))].map(c=>({name:c,items:s.menu.filter(m=>m.cat===c).map(m=>({
+      ...m, slot:'dish-'+m.id, from:this.money(Math.min(...m.sizes.map(x=>x.price))),
+      badge:m.avail?'':'Unavailable', dim:m.avail?1:.45,
+      open:()=>m.avail&&this.setState({sel:m,size:0,qty:1,note:'',step:'detail'})
+    }))}));
+    const board=(st)=>s.orders.filter(o=>o.status===st).sort((a,b)=>a.at-b.at).map(o=>{
+      const e=this.elapsed(o);
+      return {...o, ago:e.txt, timerBg:e.m>=12?'#B3402C':e.m>=6?'#D98F00':'rgba(245,240,232,.12)',
+        lines:o.items.map(i=>({...i,q:i.qty+'×',hasNote:!!i.note})),
+        start:()=>this.transition(o.no,'preparing','Kitchen · M. Behr'),
+        done:()=>this.transition(o.no,'ready','Kitchen · M. Behr'),
+        serve:()=>this.transition(o.no,'served','Waiter · L. Adler')};
+    });
+    const mine=s.orders.find(o=>o.no===s.myOrder);
+    const stages=['submitted','preparing','ready','served'];
+    const mineSteps=mine?stages.map((k,i)=>{
+      const hit=mine.hist.find(h=>h[0]===k), idx=stages.indexOf(mine.status);
+      return {key:k,label:LABEL[k],done:!!hit,active:mine.status===k,
+        time:hit?new Date(hit[1]).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'—',
+        dotBg:hit?'#1F4D3A':'rgba(19,18,17,.14)',dotFg:hit?'#F5F0E8':'rgba(19,18,17,.4)',
+        lineBg:i<idx?'#1F4D3A':'rgba(19,18,17,.14)'};
+    }):[];
+
+    const m=s.sel;
+    const sizes=m?m.sizes.map((z,i)=>({label:z.label,price:this.money(z.price),
+      bg:i===s.size?'rgba(31,77,58,.1)':'#fff',fg:'#131211',
+      ring:i===s.size?'1.5px #1F4D3A':'1px rgba(19,18,17,.12)',
+      pick:()=>this.setState({size:i})})):[];
+    const cartLines=s.cart.map((l,i)=>({...l, each:this.money(l.price)+' each', total:this.money(this.lineTotal(l)), hasNote:!!l.note,
+      inc:()=>this.setState(st=>({cart:st.cart.map((x,j)=>j===i?{...x,qty:x.qty+1}:x)})),
+      dec:()=>this.setState(st=>({cart:st.cart.map((x,j)=>j===i?{...x,qty:Math.max(1,x.qty-1)}:x)})),
+      remove:()=>this.setState(st=>({cart:st.cart.filter((x,j)=>j!==i)}))}));
+    const payOptions=PAY.filter(p=>s.cfg.pay[p.id]).map(p=>({...p, tag:p.id.slice(0,4).toUpperCase(),
+      bg:s.payment===p.id?'#1F4D3A':'#fff', fg:s.payment===p.id?'#F5F0E8':'#131211',
+      iconBg:s.payment===p.id?'rgba(245,240,232,.18)':'rgba(19,18,17,.07)',
+      ring:s.payment===p.id?'0 transparent':'1px rgba(19,18,17,.12)',
+      pick:()=>this.setState({payment:p.id})}));
+    const steps=[['welcome','Welcome & language'],['menu','Menu'],['detail','Meal detail'],['cart','Cart & total'],['pay','Payment method'],['status','Order number & status']];
+    const stepJump=steps.map((x,i)=>({n:'0'+(i+1),label:x[1],bg:s.step===x[0]?'#131211':'rgba(19,18,17,.05)',fg:s.step===x[0]?'#F5F0E8':'rgba(19,18,17,.7)',
+      go:()=>{ if(x[0]==='detail') this.setState({sel:s.menu[2],size:0,qty:1,step:'detail'});
+        else if(x[0]==='cart'&&!s.cart.length) this.setState({cart:[{id:'d1',name:'Wiener Schnitzel',size:'300 g',qty:1,price:22.5},{id:'d2',name:'Radler',size:'0.5 l',qty:2,price:5.6,note:'Very cold, please'}],step:'cart'});
+        else if(x[0]==='pay'&&!s.cart.length) this.setState({cart:[{id:'d1',name:'Wiener Schnitzel',size:'300 g',qty:1,price:22.5}],payment:null,step:'pay'});
+        else if(x[0]==='status'&&!mine) this.setState({myOrder:104,step:'status'});
+        else this.setState({step:x[0]}); }}));
+
+    return {
+      stepWelcome:s.step==='welcome', stepMenu:s.step==='menu', stepDetail:s.step==='detail'&&!!m,
+      stepCart:s.step==='cart', stepPay:s.step==='pay', stepStatus:s.step==='status',
+      pickDe:()=>this.setState({lang:'de',step:'menu'}), pickEn:()=>this.setState({lang:'en',step:'menu'}), pickAr:()=>this.setState({lang:'ar',step:'menu'}),
+      toWelcome:()=>this.go('welcome'), toMenu:()=>this.setState({step:'menu',sel:null}), toCart:()=>this.go('cart'), toPay:()=>this.go('pay'),
+      hasCart:s.cart.length>0, cartCount:s.cart.reduce((a,l)=>a+l.qty,0), runningTotal:this.money(t.sub),
+      selName:m?m.name:'', selDesc:m?m.desc:'', selPrep:m?m.prep:'', selIng:m?m.ing:[], selSizes:sizes,
+      qty:s.qty, qtyUp:()=>this.setState(x=>({qty:x.qty+1})), qtyDown:()=>this.setState(x=>({qty:Math.max(1,x.qty-1)})),
+      setNote:(e)=>this.setState({note:e.target.value}),
+      addLine:()=>this.addToCart(), addPrice:m?this.money(m.sizes[s.size].price*s.qty):'',
+      cartLines, sumSub:this.money(t.sub), sumTax:this.money(t.tax), sumTotal:this.money(t.total), taxLabel:'VAT '+s.cfg.tax+'%',
+      payOptions, confirmBg:s.payment?'#1F4D3A':'rgba(19,18,17,.25)',
+      confirmLabel:s.payment?'Confirm order · '+this.money(t.total):'Select a payment method',
+      confirmOrder:()=>{ if(s.payment&&s.cart.length) this.submit(); },
+      myNo:mine?mine.no:'—', stepJump,
+      clock:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),
+      columns:[
+        {title:'New',tint:'#7DBE9B',cards:board('submitted'),count:board('submitted').length,isNew:true,isPrep:false,isReady:false,empty:!board('submitted').length},
+        {title:'In preparation',tint:'#F3C77A',cards:board('preparing'),count:board('preparing').length,isNew:false,isPrep:true,isReady:false,empty:!board('preparing').length},
+        {title:'Ready',tint:'#F5F0E8',cards:board('ready'),count:board('ready').length,isNew:false,isPrep:false,isReady:true,empty:!board('ready').length}
+      ],
+      hasCancelled:s.orders.some(o=>o.status==='cancelled'&&!o.ack),
+      hallPrep:board('preparing').map(o=>({no:o.no})), hallPrepEmpty:!board('preparing').length,
+      hallReady:board('ready').map(o=>({no:o.no})), hallReadyEmpty:!board('ready').length,
+      ...this.adminVals(s),
+      availToggles:s.menu.filter(x=>x.cat==='Mains'||x.cat==='Desserts').map(x=>({name:x.name,state:x.avail?'available':'sold out',
+        bg:x.avail?'rgba(245,240,232,.06)':'rgba(179,64,44,.22)',fg:x.avail?'rgba(245,240,232,.8)':'#FFC6B6',
+        toggle:()=>this.setState(st=>({menu:st.menu.map(y=>y.id===x.id?{...y,avail:!y.avail}:y)}))})),
+      isGuest:S==='guest', isKitchen:S==='kitchen', isHall:S==='hall', isAdmin:S==='admin',
+      toGuest:()=>this.setState({surface:'guest'}), toKitchen:()=>this.setState({surface:'kitchen'}),
+      toHall:()=>this.setState({surface:'hall'}), toAdmin:()=>this.setState({surface:'admin'}),
+      tabGuestBg:tab('guest').bg, tabGuestFg:tab('guest').fg,
+      tabKitchenBg:tab('kitchen').bg, tabKitchenFg:tab('kitchen').fg,
+      tabHallBg:tab('hall').bg, tabHallFg:tab('hall').fg,
+      tabAdminBg:tab('admin').bg, tabAdminFg:tab('admin').fg,
+      resetDemo:()=>{ if(this.initial) this.setState({...JSON.parse(JSON.stringify(this.initial)),surface:s.surface}); },
+      showTimers:this.props.showTimers!==false,
+      deviceW:(this.props.guestDevice==='Phone'?'372px':'432px'),
+      cats, board, mine, mineSteps,
+      newOrders:board('submitted'), prepOrders:board('preparing'), readyOrders:board('ready'),
+      cancelled:s.orders.filter(o=>o.status==='cancelled'&&!o.ack).map(o=>({...o,ack:()=>this.setState(st=>({orders:st.orders.map(x=>x.no===o.no?{...x,ack:true}:x)}))}))
+    };
+  }
+}
+</script>
+</body>
+</html>
