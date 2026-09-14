@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:16-alpine'
+    environment:
+      - 'POSTGRES_DB=restaurant_orders'
+      - 'POSTGRES_USER=restaurant_orders'
+      - 'POSTGRES_PASSWORD=restaurant_orders'
+    ports:
+      - '5432'

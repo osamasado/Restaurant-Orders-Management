@@ -1,0 +1,4 @@
+-- Baseline migration.
+-- Intentionally empty: the domain schema is introduced by later migrations
+-- as entities are modeled (see issue #3 and onward). This version confirms
+-- Flyway is wired up and establishes the migration history baseline.
