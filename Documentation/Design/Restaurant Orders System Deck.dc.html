@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#131211}
+a{color:#1F4D3A}a:hover{color:#2C6B51}
+</style></helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <section data-label="Title" data-screen-label="01" data-speaker-notes="Final project proposal. One sentence framing: a table-side ordering system where the guest orders from the table and the kitchen and dining hall see every order live. Four screens, one shared state." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#1F4D3A;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <span style="font:500 26px/1 'IBM Plex Mono',monospace;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.6)">Final project proposal</span>
+    <div style="display:flex;flex-direction:column;gap:44px">
+      <h1 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:148px;line-height:.94;letter-spacing:-.025em">Restaurant<br>Orders System</h1>
+      <p style="margin:0;max-width:1180px;font-size:38px;line-height:1.45;color:rgba(245,240,232,.78)">Guests order from a device at their table in German, English or Arabic. The kitchen and the dining hall see every order live.</p>
+    </div>
+    <div style="display:flex;gap:110px;flex-wrap:wrap">
+      <span style="display:flex;flex-direction:column;gap:10px"><span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.5)">Student</span><span style="font-size:34px;font-weight:600">Osama Sado</span></span>
+      <span style="display:flex;flex-direction:column;gap:10px"><span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.5)">Coach</span><span style="font-size:34px;font-weight:600">[Coach name]</span></span>
+      <span style="display:flex;flex-direction:column;gap:10px"><span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.5)">Course</span><span style="font-size:34px;font-weight:600">[Course / cohort]</span></span>
+    </div>
+  </section>
+
+  <section data-label="The problem today" data-screen-label="02" data-speaker-notes="Today an order passes through several people before it reaches the kitchen. Every hand-off costs time and can lose detail. The waiter walks the same route three times: to take it, to deliver it, to say it is ready." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#F5F0E8;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:36px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">01 · The problem today</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:82px;line-height:1.05;letter-spacing:-.02em;max-width:1450px">An order passes through four hands before the food is cooked</h2>
+    </div>
+    <div style="display:flex;align-items:stretch;gap:28px">
+      <div style="flex:1;padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1)"><span style="font:600 24px/1 'IBM Plex Mono',monospace;color:#B3402C">01</span><p style="margin:22px 0 0;font-size:32px;line-height:1.35;font-weight:600">Guest waits for a waiter</p></div>
+      <div style="display:grid;place-items:center;font-size:40px;color:rgba(19,18,17,.3)">→</div>
+      <div style="flex:1;padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1)"><span style="font:600 24px/1 'IBM Plex Mono',monospace;color:#B3402C">02</span><p style="margin:22px 0 0;font-size:32px;line-height:1.35;font-weight:600">Waiter writes it down</p></div>
+      <div style="display:grid;place-items:center;font-size:40px;color:rgba(19,18,17,.3)">→</div>
+      <div style="flex:1;padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1)"><span style="font:600 24px/1 'IBM Plex Mono',monospace;color:#B3402C">03</span><p style="margin:22px 0 0;font-size:32px;line-height:1.35;font-weight:600">Carries it to the kitchen</p></div>
+      <div style="display:grid;place-items:center;font-size:40px;color:rgba(19,18,17,.3)">→</div>
+      <div style="flex:1;padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1)"><span style="font:600 24px/1 'IBM Plex Mono',monospace;color:#B3402C">04</span><p style="margin:22px 0 0;font-size:32px;line-height:1.35;font-weight:600">Returns to say it is ready</p></div>
+    </div>
+    <p style="margin:0;font-size:36px;line-height:1.4;max-width:1300px;color:rgba(19,18,17,.7)">Every hand-off costs time and can lose detail. This project replaces the chain with four connected screens and one shared order state.</p>
+  </section>
+
+  <section data-label="The four screens" data-screen-label="03" data-speaker-notes="Four screens, each for one user in one place. Guest device, kitchen wall monitor, hall board, office backend. The same order object is behind all four." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#F5F0E8;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">02 · Structure</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:82px;line-height:1.05;letter-spacing:-.02em">The four screens</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:26px">
+      <div style="padding:44px 36px;border-radius:22px;background:#1F4D3A;color:#F5F0E8;display:flex;flex-direction:column;gap:22px">
+        <span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.6)">Tablet or phone</span>
+        <h3 style="margin:0;font-size:44px;line-height:1.1;font-weight:600">Guest ordering</h3>
+        <p style="margin:0;font-size:28px;line-height:1.45;color:rgba(245,240,232,.8)">Language, menu, meal detail, cart, payment, order number with live status.</p>
+      </div>
+      <div style="padding:44px 36px;border-radius:22px;background:#131211;color:#F5F0E8;display:flex;flex-direction:column;gap:22px">
+        <span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.5)">Kitchen wall monitor</span>
+        <h3 style="margin:0;font-size:44px;line-height:1.1;font-weight:600">Kitchen display</h3>
+        <p style="margin:0;font-size:28px;line-height:1.45;color:rgba(245,240,232,.75)">New, in preparation, ready. Number, table, items, notes, and a timer per order.</p>
+      </div>
+      <div style="padding:44px 36px;border-radius:22px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.12);display:flex;flex-direction:column;gap:22px">
+        <span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.45)">Screen in the dining area</span>
+        <h3 style="margin:0;font-size:44px;line-height:1.1;font-weight:600">Hall status board</h3>
+        <p style="margin:0;font-size:28px;line-height:1.45;color:rgba(19,18,17,.62)">Order numbers only, in two large columns. No names, no prices.</p>
+      </div>
+      <div style="padding:44px 36px;border-radius:22px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.12);display:flex;flex-direction:column;gap:22px">
+        <span style="font:500 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.45)">Office computer</span>
+        <h3 style="margin:0;font-size:44px;line-height:1.1;font-weight:600">Management backend</h3>
+        <p style="margin:0;font-size:28px;line-height:1.45;color:rgba(19,18,17,.62)">Menu, raw materials, tables, staff, settings, and every order's status.</p>
+      </div>
+    </div>
+    <p style="margin:0;font-size:34px;line-height:1.4;color:rgba(19,18,17,.55)">One order object, four views of it. Role-based access decides which screen a person may open.</p>
+  </section>
+
+  <section data-label="Guest ordering" data-screen-label="04" data-speaker-notes="The guest screen runs on the tablet clipped to the table, or on the guest's own phone. Browse by category with photos and prices, open a meal for its description, preparation method and ingredients, pick a size, set a quantity, add a free-text note for the kitchen." style="display:flex;padding:0;background:#F5F0E8;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:100px 80px 80px 100px">
+      <div style="display:flex;flex-direction:column;gap:30px">
+        <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">03 · Guest ordering</span>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:78px;line-height:1.05;letter-spacing:-.02em">The menu, on the table</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:30px;max-width:700px">
+        <span style="display:flex;gap:22px;align-items:baseline"><span style="font:600 25px/1.4 'IBM Plex Mono',monospace;color:#1F4D3A">01</span><span style="font-size:32px;line-height:1.4">Categories with photos and prices, priced from the smallest size</span></span>
+        <span style="display:flex;gap:22px;align-items:baseline"><span style="font:600 25px/1.4 'IBM Plex Mono',monospace;color:#1F4D3A">02</span><span style="font-size:32px;line-height:1.4">Description, preparation method and ingredients on every meal</span></span>
+        <span style="display:flex;gap:22px;align-items:baseline"><span style="font:600 25px/1.4 'IBM Plex Mono',monospace;color:#1F4D3A">03</span><span style="font-size:32px;line-height:1.4">Several sizes per meal, each with its own price</span></span>
+        <span style="display:flex;gap:22px;align-items:baseline"><span style="font:600 25px/1.4 'IBM Plex Mono',monospace;color:#1F4D3A">04</span><span style="font-size:32px;line-height:1.4">Quantity control and a free-text note for the kitchen</span></span>
+      </div>
+      <p style="margin:0;font-size:28px;line-height:1.45;color:rgba(19,18,17,.55);max-width:700px">A meal marked unavailable disappears from every table device at once.</p>
+    </div>
+    <div style="width:820px;flex:none;min-width:0;display:flex;align-items:center;justify-content:center;gap:36px;padding:80px 70px 80px 0">
+      <img src="shots/guest-menu-v2.png" alt="Guest menu screen" style="max-width:47%;max-height:100%;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(19,18,17,.28))">
+      <img src="shots/guest-detail.png" alt="Meal detail screen" style="max-width:41%;max-height:88%;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(19,18,17,.22))">
+    </div>
+  </section>
+
+  <section data-label="Cart to order number" data-screen-label="05" data-speaker-notes="The cart shows subtotal, tax and total — all recalculated on the server before the order is accepted. The guest picks a payment method, confirms, and receives an order number with a live status timeline." style="display:flex;flex-direction:column;padding:90px 100px 80px;background:#131211;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:26px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,240,232,.45)">04 · Confirmation</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:78px;line-height:1.05;letter-spacing:-.02em">From cart to order number</h2>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;gap:70px;padding:40px 0 0">
+      <img src="shots/guest-status.png" alt="Order number and live status" style="height:640px;width:auto;object-fit:contain;filter:drop-shadow(0 40px 60px rgba(0,0,0,.5))">
+      <div style="flex:1;display:flex;flex-direction:column;gap:34px">
+        <div style="padding:38px 40px;border-radius:20px;background:rgba(245,240,232,.06);box-shadow:inset 0 0 0 1px rgba(245,240,232,.12)">
+          <span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#7DBE9B">Prices</span>
+          <p style="margin:18px 0 0;font-size:32px;line-height:1.4;color:rgba(245,240,232,.85)">Subtotal, tax and total are calculated on the server, never on the device, and verified again before the order is accepted.</p>
+        </div>
+        <div style="padding:38px 40px;border-radius:20px;background:rgba(245,240,232,.06);box-shadow:inset 0 0 0 1px rgba(245,240,232,.12)">
+          <span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#F3C77A">Payment</span>
+          <p style="margin:18px 0 0;font-size:32px;line-height:1.4;color:rgba(245,240,232,.85)">Cash, card, PayPal or cash desk — whichever the restaurant has switched on in settings.</p>
+        </div>
+        <div style="padding:38px 40px;border-radius:20px;background:rgba(245,240,232,.06);box-shadow:inset 0 0 0 1px rgba(245,240,232,.12)">
+          <span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.6)">Order number</span>
+          <p style="margin:18px 0 0;font-size:32px;line-height:1.4;color:rgba(245,240,232,.85)">Issued on confirmation, shown large, and tracked through a live status timeline.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="Kitchen display" data-screen-label="06" data-speaker-notes="The kitchen sees the order the moment it is confirmed. Three columns, two buttons: start and ready. The timer turns amber after six minutes and red after twelve. A cancelled order is flagged in red until a cook acknowledges it." style="display:flex;flex-direction:column;padding:80px 90px;background:#0E0D0C;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:60px;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,240,232,.45)">05 · Kitchen display</span>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:78px;line-height:1.05;letter-spacing:-.02em">Three columns, two buttons</h2>
+      </div>
+      <p style="margin:0;max-width:680px;font-size:30px;line-height:1.45;color:rgba(245,240,232,.7)">Start and Ready are the only actions a cook needs. Everything else on the card exists to answer one question: what goes on the plate.</p>
+    </div>
+    <img src="shots/kitchen.png" alt="Kitchen display" style="width:100%;flex:1;min-height:0;object-fit:contain;object-position:top;border-radius:18px;box-shadow:inset 0 0 0 1px rgba(245,240,232,.14)">
+  </section>
+
+  <section data-label="Hall status board" data-screen-label="07" data-speaker-notes="The hall board carries order numbers only — no names, no prices, no table numbers. Two columns: in preparation, and ready. Designed to be read from the back of the room." style="display:flex;flex-direction:column;padding:80px 90px;background:#131211;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:60px;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,240,232,.45)">06 · Hall status board</span>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:78px;line-height:1.05;letter-spacing:-.02em">Numbers, read from the back of the room</h2>
+      </div>
+      <p style="margin:0;max-width:620px;font-size:30px;line-height:1.45;color:rgba(245,240,232,.7)">No names, no prices, no table numbers. A guest needs one fact from this screen, and gets it in one glance.</p>
+    </div>
+    <img src="shots/hall.png" alt="Hall status board" style="width:100%;flex:1;min-height:0;object-fit:contain;object-position:top;border-radius:18px;box-shadow:inset 0 0 0 1px rgba(245,240,232,.14)">
+  </section>
+
+  <section data-label="Management backend" data-screen-label="08" data-speaker-notes="The backend defines the menu — raw materials, categories, meals, sizes, prices and recipes — registers tables and devices, manages staff accounts by role, and holds the settings for currency, tax, default language and payment methods. It can also move any order to the correct status when something goes wrong on the floor." style="display:flex;flex-direction:column;padding:80px 90px;background:#EFE9DF;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:60px;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">07 · Management backend</span>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:78px;line-height:1.05;letter-spacing:-.02em">Everything the four screens read from</h2>
+      </div>
+      <p style="margin:0;max-width:640px;font-size:30px;line-height:1.45;color:rgba(19,18,17,.62)">Menu and recipes, tables and their paired devices, staff accounts by role, currency and tax, and full control over every order.</p>
+    </div>
+    <img src="shots/admin.png" alt="Management backend" style="width:100%;flex:1;min-height:0;object-fit:contain;object-position:top;border-radius:18px;box-shadow:0 30px 60px -30px rgba(19,18,17,.4),inset 0 0 0 1px rgba(19,18,17,.12)">
+  </section>
+
+  <section data-label="Order lifecycle" data-screen-label="09" data-speaker-notes="One defined path. Every change of stage goes through a single place that validates the transition, sets the timestamps and writes an audit record — no part of the system sets a status directly. Cancellation is possible from any stage before serving." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#F5F0E8;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">08 · The order process</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:82px;line-height:1.05;letter-spacing:-.02em">One path, six stages</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px">
+      <div style="padding:34px 30px;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:16px"><span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif">Draft</span><span style="font-size:26px;line-height:1.35;color:rgba(19,18,17,.6)">Guest is still adding items; not visible to the kitchen</span><span style="margin-top:auto;font:500 25px/1.3 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(19,18,17,.42)">Table device</span></div>
+      <div style="padding:34px 30px;border-radius:18px;background:#1F4D3A;color:#F5F0E8;display:flex;flex-direction:column;gap:16px"><span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif">Submitted</span><span style="font-size:26px;line-height:1.35;color:rgba(245,240,232,.8)">Payment method chosen, order number issued</span><span style="margin-top:auto;font:500 25px/1.3 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.6)">Guest confirms</span></div>
+      <div style="padding:34px 30px;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:16px"><span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif">In preparation</span><span style="font-size:26px;line-height:1.35;color:rgba(19,18,17,.6)">The kitchen has started cooking</span><span style="margin-top:auto;font:500 25px/1.3 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(19,18,17,.42)">Kitchen screen</span></div>
+      <div style="padding:34px 30px;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:16px"><span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif">Ready</span><span style="font-size:26px;line-height:1.35;color:rgba(19,18,17,.6)">The number appears on the hall board</span><span style="margin-top:auto;font:500 25px/1.3 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(19,18,17,.42)">Kitchen screen</span></div>
+      <div style="padding:34px 30px;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:16px"><span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif">Served</span><span style="font-size:26px;line-height:1.35;color:rgba(19,18,17,.6)">Delivered to the table; leaves the active boards</span><span style="margin-top:auto;font:500 25px/1.3 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(19,18,17,.42)">Waiter or admin</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:30px;padding:36px 40px;border-radius:18px;background:rgba(179,64,44,.1);box-shadow:inset 0 0 0 1px rgba(179,64,44,.3)">
+      <span style="font:600 30px/1.15 'Bricolage Grotesque',sans-serif;color:#B3402C">Cancelled</span>
+      <span style="font-size:30px;line-height:1.4;color:rgba(19,18,17,.7)">Possible from any stage before serving, by an admin. Flagged in red on the kitchen screen until a cook acknowledges it.</span>
+    </div>
+  </section>
+
+  <section data-label="Three languages" data-screen-label="10" data-speaker-notes="German, English and Arabic. Both interface labels and menu content are translated, stored per language, so a missing translation can be found and filled. Arabic is fully right-to-left, not mirrored English. Numbers and currency are formatted per language." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#1F4D3A;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,240,232,.55)">09 · Languages</span>
+    <div style="display:flex;align-items:flex-end;gap:80px;flex-wrap:wrap">
+      <span style="font-family:'DM Serif Display',serif;font-size:130px;line-height:1;letter-spacing:-.02em">Deutsch</span>
+      <span style="font-family:'DM Serif Display',serif;font-size:130px;line-height:1;letter-spacing:-.02em">English</span>
+      <span style="font-size:130px;line-height:1.1;font-weight:600">العربية</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:36px">
+      <div style="display:flex;flex-direction:column;gap:16px"><span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.55)">Interface and content</span><p style="margin:0;font-size:30px;line-height:1.45;color:rgba(245,240,232,.85)">Labels and menu text are both translated, stored per language.</p></div>
+      <div style="display:flex;flex-direction:column;gap:16px"><span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.55)">Right to left</span><p style="margin:0;font-size:30px;line-height:1.45;color:rgba(245,240,232,.85)">Arabic is a real RTL layout, not mirrored English.</p></div>
+      <div style="display:flex;flex-direction:column;gap:16px"><span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.55)">Numbers and money</span><p style="margin:0;font-size:30px;line-height:1.45;color:rgba(245,240,232,.85)">Currency symbol, position and decimal format follow the language.</p></div>
+    </div>
+  </section>
+
+  <section data-label="Engineering substance" data-screen-label="11" data-speaker-notes="These are the parts worth defending in a review. The state machine is one place; order numbers are a concurrency problem solved with a locked transaction; prices are server-side; order lines store a snapshot so changing a price tomorrow cannot rewrite yesterday's receipts; internationalisation was designed in from the start; role-based access limits each screen." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#F5F0E8;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">10 · Substance</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:82px;line-height:1.05;letter-spacing:-.02em">What makes it a substantial project</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+      <div style="padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">A state machine, not a status field</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(19,18,17,.62)">One place validates the transition, sets timestamps and writes the audit record. Nothing else may set a status.</p></div>
+      <div style="padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">Unique numbers under load</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(19,18,17,.62)">Two tables confirming in the same instant must not get the same number — a locked transaction, not a counter.</p></div>
+      <div style="padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">Prices computed on the server</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(19,18,17,.62)">The total shown to the guest is recalculated and verified before the order is accepted.</p></div>
+      <div style="padding:40px 36px;border-radius:20px;background:#131211;color:#F5F0E8;display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">Orders keep a snapshot</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(245,240,232,.75)">Title, size and price are copied onto the order line, so a price change tomorrow cannot rewrite yesterday's receipts.</p></div>
+      <div style="padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">RTL designed in from the start</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(19,18,17,.62)">Translated content stored per language, so a missing translation can be found and filled.</p></div>
+      <div style="padding:40px 36px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.1);display:flex;flex-direction:column;gap:18px"><span style="font:600 34px/1.15 'Bricolage Grotesque',sans-serif">Role-based access</span><p style="margin:0;font-size:27px;line-height:1.4;color:rgba(19,18,17,.62)">Each of the four screens exposes only what its user — admin, kitchen, waiter, cashier — is allowed to do.</p></div>
+    </div>
+  </section>
+
+  <section data-label="Scope" data-screen-label="12" data-speaker-notes="What is built in this project, and what is deliberately left for a later version. Be explicit about the payment flow: it is built, but real charging needs a merchant account." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#EFE9DF;color:#131211;font-family:'Bricolage Grotesque',sans-serif">
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(19,18,17,.45)">11 · Scope</span>
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:82px;line-height:1.05;letter-spacing:-.02em">Built now, and left for later</h2>
+    </div>
+    <div style="display:flex;gap:34px">
+      <div style="flex:1;padding:48px 44px;border-radius:22px;background:#1F4D3A;color:#F5F0E8;display:flex;flex-direction:column;gap:26px">
+        <span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.6)">Built in this project</span>
+        <span style="font-size:31px;line-height:1.35">All four screens, complete</span>
+        <span style="font-size:31px;line-height:1.35">Three languages with right-to-left support</span>
+        <span style="font-size:31px;line-height:1.35">Full menu and raw-material management</span>
+        <span style="font-size:31px;line-height:1.35">Order lifecycle with audit history</span>
+        <span style="font-size:31px;line-height:1.35">Configurable currency, tax and payment methods</span>
+        <span style="font-size:31px;line-height:1.35">Role-based staff accounts</span>
+        <span style="font-size:31px;line-height:1.35">Installable on phones and tablets as an app</span>
+      </div>
+      <div style="flex:1;padding:48px 44px;border-radius:22px;background:#fff;box-shadow:inset 0 0 0 1px rgba(19,18,17,.12);display:flex;flex-direction:column;gap:26px">
+        <span style="font:600 25px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(19,18,17,.45)">Left for a later version</span>
+        <span style="font-size:31px;line-height:1.35;color:rgba(19,18,17,.72)">Live card and PayPal charging — the flow is built; real charging needs a merchant account</span>
+        <span style="font-size:31px;line-height:1.35;color:rgba(19,18,17,.72)">Automatic stock deduction from recipes</span>
+        <span style="font-size:31px;line-height:1.35;color:rgba(19,18,17,.72)">Kitchen ticket printing</span>
+        <span style="font-size:31px;line-height:1.35;color:rgba(19,18,17,.72)">Reporting and analytics</span>
+        <span style="font-size:31px;line-height:1.35;color:rgba(19,18,17,.72)">Instant push updates in place of periodic refresh</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="Demonstration" data-screen-label="13" data-speaker-notes="Close on the demonstration: place an order on a phone, it appears on the kitchen screen within seconds, and its number moves across the hall board as the kitchen advances it — all three screens visible side by side. Invite questions." style="display:flex;flex-direction:column;justify-content:space-between;padding:100px;background:#131211;color:#F5F0E8;font-family:'Bricolage Grotesque',sans-serif">
+    <span style="font:500 24px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,240,232,.45)">12 · Demonstration</span>
+    <div style="display:flex;flex-direction:column;gap:44px">
+      <h2 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:104px;line-height:1.05;letter-spacing:-.025em;max-width:1500px">The system can be shown running end to end</h2>
+      <p style="margin:0;max-width:1400px;font-size:38px;line-height:1.45;color:rgba(245,240,232,.75)">An order placed on a phone appears on the kitchen screen within seconds, and its number moves across the hall board as the kitchen advances it — all three screens visible side by side.</p>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:60px;flex-wrap:wrap">
+      <span style="font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.5)">Osama Sado</span>
+      <span style="font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.5)">Restaurant Orders System</span>
+      <span style="font:600 26px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.5)">[Date]</span>
+    </div>
+  </section>
+
+</x-import>
+</x-dc>
+</body>
+</html>

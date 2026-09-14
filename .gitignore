@@ -1,0 +1,14 @@
+#general
+.idea
+*.iml
+
+#backend
+/backend/target
+/backend/src/main/resources/static
+
+#frontend
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/npm-debug.log*
+frontend/.local
