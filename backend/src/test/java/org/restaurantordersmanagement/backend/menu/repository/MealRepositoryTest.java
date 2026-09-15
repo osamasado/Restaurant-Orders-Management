@@ -1,4 +1,4 @@
-package org.restaurantordersmanagement.backend.menu;
+package org.restaurantordersmanagement.backend.menu.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,6 +9,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
 import org.restaurantordersmanagement.backend.i18n.Language;
+import org.restaurantordersmanagement.backend.menu.model.Category;
+import org.restaurantordersmanagement.backend.menu.model.Meal;
+import org.restaurantordersmanagement.backend.menu.model.MealSize;
+import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;

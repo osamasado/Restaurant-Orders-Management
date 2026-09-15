@@ -1,4 +1,4 @@
-package org.restaurantordersmanagement.backend.menu;
+package org.restaurantordersmanagement.backend.menu.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

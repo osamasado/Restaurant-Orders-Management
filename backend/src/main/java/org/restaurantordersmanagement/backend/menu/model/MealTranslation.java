@@ -1,4 +1,4 @@
-package org.restaurantordersmanagement.backend.menu;
+package org.restaurantordersmanagement.backend.menu.model;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

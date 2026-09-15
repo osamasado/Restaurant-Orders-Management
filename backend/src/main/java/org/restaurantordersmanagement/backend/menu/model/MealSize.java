@@ -1,34 +1,30 @@
-package org.restaurantordersmanagement.backend.menu;
+package org.restaurantordersmanagement.backend.menu.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"meal_size_id", "raw_material_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
-public class Recipe {
+public class MealSize {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
-    private MealSize mealSize;
+    private Meal meal;
 
-    @ManyToOne(optional = false)
-    private RawMaterial rawMaterial;
+    private String label;
 
-    private BigDecimal quantity;
+    private BigDecimal price;
 
 }
