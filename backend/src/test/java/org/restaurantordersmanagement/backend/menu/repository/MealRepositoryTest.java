@@ -12,6 +12,7 @@ import org.restaurantordersmanagement.backend.i18n.Language;
 import org.restaurantordersmanagement.backend.menu.model.Category;
 import org.restaurantordersmanagement.backend.menu.model.Meal;
 import org.restaurantordersmanagement.backend.menu.model.MealSize;
+import org.restaurantordersmanagement.backend.menu.model.MealSizeTranslation;
 import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -51,14 +52,22 @@ class MealRepositoryTest {
 
         MealSize small = new MealSize();
         small.setMeal(meal);
-        small.setLabel("200 g");
         small.setPrice(new BigDecimal("14.50"));
+        MealSizeTranslation smallEn = new MealSizeTranslation();
+        smallEn.setMealSize(small);
+        smallEn.setLanguage(Language.EN);
+        smallEn.setLabel("Small");
+        small.getTranslations().add(smallEn);
         meal.getSizes().add(small);
 
         MealSize large = new MealSize();
         large.setMeal(meal);
-        large.setLabel("300 g");
         large.setPrice(new BigDecimal("18.90"));
+        MealSizeTranslation largeEn = new MealSizeTranslation();
+        largeEn.setMealSize(large);
+        largeEn.setLanguage(Language.EN);
+        largeEn.setLabel("Large");
+        large.getTranslations().add(largeEn);
         meal.getSizes().add(large);
 
         Meal saved = mealRepository.saveAndFlush(meal);
@@ -69,6 +78,7 @@ class MealRepositoryTest {
         assertEquals(1, found.get().getTranslations().size());
         assertEquals(4, found.get().getTranslations().get(0).getIngredients().size());
         assertEquals(2, found.get().getSizes().size());
+        assertEquals(1, found.get().getSizes().get(0).getTranslations().size());
     }
 
 }

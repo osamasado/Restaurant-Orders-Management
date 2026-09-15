@@ -46,7 +46,6 @@ class RecipeRepositoryTest {
         meal.setAvailable(true);
         MealSize size = new MealSize();
         size.setMeal(meal);
-        size.setLabel("200 g");
         size.setPrice(new BigDecimal("14.50"));
         meal.getSizes().add(size);
         meal = mealRepository.saveAndFlush(meal);
