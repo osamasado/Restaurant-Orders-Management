@@ -1,6 +1,7 @@
 #general
 .idea
 *.iml
+.scannerwork/
 
 #backend
 /backend/target
