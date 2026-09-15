@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Meal {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     private boolean available = true;

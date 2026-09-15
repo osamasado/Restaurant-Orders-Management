@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -24,9 +25,11 @@ public class Recipe {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "meal_size_id")
     private MealSize mealSize;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "raw_material_id")
     private RawMaterial rawMaterial;
 
     private BigDecimal quantity;

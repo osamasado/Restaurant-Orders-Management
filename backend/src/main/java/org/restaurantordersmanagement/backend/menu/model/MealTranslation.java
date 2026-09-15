@@ -33,6 +33,7 @@ public class MealTranslation {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "meal_id")
     private Meal meal;
 
     @Enumerated(EnumType.STRING)

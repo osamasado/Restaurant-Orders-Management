@@ -1,10 +1,7 @@
 package org.restaurantordersmanagement.backend.menu.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,7 @@ public class MealSize {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "meal_id")
     private Meal meal;
 
     private String label;
