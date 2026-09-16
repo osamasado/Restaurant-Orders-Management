@@ -1,6 +1,6 @@
 # Database schema
 
-Reflects the schema created by Flyway migrations `V1`–`V6` (`backend/src/main/resources/db/migration/`). This covers the menu domain modeled in issue #3 — `Order`/`Table`/`StaffAccount`/`Config` will be added here as later tickets introduce them.
+Reflects the schema created by Flyway migrations `V1`–`V9` (`backend/src/main/resources/db/migration/`). This covers the menu domain modeled in issue #3 and the `Table`/`StaffAccount`/`Config` entities modeled in issue #4 — `Order` will be added here once a later ticket introduces it.
 
 ```mermaid
 erDiagram
@@ -12,6 +12,7 @@ erDiagram
     MEAL_SIZE ||--o{ MEAL_SIZE_TRANSLATION : has
     MEAL_SIZE ||--o{ RECIPE : "used via"
     RAW_MATERIAL ||--o{ RECIPE : "used in"
+    CONFIG ||--o{ CONFIG_PAYMENT_METHOD : enables
 
     CATEGORY {
         bigint id PK
@@ -65,6 +66,33 @@ erDiagram
         bigint raw_material_id FK
         numeric quantity
     }
+    RESTAURANT_TABLE {
+        bigint id PK
+        varchar table_number
+        varchar room
+        int seats
+        varchar paired_device_id
+        timestamptz last_seen_at
+    }
+    STAFF_ACCOUNT {
+        bigint id PK
+        varchar name
+        varchar role
+        varchar pin_hash
+        timestamptz last_seen_at
+    }
+    CONFIG {
+        bigint id PK
+        varchar currency_code
+        varchar currency_symbol
+        varchar symbol_position
+        numeric tax_rate
+        varchar default_language
+    }
+    CONFIG_PAYMENT_METHOD {
+        bigint config_id FK
+        varchar payment_method
+    }
 ```
 
 ## Notes
@@ -74,3 +102,7 @@ erDiagram
 - **`recipe`** links a `meal_size` (not `meal` directly) to a `raw_material`, per the proposal: *"Recipes link each meal size to its raw materials."*
 - **`raw_material`** has no translation table — it's internal/back-of-house only, never shown to guests.
 - **`meal_translation_ingredient`** is an `@ElementCollection` (an ordered list of plain strings per translation), not a shared/managed `Ingredient` entity like `raw_material` is.
+- **`restaurant_table`**, not `table` — the `Table` entity name collides with the SQL reserved word `TABLE`, so it's explicitly mapped to a differently-named table.
+- **`staff_account.role`** is enforced only via the Java enum (`EnumType.STRING`), no DB `CHECK` constraint — same precedent as `language`.
+- **`config`** is a singleton table with no DB-level enforcement (e.g. no `CHECK (id = 1)`) — the `V9__config.sql` migration seeds exactly one row and callers are expected to fetch it by convention.
+- **`config_payment_method`** is an `@ElementCollection` of an enum (`Set<PaymentMethod>`), keyed by `(config_id, payment_method)` — unordered, unlike `meal_translation_ingredient`'s ordered list.
