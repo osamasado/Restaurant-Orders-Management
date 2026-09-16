@@ -30,6 +30,7 @@
         <java.version>25</java.version>
         <sonar.organization>osamasado</sonar.organization>
         <sonar.projectKey>Restaurant-Orders-Management-Backend</sonar.projectKey>
+        <sonar.coverage.exclusions>src/main/java/org/restaurantordersmanagement/backend/BackendApplication.java</sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>
