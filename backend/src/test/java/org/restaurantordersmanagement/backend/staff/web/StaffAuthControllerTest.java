@@ -51,7 +51,14 @@ class StaffAuthControllerTest {
 
         mockMvc.perform(post("/api/staff/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Admin One\",\"pin\":\"1234\"}"))
+                        .content(
+                            """
+                            {
+                                "name": "Admin One",
+                                "pin": "1234"
+                            }
+                            """
+                        ))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Admin One"))
                 .andExpect(jsonPath("$.role").value("ADMIN"));
@@ -63,7 +70,14 @@ class StaffAuthControllerTest {
 
         mockMvc.perform(post("/api/staff/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Kitchen One\",\"pin\":\"wrong\"}"))
+                        .content(
+                                """
+                                {
+                                    "name": "Kitchen One",
+                                    "pin": "wrong"
+                                }
+                                """
+                        ))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -98,7 +112,14 @@ class StaffAuthControllerTest {
 
         MvcResult loginResult = mockMvc.perform(post("/api/staff/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Cashier One\",\"pin\":\"9999\"}"))
+                        .content(
+                                """
+                                {
+                                    "name": "Cashier One",
+                                    "pin": "9999"
+                                }
+                                """
+                        ))
                 .andExpect(status().isOk())
                 .andReturn();
 
