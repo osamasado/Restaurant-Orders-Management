@@ -1,75 +1,32 @@
-# React + TypeScript + Vite
+# Restaurant Orders Management — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript + Vite. Four route groups, one per screen:
 
-Currently, two official plugins are available:
+| Route | Screen | Default theme |
+|---|---|---|
+| `/guest` | Guest ordering (table-side device) | light |
+| `/kitchen` | Kitchen display (wall monitor) | dark |
+| `/hall` | Hall status board | dark |
+| `/admin/*` | Management backend (7 nested sections) | light |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+`/` is a dev-only landing page linking to the four screens — not a production route.
 
-## React Compiler
+## Running locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Dev server runs on port 5174 and proxies `/api` to the backend at `http://localhost:8080` (see `vite.config.ts`) — run the backend separately (`backend/`) for any screen that calls the API.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Design system
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Colors, fonts, radii, spacing, and shadows live in `src/styles/tokens.css` as CSS custom properties, ported from `Documentation/Design/README.md`. Each screen picks a default light/dark theme on first load; `src/theme/` (`ThemeProvider`/`useTheme`/`ThemeToggle`) implements a manual override, stored under one shared `localStorage` key so a choice made on one screen carries over to the others.
 
-```
+## Scripts
+
+- `npm run dev` — start the dev server
+- `npm run build` — type-check (`tsc -b`) and build for production
+- `npm run lint` — ESLint
+- `npm run preview` — serve the production build locally
