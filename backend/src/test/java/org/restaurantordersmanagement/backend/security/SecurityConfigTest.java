@@ -30,9 +30,14 @@ class SecurityConfigTest {
     }
 
     @Test
-    void adminOnlyEndpointRejectsAnonymousRequest() throws Exception {
+    void adminOnlyEndpointChallengesAnonymousRequest() throws Exception {
+        // Spring Security returns 401 here, not 403: ExceptionTranslationFilter treats an
+        // AccessDeniedException from an anonymous principal as "we don't know who this is
+        // yet" and delegates to the AuthenticationEntryPoint. 403 is reserved for a request
+        // that IS authenticated but lacks the required role - see
+        // adminOnlyEndpointRejectsNonAdminRole below.
         mockMvc.perform(get("/test/admin-only"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
