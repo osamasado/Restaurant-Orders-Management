@@ -1,3 +1,6 @@
+import { useT } from '../i18n/useT'
+
 export function NotFoundScreen() {
-  return <div>Page not found</div>
+  const { t } = useT()
+  return <div>{t('notFound.message')}</div>
 }

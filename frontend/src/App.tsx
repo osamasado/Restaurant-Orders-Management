@@ -17,13 +17,13 @@ function App() {
         <Route path="/hall" element={<HallScreen />} />
         <Route path="/admin" element={<AdminScreen />}>
           <Route index element={<Navigate to="orders" replace />} />
-          <Route path="orders" element={<ComingSoonView title="Orders" />} />
-          <Route path="history" element={<ComingSoonView title="Audit history" />} />
-          <Route path="meals" element={<ComingSoonView title="Meals" />} />
-          <Route path="materials" element={<ComingSoonView title="Raw materials" />} />
-          <Route path="tables" element={<ComingSoonView title="Tables & devices" />} />
-          <Route path="staff" element={<ComingSoonView title="Staff accounts" />} />
-          <Route path="settings" element={<ComingSoonView title="Settings" />} />
+          <Route path="orders" element={<ComingSoonView titleKey="admin.nav.orders" />} />
+          <Route path="history" element={<ComingSoonView titleKey="admin.nav.history" />} />
+          <Route path="meals" element={<ComingSoonView titleKey="admin.nav.meals" />} />
+          <Route path="materials" element={<ComingSoonView titleKey="admin.nav.materials" />} />
+          <Route path="tables" element={<ComingSoonView titleKey="admin.nav.tables" />} />
+          <Route path="staff" element={<ComingSoonView titleKey="admin.nav.staff" />} />
+          <Route path="settings" element={<ComingSoonView titleKey="admin.nav.settings" />} />
         </Route>
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>

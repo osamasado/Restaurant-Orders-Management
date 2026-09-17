@@ -1,0 +1,67 @@
+{
+  "common": {
+    "theme": {
+      "light": "فاتح",
+      "dark": "داكن",
+      "switchToLight": "التبديل إلى الوضع الفاتح",
+      "switchToDark": "التبديل إلى الوضع الداكن"
+    },
+    "language": {
+      "switchTo": "التبديل إلى {{language}}",
+      "names": {
+        "de": "الألمانية",
+        "en": "الإنجليزية",
+        "ar": "العربية"
+      }
+    }
+  },
+  "guest": {
+    "tableLabel": "لم يتم تخصيص الطاولة بعد",
+    "orderingComingSoon": "طلب الضيوف، قريبًا",
+    "continue": "متابعة"
+  },
+  "kitchen": {
+    "title": "المطبخ",
+    "station": "المحطة 1",
+    "columns": {
+      "new": "جديد",
+      "preparing": "قيد التحضير",
+      "ready": "جاهز"
+    },
+    "ranOut": "نفذت الكمية؟"
+  },
+  "hall": {
+    "title": "Restaurant Orders Management",
+    "panels": {
+      "preparing": "قيد التحضير",
+      "ready": "جاهز"
+    },
+    "footer": "يتم تحديث أرقام الطلبات تلقائيًا"
+  },
+  "admin": {
+    "eyebrow": "الإدارة",
+    "nav": {
+      "orders": "الطلبات",
+      "history": "سجل التدقيق",
+      "meals": "الأطباق",
+      "materials": "المواد الخام",
+      "tables": "الطاولات والأجهزة",
+      "staff": "حسابات الموظفين",
+      "settings": "الإعدادات"
+    },
+    "notSignedIn": "لم يتم تسجيل الدخول بعد",
+    "comingSoon": "قريبًا"
+  },
+  "notFound": {
+    "message": "الصفحة غير موجودة"
+  },
+  "home": {
+    "title": "Restaurant Orders Management",
+    "links": {
+      "guest": "طلب الضيوف",
+      "kitchen": "شاشة المطبخ",
+      "hall": "لوحة حالة الصالة",
+      "admin": "لوحة الإدارة"
+    }
+  }
+}

@@ -76,7 +76,7 @@
 }
 
 .kitchen-screen__count {
-  margin-left: auto;
+  margin-inline-start: auto;
   font-variant-numeric: tabular-nums;
 }
 

@@ -1,19 +1,25 @@
+import { LanguageProvider } from '../../i18n/LanguageProvider'
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
+import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import './HallScreen.css'
 
 const PANELS = [
-  { key: 'preparing', label: 'In preparation' },
-  { key: 'ready', label: 'Ready' },
+  { key: 'preparing', labelKey: 'hall.panels.preparing' },
+  { key: 'ready', labelKey: 'hall.panels.ready' },
 ] as const
 
 function HallScreenContent() {
+  const { t } = useT()
+
   return (
     <div className="hall-screen">
       <header className="hall-screen__header">
-        <h1 className="hall-screen__title">Restaurant Orders Management</h1>
+        <h1 className="hall-screen__title">{t('hall.title')}</h1>
         <div className="hall-screen__header-right">
-          <span className="hall-screen__clock">—:—</span>
+          <span className="hall-screen__clock">--:--</span>
+          <LanguageSwitcher />
           <ThemeToggle />
         </div>
       </header>
@@ -23,7 +29,7 @@ function HallScreenContent() {
           <section key={panel.key} className="hall-screen__panel">
             <header className="hall-screen__panel-header">
               <span className="hall-screen__dot" />
-              <span>{panel.label}</span>
+              <span>{t(panel.labelKey)}</span>
             </header>
             <div className="hall-screen__numbers" />
           </section>
@@ -31,7 +37,7 @@ function HallScreenContent() {
       </div>
 
       <footer className="hall-screen__footer">
-        <span>Order numbers update automatically</span>
+        <span>{t('hall.footer')}</span>
       </footer>
     </div>
   )
@@ -40,7 +46,9 @@ function HallScreenContent() {
 export function HallScreen() {
   return (
     <ThemeProvider defaultTheme="dark">
-      <HallScreenContent />
+      <LanguageProvider defaultLanguage="de">
+        <HallScreenContent />
+      </LanguageProvider>
     </ThemeProvider>
   )
 }
