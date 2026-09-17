@@ -1,0 +1,98 @@
+/*
+ * Design tokens from Documentation/Design/README.md.
+ *
+ * Semantic, theme-aware: the bare :root below is the complete LIGHT palette.
+ * Dark values are redefined twice - once for system preference, once for an
+ * explicit [data-theme="dark"] override - so a manual toggle always wins.
+ * Each screen picks its own default theme on mount (kitchen/hall dark,
+ * guest/admin light); the toggle can flip any of them either way.
+ *
+ * The dark accent values below aren't invented - they're the README's own
+ * documented "on-dark" tints (Forest/Amber/Clay), just applied bidirectionally
+ * instead of being fixed to specific screens.
+ */
+
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fbf8f2;
+  --bg-card-alt: #ffffff;
+  --bg-sidebar: #efe9df;
+  --text: #131211;
+  --text-secondary: rgba(19, 18, 17, 0.6);
+  --hairline: rgba(19, 18, 17, 0.12);
+
+  --accent-forest: #1f4d3a;
+  --accent-forest-hover: #2c6b51;
+  --accent-amber: #d98f00;
+  --accent-amber-note: #7a5200;
+  --accent-clay: #b3402c;
+
+  --shadow-card: inset 0 0 0 1px rgba(19, 18, 17, 0.08), 0 1px 2px rgba(19, 18, 17, 0.07);
+  --shadow-card-hover: 0 6px 18px -8px rgba(19, 18, 17, 0.3), inset 0 0 0 1px rgba(31, 77, 58, 0.3);
+  --shadow-primary-bar: 0 16px 30px -14px rgba(31, 77, 58, 0.8);
+
+  /* Fixed - a physical device bezel color, not a themed surface */
+  --device-bezel: #1a1918;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  --radius-bezel: 40px;
+  --radius-screen: 28px;
+  --radius-card: 18px;
+  --radius-card-inner: 14px;
+  --radius-chip: 10px;
+  --radius-pill: 20px;
+
+  /* 4px base step */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 10px;
+  --space-4: 14px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 26px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #131211;
+    --bg-card: #1a1918;
+    --bg-card-alt: #1a1918;
+    --bg-sidebar: #1a1918;
+    --text: #f5f0e8;
+    --text-secondary: rgba(245, 240, 232, 0.6);
+    --hairline: rgba(245, 240, 232, 0.12);
+
+    --accent-forest: #7dbe9b;
+    --accent-forest-hover: #a8dcc0;
+    --accent-amber: #f3c77a;
+    --accent-amber-note: #8a5c00;
+    --accent-clay: #ff8e75;
+
+    --shadow-card: inset 0 0 0 1px rgba(245, 240, 232, 0.1), 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-card-hover: 0 6px 18px -8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(125, 190, 155, 0.3);
+    --shadow-primary-bar: 0 16px 30px -14px rgba(0, 0, 0, 0.8);
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #131211;
+  --bg-card: #1a1918;
+  --bg-card-alt: #1a1918;
+  --bg-sidebar: #1a1918;
+  --text: #f5f0e8;
+  --text-secondary: rgba(245, 240, 232, 0.6);
+  --hairline: rgba(245, 240, 232, 0.12);
+
+  --accent-forest: #7dbe9b;
+  --accent-forest-hover: #a8dcc0;
+  --accent-amber: #f3c77a;
+  --accent-amber-note: #8a5c00;
+  --accent-clay: #ff8e75;
+
+  --shadow-card: inset 0 0 0 1px rgba(245, 240, 232, 0.1), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 6px 18px -8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(125, 190, 155, 0.3);
+  --shadow-primary-bar: 0 16px 30px -14px rgba(0, 0, 0, 0.8);
+}
