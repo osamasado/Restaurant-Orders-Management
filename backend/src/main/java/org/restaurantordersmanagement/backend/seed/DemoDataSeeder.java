@@ -1,6 +1,8 @@
 package org.restaurantordersmanagement.backend.seed;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.restaurantordersmanagement.backend.i18n.Language;
@@ -12,6 +14,8 @@ import org.restaurantordersmanagement.backend.menu.model.MealSizeTranslation;
 import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 import org.restaurantordersmanagement.backend.menu.repository.CategoryRepository;
 import org.restaurantordersmanagement.backend.menu.repository.MealRepository;
+import org.restaurantordersmanagement.backend.table.model.Table;
+import org.restaurantordersmanagement.backend.table.repository.TableRepository;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,14 +32,18 @@ public class DemoDataSeeder {
 
     private final CategoryRepository categoryRepository;
     private final MealRepository mealRepository;
+    private final TableRepository tableRepository;
 
-    public DemoDataSeeder(CategoryRepository categoryRepository, MealRepository mealRepository) {
+    public DemoDataSeeder(
+            CategoryRepository categoryRepository, MealRepository mealRepository, TableRepository tableRepository) {
         this.categoryRepository = categoryRepository;
         this.mealRepository = mealRepository;
+        this.tableRepository = tableRepository;
     }
 
     public void seedAll() {
         seedMenu();
+        seedTables();
     }
 
     private void seedMenu() {
@@ -105,6 +113,33 @@ public class DemoDataSeeder {
                 size("0.5 l", "0,5 l", "0.5 l", "5.60"));
 
         log.info("Seeded demo menu: 4 categories, 8 meals");
+    }
+
+    private void seedTables() {
+        Instant online = Instant.now();
+        Instant offline = Instant.now().minus(Duration.ofHours(3));
+
+        table("1", "Front room", 2, "tablet-a1", online);
+        table("2", "Front room", 4, "tablet-a2", online);
+        table("7", "Garden room", 4, "tablet-b3", online);
+        table("9", "Garden room", 6, "tablet-b5", online);
+        table("11", "Terrace", 4, "tablet-c1", offline);
+        table("14", "Terrace", 2, null, null);
+    }
+
+    private void table(String tableNumber, String room, int seats, String pairedDeviceId, Instant lastSeenAt) {
+        if (tableRepository.findByTableNumber(tableNumber).isPresent()) {
+            log.info("Demo table {} already seeded, skipping", tableNumber);
+            return;
+        }
+
+        Table table = new Table();
+        table.setTableNumber(tableNumber);
+        table.setRoom(room);
+        table.setSeats(seats);
+        table.setPairedDeviceId(pairedDeviceId);
+        table.setLastSeenAt(lastSeenAt);
+        tableRepository.saveAndFlush(table);
     }
 
     private Category category(int sortOrder, String nameEn, String nameDe, String nameAr) {
