@@ -1,23 +1,28 @@
 import { NavLink, Outlet } from 'react-router'
+import { useTranslation } from 'react-i18next'
+import { LanguageProvider } from '../../i18n/LanguageProvider'
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import './AdminScreen.css'
 
 const NAV_ITEMS = [
-  { to: 'orders', label: 'Orders' },
-  { to: 'history', label: 'Audit history' },
-  { to: 'meals', label: 'Meals' },
-  { to: 'materials', label: 'Raw materials' },
-  { to: 'tables', label: 'Tables & devices' },
-  { to: 'staff', label: 'Staff accounts' },
-  { to: 'settings', label: 'Settings' },
+  { to: 'orders', labelKey: 'admin.nav.orders' },
+  { to: 'history', labelKey: 'admin.nav.history' },
+  { to: 'meals', labelKey: 'admin.nav.meals' },
+  { to: 'materials', labelKey: 'admin.nav.materials' },
+  { to: 'tables', labelKey: 'admin.nav.tables' },
+  { to: 'staff', labelKey: 'admin.nav.staff' },
+  { to: 'settings', labelKey: 'admin.nav.settings' },
 ] as const
 
 function AdminScreenContent() {
+  const { t } = useTranslation()
+
   return (
     <div className="admin-screen">
       <aside className="admin-screen__sidebar">
-        <span className="admin-screen__eyebrow">Management</span>
+        <span className="admin-screen__eyebrow">{t('admin.eyebrow')}</span>
         <nav className="admin-screen__nav">
           {NAV_ITEMS.map((item) => (
             <NavLink
@@ -29,14 +34,17 @@ function AdminScreenContent() {
                   : 'admin-screen__nav-link'
               }
             >
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </nav>
         <div className="admin-screen__spacer" />
         <div className="admin-screen__signed-in">
-          <ThemeToggle />
-          <span>Signed in as —</span>
+          <div className="admin-screen__signed-in-controls">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+          <span>{t('admin.notSignedIn')}</span>
         </div>
       </aside>
       <main className="admin-screen__content">
@@ -49,7 +57,9 @@ function AdminScreenContent() {
 export function AdminScreen() {
   return (
     <ThemeProvider defaultTheme="light">
-      <AdminScreenContent />
+      <LanguageProvider defaultLanguage="de">
+        <AdminScreenContent />
+      </LanguageProvider>
     </ThemeProvider>
   )
 }
