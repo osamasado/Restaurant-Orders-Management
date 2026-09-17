@@ -1,36 +1,20 @@
 .guest-screen {
   min-height: 100svh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-6);
-  background: var(--bg);
-}
-
-.guest-screen__device {
-  width: 432px;
-  max-width: 100%;
-  padding: var(--space-4);
-  border-radius: var(--radius-bezel);
-  background: var(--device-bezel);
-}
-
-.guest-screen__inner {
-  height: 716px;
-  min-height: 560px;
-  border-radius: var(--radius-screen);
-  background: var(--bg-card);
-  display: flex;
   flex-direction: column;
-  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .guest-screen__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-5);
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.guest-screen__eyebrow {
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -40,13 +24,14 @@
 
 .guest-screen__content {
   flex: 1;
-  overflow: auto;
-  padding: var(--space-5);
+  overflow-y: auto;
+  padding: 0 var(--space-6) var(--space-6);
   font-family: var(--font-body);
-  color: var(--text);
 }
 
 .guest-screen__action-bar {
+  position: sticky;
+  bottom: 0;
   padding: var(--space-5);
   text-align: center;
   font-family: var(--font-body);
