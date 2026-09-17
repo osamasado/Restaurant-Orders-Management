@@ -1,5 +1,67 @@
 {
   "common": {
-    "ready": "Ready"
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "switchToLight": "Switch to light mode",
+      "switchToDark": "Switch to dark mode"
+    },
+    "language": {
+      "switchTo": "Switch to {{language}}",
+      "names": {
+        "de": "German",
+        "en": "English",
+        "ar": "Arabic"
+      }
+    }
+  },
+  "guest": {
+    "tableLabel": "Table not assigned yet",
+    "orderingComingSoon": "Guest ordering, coming soon",
+    "continue": "Continue"
+  },
+  "kitchen": {
+    "title": "Kitchen",
+    "station": "Station 1",
+    "columns": {
+      "new": "New",
+      "preparing": "In preparation",
+      "ready": "Ready"
+    },
+    "ranOut": "Ran out?"
+  },
+  "hall": {
+    "title": "Restaurant Orders Management",
+    "panels": {
+      "preparing": "In preparation",
+      "ready": "Ready"
+    },
+    "footer": "Order numbers update automatically"
+  },
+  "admin": {
+    "eyebrow": "Management",
+    "nav": {
+      "orders": "Orders",
+      "history": "Audit history",
+      "meals": "Meals",
+      "materials": "Raw materials",
+      "tables": "Tables & devices",
+      "staff": "Staff accounts",
+      "settings": "Settings"
+    },
+    "notSignedIn": "Not signed in yet",
+    "comingSoon": "Coming soon"
+  },
+  "notFound": {
+    "message": "Page not found"
+  },
+  "home": {
+    "title": "Restaurant Orders Management",
+    "links": {
+      "guest": "Guest ordering",
+      "kitchen": "Kitchen display",
+      "hall": "Hall status board",
+      "admin": "Management backend"
+    }
   }
 }

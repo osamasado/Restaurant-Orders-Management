@@ -1,5 +1,67 @@
 {
   "common": {
-    "ready": "Fertig"
+    "theme": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "switchToLight": "Zum hellen Modus wechseln",
+      "switchToDark": "Zum dunklen Modus wechseln"
+    },
+    "language": {
+      "switchTo": "Zu {{language}} wechseln",
+      "names": {
+        "de": "Deutsch",
+        "en": "Englisch",
+        "ar": "Arabisch"
+      }
+    }
+  },
+  "guest": {
+    "tableLabel": "Tisch noch nicht zugewiesen",
+    "orderingComingSoon": "Gästebestellung, demnächst verfügbar",
+    "continue": "Weiter"
+  },
+  "kitchen": {
+    "title": "Küche",
+    "station": "Station 1",
+    "columns": {
+      "new": "Neu",
+      "preparing": "In Zubereitung",
+      "ready": "Fertig"
+    },
+    "ranOut": "Ausverkauft?"
+  },
+  "hall": {
+    "title": "Restaurant Orders Management",
+    "panels": {
+      "preparing": "In Zubereitung",
+      "ready": "Fertig"
+    },
+    "footer": "Bestellnummern werden automatisch aktualisiert"
+  },
+  "admin": {
+    "eyebrow": "Verwaltung",
+    "nav": {
+      "orders": "Bestellungen",
+      "history": "Änderungsprotokoll",
+      "meals": "Gerichte",
+      "materials": "Rohstoffe",
+      "tables": "Tische & Geräte",
+      "staff": "Personalkonten",
+      "settings": "Einstellungen"
+    },
+    "notSignedIn": "Noch nicht angemeldet",
+    "comingSoon": "Demnächst verfügbar"
+  },
+  "notFound": {
+    "message": "Seite nicht gefunden"
+  },
+  "home": {
+    "title": "Restaurant Orders Management",
+    "links": {
+      "guest": "Gästebestellung",
+      "kitchen": "Küchenanzeige",
+      "hall": "Statusanzeige im Saal",
+      "admin": "Verwaltungsbereich"
+    }
   }
 }
