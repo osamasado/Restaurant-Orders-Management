@@ -14,6 +14,12 @@
   padding: var(--space-6);
 }
 
+.guest-screen__header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .guest-screen__eyebrow {
   font-family: var(--font-mono);
   font-size: 12px;
