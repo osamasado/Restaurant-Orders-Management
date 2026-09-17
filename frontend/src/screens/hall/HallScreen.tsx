@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
+import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import './HallScreen.css'
@@ -11,7 +11,7 @@ const PANELS = [
 ] as const
 
 function HallScreenContent() {
-  const { t } = useTranslation()
+  const { t } = useT()
 
   return (
     <div className="hall-screen">

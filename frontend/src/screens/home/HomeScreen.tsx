@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { useT } from '../../i18n/useT'
 import './HomeScreen.css'
 
 /** Dev-only landing page for this ticket's QA - not a production route. */
 export function HomeScreen() {
-  const { t } = useTranslation()
+  const { t } = useT()
 
   return (
     <div className="home-screen">

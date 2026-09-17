@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { useT } from '../../../i18n/useT'
 import '../AdminScreen.css'
 
 type ComingSoonViewProps = {
@@ -7,7 +7,7 @@ type ComingSoonViewProps = {
 
 /** Shared placeholder for admin sub-sections - issues #13-#16 replace these with real content. */
 export function ComingSoonView({ titleKey }: ComingSoonViewProps) {
-  const { t } = useTranslation()
+  const { t } = useT()
 
   return (
     <div>

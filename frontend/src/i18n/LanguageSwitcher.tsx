@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next'
 import type { Language } from './i18n'
 import { useLanguage } from './language-context'
+import { useT } from './useT'
 import './LanguageSwitcher.css'
 
 const LANGUAGES: Language[] = ['de', 'en', 'ar']
 
 /** Three text pills, no flag icons or a native <select> - matches ThemeToggle's visual language. */
 export function LanguageSwitcher() {
-  const { t } = useTranslation()
+  const { t } = useT()
   const { language, setLanguage } = useLanguage()
 
   return (
