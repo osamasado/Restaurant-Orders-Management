@@ -14,8 +14,12 @@ import org.restaurantordersmanagement.backend.menu.model.MealSizeTranslation;
 import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 import org.restaurantordersmanagement.backend.menu.repository.CategoryRepository;
 import org.restaurantordersmanagement.backend.menu.repository.MealRepository;
+import org.restaurantordersmanagement.backend.staff.model.Role;
+import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
+import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
 import org.restaurantordersmanagement.backend.table.model.Table;
 import org.restaurantordersmanagement.backend.table.repository.TableRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,20 +34,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoDataSeeder {
 
+    /** Demo login PIN for every seeded staff account - see the task-summary doc. */
+    private static final String DEMO_PIN = "1234";
+
     private final CategoryRepository categoryRepository;
     private final MealRepository mealRepository;
     private final TableRepository tableRepository;
+    private final StaffAccountRepository staffAccountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DemoDataSeeder(
-            CategoryRepository categoryRepository, MealRepository mealRepository, TableRepository tableRepository) {
+            CategoryRepository categoryRepository,
+            MealRepository mealRepository,
+            TableRepository tableRepository,
+            StaffAccountRepository staffAccountRepository,
+            PasswordEncoder passwordEncoder) {
         this.categoryRepository = categoryRepository;
         this.mealRepository = mealRepository;
         this.tableRepository = tableRepository;
+        this.staffAccountRepository = staffAccountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void seedAll() {
         seedMenu();
         seedTables();
+        seedStaff();
     }
 
     private void seedMenu() {
@@ -140,6 +156,26 @@ public class DemoDataSeeder {
         table.setPairedDeviceId(pairedDeviceId);
         table.setLastSeenAt(lastSeenAt);
         tableRepository.saveAndFlush(table);
+    }
+
+    private void seedStaff() {
+        staffAccount("O. Sado", Role.ADMIN);
+        staffAccount("M. Behr", Role.KITCHEN);
+        staffAccount("L. Adler", Role.WAITER);
+        staffAccount("T. Nowak", Role.CASHIER);
+    }
+
+    private void staffAccount(String name, Role role) {
+        if (staffAccountRepository.findByName(name).isPresent()) {
+            log.info("Demo staff account {} already seeded, skipping", name);
+            return;
+        }
+
+        StaffAccount staffAccount = new StaffAccount();
+        staffAccount.setName(name);
+        staffAccount.setRole(role);
+        staffAccount.setPinHash(passwordEncoder.encode(DEMO_PIN));
+        staffAccountRepository.saveAndFlush(staffAccount);
     }
 
     private Category category(int sortOrder, String nameEn, String nameDe, String nameAr) {
