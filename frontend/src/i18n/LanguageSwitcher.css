@@ -1,0 +1,29 @@
+.language-switcher {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.language-switcher__option {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.language-switcher__option:hover {
+  color: var(--text);
+  border-color: var(--accent-forest);
+}
+
+.language-switcher__option--active {
+  color: var(--bg-card);
+  background: var(--accent-forest);
+  border-color: var(--accent-forest);
+}
