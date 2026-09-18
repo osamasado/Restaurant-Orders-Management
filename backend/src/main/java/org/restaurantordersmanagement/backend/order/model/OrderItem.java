@@ -7,9 +7,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.function.Function;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.restaurantordersmanagement.backend.i18n.Language;
+import org.restaurantordersmanagement.backend.menu.model.Meal;
+import org.restaurantordersmanagement.backend.menu.model.MealSize;
+import org.restaurantordersmanagement.backend.menu.model.MealSizeTranslation;
+import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 
 /**
  * name/size/unitPrice are copied from the Meal/MealSize at order time, never
@@ -39,5 +46,36 @@ public class OrderItem {
     private BigDecimal unitPrice;
 
     private String note;
+
+    /**
+     * Copies the meal title/size label/price for the given language, at this
+     * moment, onto a new (not yet persisted/attached to an order) OrderItem.
+     * Nothing here keeps referencing the Meal/MealSize afterward - a later
+     * edit to either has no effect on the returned snapshot.
+     */
+    public static OrderItem snapshotFrom(MealSize mealSize, Language language, int quantity, String note) {
+        Meal meal = mealSize.getMeal();
+        String mealName =
+                translationFor(meal.getTranslations(), language, MealTranslation::getLanguage, MealTranslation::getName);
+        String sizeLabel = translationFor(
+                mealSize.getTranslations(), language, MealSizeTranslation::getLanguage, MealSizeTranslation::getLabel);
+
+        OrderItem item = new OrderItem();
+        item.setName(mealName);
+        item.setSize(sizeLabel);
+        item.setQuantity(quantity);
+        item.setUnitPrice(mealSize.getPrice());
+        item.setNote(note);
+        return item;
+    }
+
+    private static <T> String translationFor(
+            List<T> translations, Language language, Function<T, Language> languageOf, Function<T, String> valueOf) {
+        return translations.stream()
+                .filter(translation -> languageOf.apply(translation) == language)
+                .map(valueOf)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No " + language + " translation available"));
+    }
 
 }
