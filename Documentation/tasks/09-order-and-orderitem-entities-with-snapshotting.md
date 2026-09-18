@@ -1,0 +1,22 @@
+# Issue #9: Order & OrderItem entities with price/size snapshotting
+
+## What was done
+
+Modeled `Order`/`OrderItem`, plus an `OrderStatusHistory` audit entity (CLAUDE.md's non-negotiable state machine rule requires every transition to be timestamped and record which staff member made it, and the issue's own field list names `Order.history`). This is entities and snapshot-construction only — the actual state-machine service (legal transitions, enforcement) is issue #10, order-number generation is issue #11, and tax/total calculation is issue #12, matching how issue #4 modeled `Table`/`StaffAccount`/`Config` before issue #5 built the service layer on top.
+
+## The other files
+
+- **`order/model/OrderStatus.java`** — `DRAFT/SUBMITTED/PREPARING/READY/SERVED/CANCELLED`, matching CLAUDE.md's state machine exactly. Enum-only enforcement, same precedent as `Role`/`Language`.
+- **`order/model/Order.java`** — mapped to `restaurant_order`, not `order` (reserved SQL keyword, same problem already solved for `Table` → `restaurant_table`). `orderNumber` is a nullable `Integer` (issue #11 assigns it); `paymentMethod` reuses the existing `settings.model.PaymentMethod` enum as-is; `history` is `@OrderBy("changedAt ASC")` so the audit trail always comes back chronological without service-layer sorting. Since this file needs both the domain `Table` entity (the FK) and the `@Table` JPA annotation, the annotation is used fully-qualified (`@jakarta.persistence.Table(name = "restaurant_order")`) rather than imported — the same collision-avoidance trick the `Table` entity itself uses, just from the other direction (that entity's own class name collided with the annotation; here a *different* class's name would have collided with an import).
+- **`order/model/OrderItem.java`** — `name`/`size`/`unitPrice` are plain columns with **zero FK back to `Meal`/`MealSize`** — copied text/numbers, never referenced live, per the ticket's literal wording and CLAUDE.md's snapshot rule. `OrderItem.snapshotFrom(MealSize, Language, quantity, note)` is the static factory that actually performs the copy (reads the meal's/size's translation for the given language plus the size's price) — this is what makes "creating an order copies meal title/size/price onto each OrderItem" a real, tested behavior rather than just a schema shape that could vacuously hold anything.
+- **`order/model/OrderStatusHistory.java`** — one row per status *reached* (not a from/to pair); `changedBy` is a nullable FK to `StaffAccount` since a guest submitting their own draft has no staff member behind that transition.
+- **`order/repository/OrderRepository.java`** — bare `JpaRepository<Order, Long>`, no custom finders yet (none needed by this ticket; #10/#11 add whatever queries they need). `OrderItem`/`OrderStatusHistory` get no repository, matching the established convention for cascade-managed child entities.
+- **`V11__order.sql`** — creates `restaurant_order`, `order_item`, `order_status_history` in one migration, mirroring `V3__meal.sql` bundling `Meal`+`MealTranslation`+`MealSize` as one cohesive aggregate.
+- **`Documentation/database-schema.md`** — new entity blocks/relationships, updated intro sentence, five new Notes bullets.
+
+## Verification performed
+
+1. `./mvnw compile test-compile` — clean, including the entity-name/annotation collision fix described above.
+2. **Could not run the new tests for real this time** — Docker was available yesterday (issue #8) but is unreachable again this session (`docker info` fails with an I/O error reaching Docker Desktop on the Windows host from WSL). Confirms Docker availability in this sandbox is not a stable fact across sessions/days — it needs checking fresh each time, not assumed from a prior session's success. Both new tests are written and compile clean; they need a real run once Docker is reachable again:
+   - `OrderRepositoryTest` — builds a full `Order` with a cascaded `OrderItem` and two `OrderStatusHistory` entries (one with a `changedBy` staff member, one without), `saveAndFlush`s, re-fetches, and asserts the history comes back in the exact chronological order inserted.
+   - `OrderItemSnapshotTest` — the literal acceptance criteria: builds a real `Meal`/`MealSize` via the existing repositories, snapshots an `OrderItem` from it via `snapshotFrom`, saves an `Order` containing it, then **edits the original `Meal`'s name and the `MealSize`'s price and re-saves it**, re-fetches the `Order`, and asserts the line item's name/size/price/quantity/note are all still the original snapshotted values.

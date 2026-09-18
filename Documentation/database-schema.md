@@ -1,6 +1,6 @@
 # Database schema
 
-Reflects the schema created by Flyway migrations `V1`–`V9` (`backend/src/main/resources/db/migration/`). This covers the menu domain modeled in issue #3 and the `Table`/`StaffAccount`/`Config` entities modeled in issue #4 — `Order` will be added here once a later ticket introduces it.
+Reflects the schema created by Flyway migrations `V1`–`V11` (`backend/src/main/resources/db/migration/`). This covers the menu domain modeled in issue #3, the `Table`/`StaffAccount`/`Config` entities modeled in issue #4, and the `Order`/`OrderItem`/`OrderStatusHistory` entities modeled in issue #9 — the order *state machine* itself (legal transitions, order-number generation, price/tax calculation) is issues #10–#12, not yet reflected here.
 
 ```mermaid
 erDiagram
@@ -93,6 +93,35 @@ erDiagram
         bigint config_id FK
         varchar payment_method
     }
+    RESTAURANT_TABLE ||--o{ RESTAURANT_ORDER : seats
+    RESTAURANT_ORDER ||--o{ ORDER_ITEM : has
+    RESTAURANT_ORDER ||--o{ ORDER_STATUS_HISTORY : has
+    STAFF_ACCOUNT ||--o{ ORDER_STATUS_HISTORY : records
+
+    RESTAURANT_ORDER {
+        bigint id PK
+        int order_number
+        bigint table_id FK
+        varchar status
+        timestamptz placed_at
+        varchar payment_method
+    }
+    ORDER_ITEM {
+        bigint id PK
+        bigint order_id FK
+        varchar name
+        varchar size
+        int quantity
+        numeric unit_price
+        text note
+    }
+    ORDER_STATUS_HISTORY {
+        bigint id PK
+        bigint order_id FK
+        varchar status
+        timestamptz changed_at
+        bigint staff_account_id FK
+    }
 ```
 
 ## Notes
@@ -106,3 +135,7 @@ erDiagram
 - **`staff_account.role`** is enforced only via the Java enum (`EnumType.STRING`), no DB `CHECK` constraint — same precedent as `language`.
 - **`config`** is a singleton table with no DB-level enforcement (e.g. no `CHECK (id = 1)`) — the `V9__config.sql` migration seeds exactly one row and callers are expected to fetch it by convention.
 - **`config_payment_method`** is an `@ElementCollection` of an enum (`Set<PaymentMethod>`), keyed by `(config_id, payment_method)` — unordered, unlike `meal_translation_ingredient`'s ordered list.
+- **`restaurant_order`**, not `order` — same reserved-SQL-keyword problem as `restaurant_table`.
+- **`order_item`** has **no FK back to `meal`/`meal_size` at all** — `name`/`size`/`unit_price` are copied text/numbers at order time (see `OrderItem.snapshotFrom`), never referenced live, so a later menu edit can never rewrite a historical order.
+- **`order_status_history`** is one row per status the order *reached* (not a from/to pair — the previous state is just the prior row, read back in chronological order via `@OrderBy("changedAt ASC")`). `staff_account_id` is nullable: a guest submitting their own draft has no staff member behind that transition.
+- **`order_number`** is nullable — assigning it is issue #11's concurrency-safe generator, not modeled yet.
