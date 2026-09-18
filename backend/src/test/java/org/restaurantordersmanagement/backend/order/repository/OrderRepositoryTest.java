@@ -52,7 +52,6 @@ class OrderRepositoryTest {
 
         Order order = new Order();
         order.setTable(table);
-        order.setStatus(OrderStatus.PREPARING);
 
         OrderItem item = new OrderItem();
         item.setOrder(order);
