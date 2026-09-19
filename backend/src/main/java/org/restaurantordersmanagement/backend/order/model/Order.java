@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,18 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    /**
+     * Null while the order is a DRAFT; recomputed from the snapshotted
+     * {@link OrderItem}s and {@link org.restaurantordersmanagement.backend.settings.model.Config}'s
+     * tax rate by {@link org.restaurantordersmanagement.backend.order.service.OrderPricingService}
+     * the moment it's submitted - never taken from anything the client sent.
+     */
+    private BigDecimal subtotal;
+
+    private BigDecimal taxAmount;
+
+    private BigDecimal total;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
