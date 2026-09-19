@@ -41,7 +41,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Assigned by issue #11's concurrency-safe generator - null until then. */
+    /**
+     * Null while the order is a DRAFT; assigned by
+     * {@link org.restaurantordersmanagement.backend.order.service.OrderNumberService}
+     * the moment it's submitted.
+     */
     private Integer orderNumber;
 
     @ManyToOne(optional = false)

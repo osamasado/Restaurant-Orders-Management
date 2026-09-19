@@ -6,6 +6,7 @@ import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.restaurantordersmanagement.backend.order.repository.OrderRepository;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The single place order.status is allowed to change. Validates legality via
@@ -19,15 +20,22 @@ import org.springframework.stereotype.Service;
 public class OrderStateMachineService {
 
     private final OrderRepository orderRepository;
+    private final OrderNumberService orderNumberService;
 
-    public OrderStateMachineService(OrderRepository orderRepository) {
+    public OrderStateMachineService(OrderRepository orderRepository, OrderNumberService orderNumberService) {
         this.orderRepository = orderRepository;
+        this.orderNumberService = orderNumberService;
     }
 
     /**
+     * @Transactional so that, for the DRAFT -&gt; SUBMITTED transition, the
+     * order-number counter's row lock (see OrderNumberService) and this
+     * order's save happen as one atomic unit.
+     *
      * @param actor the staff member who triggered this transition, or null for a
      *              guest-triggered one (e.g. submitting their own draft)
      */
+    @Transactional
     public Order transition(Order order, OrderStatus newStatus, StaffAccount actor) {
         OrderStatus currentStatus = order.getStatus();
         if (!OrderTransitions.isLegal(currentStatus, newStatus)) {
@@ -37,6 +45,7 @@ public class OrderStateMachineService {
         Instant now = Instant.now();
         if (newStatus == OrderStatus.SUBMITTED) {
             order.setPlacedAt(now);
+            order.setOrderNumber(orderNumberService.assignNextOrderNumber());
         }
         order.recordTransition(newStatus, now, actor);
 
