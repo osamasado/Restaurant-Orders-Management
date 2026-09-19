@@ -21,10 +21,15 @@ public class OrderStateMachineService {
 
     private final OrderRepository orderRepository;
     private final OrderNumberService orderNumberService;
+    private final OrderPricingService orderPricingService;
 
-    public OrderStateMachineService(OrderRepository orderRepository, OrderNumberService orderNumberService) {
+    public OrderStateMachineService(
+            OrderRepository orderRepository,
+            OrderNumberService orderNumberService,
+            OrderPricingService orderPricingService) {
         this.orderRepository = orderRepository;
         this.orderNumberService = orderNumberService;
+        this.orderPricingService = orderPricingService;
     }
 
     /**
@@ -46,6 +51,7 @@ public class OrderStateMachineService {
         if (newStatus == OrderStatus.SUBMITTED) {
             order.setPlacedAt(now);
             order.setOrderNumber(orderNumberService.assignNextOrderNumber());
+            orderPricingService.applyPricing(order);
         }
         order.recordTransition(newStatus, now, actor);
 
