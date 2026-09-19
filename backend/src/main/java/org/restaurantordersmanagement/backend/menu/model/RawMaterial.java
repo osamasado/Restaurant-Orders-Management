@@ -27,4 +27,6 @@ public class RawMaterial {
 
     private String supplier;
 
+    private String imagePath;
+
 }

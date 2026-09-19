@@ -30,6 +30,8 @@ public class Meal {
 
     private boolean available = true;
 
+    private String imagePath;
+
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealTranslation> translations = new ArrayList<>();
 

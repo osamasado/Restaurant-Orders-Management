@@ -1,0 +1,2 @@
+ALTER TABLE meal ADD COLUMN image_path VARCHAR(255);
+ALTER TABLE raw_material ADD COLUMN image_path VARCHAR(255);
