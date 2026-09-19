@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
 import org.restaurantordersmanagement.backend.order.model.Order;
@@ -29,7 +30,11 @@ import org.springframework.context.annotation.Import;
  * Deliberately NOT @Transactional (unlike OrderStateMachineServiceTest):
  * a test-level transaction would collapse every thread's work into one
  * transaction and defeat the whole point of exercising the counter row's
- * lock across real, separate, concurrent transactions.
+ * lock across real, separate, concurrent transactions. That means every
+ * insert here is a real commit against the Testcontainers Postgres instance
+ * shared by the whole test run, so tearDown() explicitly deletes what it
+ * created - otherwise it leaks into unrelated tests (e.g. DemoDataSeederTest's
+ * row-count assertions).
  */
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -46,15 +51,25 @@ class OrderNumberConcurrencyTest {
     @Autowired
     private TableRepository tableRepository;
 
+    private Table table;
+    private final List<Order> draftOrders = new ArrayList<>();
+
+    @AfterEach
+    void tearDown() {
+        orderRepository.deleteAll(draftOrders);
+        if (table != null) {
+            tableRepository.delete(table);
+        }
+    }
+
     @Test
     void simultaneousSubmissionsNeverProduceDuplicateOrderNumbers() throws InterruptedException {
-        Table table = new Table();
+        table = new Table();
         table.setTableNumber("concurrency-test");
         table.setRoom("Front room");
         table.setSeats(4);
         table = tableRepository.saveAndFlush(table);
 
-        List<Order> draftOrders = new ArrayList<>();
         for (int i = 0; i < CONCURRENT_SUBMISSIONS; i++) {
             Order order = new Order();
             order.setTable(table);
