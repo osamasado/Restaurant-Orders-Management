@@ -51,24 +51,33 @@ class OrderNumberConcurrencyTest {
     @Autowired
     private TableRepository tableRepository;
 
-    private Table table;
+    private Long tableId;
     private final List<Order> draftOrders = new ArrayList<>();
 
+    /**
+     * Reloads fresh entities by id rather than reusing draftOrders directly:
+     * those objects were mutated by concurrent transition() calls, and
+     * deleting a stale, detached graph whose cascaded history entries were
+     * never actually attached to it throws TransientPropertyValueException.
+     */
     @AfterEach
     void tearDown() {
-        orderRepository.deleteAll(draftOrders);
-        if (table != null) {
-            tableRepository.delete(table);
+        for (Order draftOrder : draftOrders) {
+            orderRepository.findById(draftOrder.getId()).ifPresent(orderRepository::delete);
+        }
+        if (tableId != null) {
+            tableRepository.findById(tableId).ifPresent(tableRepository::delete);
         }
     }
 
     @Test
     void simultaneousSubmissionsNeverProduceDuplicateOrderNumbers() throws InterruptedException {
-        table = new Table();
+        Table table = new Table();
         table.setTableNumber("concurrency-test");
         table.setRoom("Front room");
         table.setSeats(4);
         table = tableRepository.saveAndFlush(table);
+        tableId = table.getId();
 
         for (int i = 0; i < CONCURRENT_SUBMISSIONS; i++) {
             Order order = new Order();
