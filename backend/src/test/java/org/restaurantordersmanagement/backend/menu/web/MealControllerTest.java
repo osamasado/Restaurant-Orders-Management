@@ -12,6 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
 import org.restaurantordersmanagement.backend.i18n.Language;
@@ -27,13 +30,14 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
-/** @Transactional rolls back each test's data so tests don't leak rows into each other's counts/assertions. */
+/**
+ * Deliberately NOT @Transactional - see CategoryControllerTest's javadoc for
+ * why. tearDown() deletes exactly what each test created, by id.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
-@Transactional
 class MealControllerTest {
 
     @Autowired
@@ -45,7 +49,20 @@ class MealControllerTest {
     @Autowired
     private MealRepository mealRepository;
 
-    private Long createCategory() throws Exception {
+    private final List<Long> createdMealIds = new ArrayList<>();
+    private final List<Long> createdCategoryIds = new ArrayList<>();
+
+    @AfterEach
+    void tearDown() {
+        for (Long mealId : createdMealIds) {
+            mealRepository.findById(mealId).ifPresent(mealRepository::delete);
+        }
+        for (Long categoryId : createdCategoryIds) {
+            categoryRepository.findById(categoryId).ifPresent(categoryRepository::delete);
+        }
+    }
+
+    private Long createCategory() {
         Category category = new Category();
         category.setSortOrder(1);
         CategoryTranslation translation = new CategoryTranslation();
@@ -53,7 +70,9 @@ class MealControllerTest {
         translation.setLanguage(Language.EN);
         translation.setName("Mains");
         category.getTranslations().add(translation);
-        return categoryRepository.saveAndFlush(category).getId();
+        Long id = categoryRepository.saveAndFlush(category).getId();
+        createdCategoryIds.add(id);
+        return id;
     }
 
     private String mealRequestJson(Long categoryId) {
@@ -71,6 +90,18 @@ class MealControllerTest {
                     ]
                 }
                 """.formatted(categoryId);
+    }
+
+    private Long createMeal(Long categoryId) throws Exception {
+        MvcResult result = mockMvc.perform(post("/api/meals")
+                        .with(user("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mealRequestJson(categoryId)))
+                .andExpect(status().isOk())
+                .andReturn();
+        Long id = ((Number) JsonPath.read(result.getResponse().getContentAsString(), "$.id")).longValue();
+        createdMealIds.add(id);
+        return id;
     }
 
     @Test
@@ -109,6 +140,7 @@ class MealControllerTest {
                 .andReturn();
 
         Long id = ((Number) JsonPath.read(createResult.getResponse().getContentAsString(), "$.id")).longValue();
+        createdMealIds.add(id);
 
         mockMvc.perform(get("/api/meals").with(user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
@@ -130,14 +162,7 @@ class MealControllerTest {
     @Test
     void uploadReplaceAndDeleteImage() throws Exception {
         Long categoryId = createCategory();
-
-        MvcResult createResult = mockMvc.perform(post("/api/meals")
-                        .with(user("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mealRequestJson(categoryId)))
-                .andExpect(status().isOk())
-                .andReturn();
-        Long id = ((Number) JsonPath.read(createResult.getResponse().getContentAsString(), "$.id")).longValue();
+        Long id = createMeal(categoryId);
 
         MockMultipartFile file = new MockMultipartFile("file", "dish.jpg", "image/jpeg", "fake-jpeg-bytes".getBytes());
 
@@ -155,14 +180,7 @@ class MealControllerTest {
     @Test
     void uploadRejectsUnsupportedImageType() throws Exception {
         Long categoryId = createCategory();
-
-        MvcResult createResult = mockMvc.perform(post("/api/meals")
-                        .with(user("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mealRequestJson(categoryId)))
-                .andExpect(status().isOk())
-                .andReturn();
-        Long id = ((Number) JsonPath.read(createResult.getResponse().getContentAsString(), "$.id")).longValue();
+        Long id = createMeal(categoryId);
 
         MockMultipartFile file = new MockMultipartFile("file", "dish.gif", "image/gif", "fake-gif-bytes".getBytes());
 
@@ -175,14 +193,7 @@ class MealControllerTest {
     @Test
     void updateReplacesTranslationsAndSizes() throws Exception {
         Long categoryId = createCategory();
-
-        MvcResult createResult = mockMvc.perform(post("/api/meals")
-                        .with(user("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mealRequestJson(categoryId)))
-                .andExpect(status().isOk())
-                .andReturn();
-        Long id = ((Number) JsonPath.read(createResult.getResponse().getContentAsString(), "$.id")).longValue();
+        Long id = createMeal(categoryId);
 
         mockMvc.perform(put("/api/meals/" + id)
                         .with(user("admin").roles("ADMIN"))
