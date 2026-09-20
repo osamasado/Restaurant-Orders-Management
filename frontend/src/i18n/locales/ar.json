@@ -107,6 +107,18 @@
       "sizeLabel": "التسمية ({{language}})",
       "removeSize": "إزالة الحجم",
       "addSize": "+ إضافة حجم",
+      "recipe": {
+        "saveFirst": "احفظ الطبق أولاً لإضافة المكونات",
+        "show": "الوصفة",
+        "hide": "إخفاء الوصفة",
+        "loading": "جارٍ تحميل الوصفة...",
+        "loadError": "تعذر تحميل الوصفة",
+        "quantity": "الكمية",
+        "removeIngredient": "إزالة المكون",
+        "addIngredient": "+ إضافة مكون",
+        "save": "حفظ الوصفة",
+        "error": "تعذر حفظ الوصفة"
+      },
       "error": "تعذر حفظ هذا الطبق",
       "cancel": "إلغاء",
       "save": "حفظ"

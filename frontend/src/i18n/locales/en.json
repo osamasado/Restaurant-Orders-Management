@@ -107,6 +107,18 @@
       "sizeLabel": "Label ({{language}})",
       "removeSize": "Remove size",
       "addSize": "+ Add size",
+      "recipe": {
+        "saveFirst": "Save the meal first to add ingredients",
+        "show": "Recipe",
+        "hide": "Hide recipe",
+        "loading": "Loading recipe...",
+        "loadError": "Could not load the recipe",
+        "quantity": "Qty",
+        "removeIngredient": "Remove ingredient",
+        "addIngredient": "+ Add ingredient",
+        "save": "Save recipe",
+        "error": "Could not save the recipe"
+      },
       "error": "Could not save this meal",
       "cancel": "Cancel",
       "save": "Save"

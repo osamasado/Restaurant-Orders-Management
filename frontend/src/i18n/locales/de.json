@@ -107,6 +107,18 @@
       "sizeLabel": "Bezeichnung ({{language}})",
       "removeSize": "Größe entfernen",
       "addSize": "+ Größe hinzufügen",
+      "recipe": {
+        "saveFirst": "Zuerst das Gericht speichern, um Zutaten hinzuzufügen",
+        "show": "Rezept",
+        "hide": "Rezept ausblenden",
+        "loading": "Rezept wird geladen...",
+        "loadError": "Rezept konnte nicht geladen werden",
+        "quantity": "Menge",
+        "removeIngredient": "Zutat entfernen",
+        "addIngredient": "+ Zutat hinzufügen",
+        "save": "Rezept speichern",
+        "error": "Rezept konnte nicht gespeichert werden"
+      },
       "error": "Gericht konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
       "save": "Speichern"
