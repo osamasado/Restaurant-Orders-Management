@@ -154,6 +154,75 @@
   color: var(--accent-forest);
 }
 
+.meal-form__recipe-hint {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin: var(--space-1) 0 0;
+}
+
+.meal-form__recipe {
+  margin-top: var(--space-2);
+}
+
+.meal-form__recipe-toggle {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-forest);
+}
+
+.meal-form__recipe-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-card-inner);
+  background: rgba(19, 18, 17, 0.03);
+}
+
+.meal-form__recipe-row {
+  display: grid;
+  grid-template-columns: 1fr 90px auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.meal-form__recipe-row select,
+.meal-form__recipe-row input {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-card-alt);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card-inner);
+  padding: var(--space-2) var(--space-3);
+}
+
+.meal-form__recipe-row button {
+  color: var(--accent-clay);
+  font-size: 14px;
+  padding: var(--space-2);
+}
+
+.meal-form__recipe-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.meal-form__recipe-actions button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--accent-forest);
+}
+
+.meal-form__recipe-actions button:disabled {
+  opacity: 0.5;
+}
+
 .meal-form__error {
   font-family: var(--font-body);
   font-size: 13px;

@@ -6,6 +6,7 @@
 #backend
 /backend/target
 /backend/src/main/resources/static
+/backend/uploads
 
 #frontend
 frontend/node_modules

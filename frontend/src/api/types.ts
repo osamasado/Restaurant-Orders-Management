@@ -60,3 +60,31 @@ export type MealResponse = {
   translations: MealTranslationDto[]
   sizes: MealSizeDto[]
 }
+
+export type RawMaterialRequest = {
+  name: string
+  unit: string
+  inStockQuantity: number | null
+  supplier: string | null
+}
+
+export type RawMaterialResponse = {
+  id: number
+  name: string
+  unit: string
+  inStockQuantity: number | null
+  supplier: string | null
+  imageUrl: string | null
+}
+
+export type RecipeLineRequest = {
+  rawMaterialId: number
+  quantity: number
+}
+
+export type RecipeLineDto = {
+  rawMaterialId: number
+  rawMaterialName: string
+  unit: string
+  quantity: number
+}

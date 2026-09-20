@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { deleteCategory, deleteMeal, listCategories, listMeals, setMealAvailability } from '../../../../api/menuApi'
-import type { CategoryResponse, Language, MealResponse } from '../../../../api/types'
+import { listRawMaterials } from '../../../../api/rawMaterialApi'
+import type { CategoryResponse, Language, MealResponse, RawMaterialResponse } from '../../../../api/types'
 import { useT } from '../../../../i18n/useT'
 import { CategoryFormModal } from './CategoryFormModal'
 import { MealFormModal } from './MealFormModal'
@@ -56,15 +57,21 @@ export function MealsView() {
 
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [meals, setMeals] = useState<MealResponse[]>([])
+  const [rawMaterials, setRawMaterials] = useState<RawMaterialResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<ModalState>(null)
 
   const refresh = async () => {
     try {
-      const [categoriesResponse, mealsResponse] = await Promise.all([listCategories(), listMeals()])
+      const [categoriesResponse, mealsResponse, rawMaterialsResponse] = await Promise.all([
+        listCategories(),
+        listMeals(),
+        listRawMaterials(),
+      ])
       setCategories(categoriesResponse)
       setMeals(mealsResponse)
+      setRawMaterials(rawMaterialsResponse)
       setError(null)
     } catch {
       setError(t('admin.meals.loadError'))
@@ -196,7 +203,13 @@ export function MealsView() {
         <CategoryFormModal category={modal.category} onClose={closeModal} onSaved={handleSaved} />
       )}
       {modal?.type === 'meal' && (
-        <MealFormModal meal={modal.meal} categories={categories} onClose={closeModal} onSaved={handleSaved} />
+        <MealFormModal
+          meal={modal.meal}
+          categories={categories}
+          rawMaterials={rawMaterials}
+          onClose={closeModal}
+          onSaved={handleSaved}
+        />
       )}
     </div>
   )

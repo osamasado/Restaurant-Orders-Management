@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import { createMeal, deleteMealImage, updateMeal, uploadMealImage } from '../../../../api/menuApi'
-import type { CategoryResponse, Language, MealRequest, MealResponse } from '../../../../api/types'
+import { getRecipe, replaceRecipe } from '../../../../api/recipeApi'
+import type {
+  CategoryResponse,
+  Language,
+  MealRequest,
+  MealResponse,
+  RawMaterialResponse,
+} from '../../../../api/types'
 import { Modal } from '../../../../components/Modal'
+import { PhotoIcon } from '../../../../components/PhotoIcon'
 import { useT } from '../../../../i18n/useT'
 import './MealFormModal.css'
 
@@ -10,8 +18,15 @@ type MealFormModalProps = {
   /** null means "create a new meal". */
   meal: MealResponse | null
   categories: CategoryResponse[]
+  rawMaterials: RawMaterialResponse[]
   onClose: () => void
   onSaved: () => void
+}
+
+type RecipeLineState = {
+  localKey: string
+  rawMaterialId: number | ''
+  quantity: string
 }
 
 type TranslationFields = {
@@ -76,23 +91,7 @@ function categoryLabel(category: CategoryResponse, language: Language): string {
   return match?.name ?? `#${category.id}`
 }
 
-function PhotoIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="8.5" cy="10" r="1.5" fill="currentColor" />
-      <path
-        d="M3 16l5-4 4 3 5-5 4 4"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-export function MealFormModal({ meal, categories, onClose, onSaved }: MealFormModalProps) {
+export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved }: MealFormModalProps) {
   const { t } = useT()
   const [categoryId, setCategoryId] = useState<number | ''>(meal?.categoryId ?? categories[0]?.id ?? '')
   const [available, setAvailable] = useState(meal?.available ?? true)
@@ -104,6 +103,12 @@ export function MealFormModal({ meal, categories, onClose, onSaved }: MealFormMo
   const [removeImage, setRemoveImage] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const [expandedSizeKey, setExpandedSizeKey] = useState<string | null>(null)
+  const [recipeLines, setRecipeLines] = useState<Record<string, RecipeLineState[]>>({})
+  const [recipeLoading, setRecipeLoading] = useState<Record<string, boolean>>({})
+  const [recipeSaving, setRecipeSaving] = useState<Record<string, boolean>>({})
+  const [recipeError, setRecipeError] = useState<Record<string, string | null>>({})
 
   const updateTranslationField = (language: Language, field: keyof TranslationFields, value: string) => {
     setTranslations((prev) => ({ ...prev, [language]: { ...prev[language], [field]: value } }))
@@ -127,6 +132,86 @@ export function MealFormModal({ meal, categories, onClose, onSaved }: MealFormMo
         size.localKey === localKey ? { ...size, labels: { ...size.labels, [language]: label } } : size,
       ),
     )
+  }
+
+  const loadRecipe = async (size: SizeState) => {
+    if (size.id == null) return
+    setRecipeLoading((prev) => ({ ...prev, [size.localKey]: true }))
+    setRecipeError((prev) => ({ ...prev, [size.localKey]: null }))
+    try {
+      const lines = await getRecipe(size.id)
+      setRecipeLines((prev) => ({
+        ...prev,
+        [size.localKey]: lines.map((line) => ({
+          localKey: crypto.randomUUID(),
+          rawMaterialId: line.rawMaterialId,
+          quantity: String(line.quantity),
+        })),
+      }))
+    } catch {
+      setRecipeError((prev) => ({ ...prev, [size.localKey]: t('admin.meals.recipe.loadError') }))
+    } finally {
+      setRecipeLoading((prev) => ({ ...prev, [size.localKey]: false }))
+    }
+  }
+
+  const toggleRecipe = (size: SizeState) => {
+    if (expandedSizeKey === size.localKey) {
+      setExpandedSizeKey(null)
+      return
+    }
+    setExpandedSizeKey(size.localKey)
+    if (!recipeLines[size.localKey]) {
+      void loadRecipe(size)
+    }
+  }
+
+  const addRecipeLine = (sizeKey: string) => {
+    setRecipeLines((prev) => ({
+      ...prev,
+      [sizeKey]: [
+        ...(prev[sizeKey] ?? []),
+        { localKey: crypto.randomUUID(), rawMaterialId: rawMaterials[0]?.id ?? '', quantity: '' },
+      ],
+    }))
+  }
+
+  const removeRecipeLine = (sizeKey: string, lineKey: string) => {
+    setRecipeLines((prev) => ({
+      ...prev,
+      [sizeKey]: (prev[sizeKey] ?? []).filter((line) => line.localKey !== lineKey),
+    }))
+  }
+
+  const updateRecipeLine = (sizeKey: string, lineKey: string, patch: Partial<RecipeLineState>) => {
+    setRecipeLines((prev) => ({
+      ...prev,
+      [sizeKey]: (prev[sizeKey] ?? []).map((line) => (line.localKey === lineKey ? { ...line, ...patch } : line)),
+    }))
+  }
+
+  const saveRecipe = async (size: SizeState) => {
+    if (size.id == null) return
+    setRecipeSaving((prev) => ({ ...prev, [size.localKey]: true }))
+    setRecipeError((prev) => ({ ...prev, [size.localKey]: null }))
+    try {
+      const lines = (recipeLines[size.localKey] ?? [])
+        .filter((line) => line.rawMaterialId !== '')
+        .map((line) => ({ rawMaterialId: Number(line.rawMaterialId), quantity: Number(line.quantity) }))
+      const saved = await replaceRecipe(size.id, lines)
+      setRecipeLines((prev) => ({
+        ...prev,
+        [size.localKey]: saved.map((line) => ({
+          localKey: crypto.randomUUID(),
+          rawMaterialId: line.rawMaterialId,
+          quantity: String(line.quantity),
+        })),
+      }))
+    } catch {
+      setRecipeError((prev) => ({ ...prev, [size.localKey]: t('admin.meals.recipe.error') }))
+    } finally {
+      setRecipeSaving((prev) => ({ ...prev, [size.localKey]: false }))
+    }
   }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -277,26 +362,108 @@ export function MealFormModal({ meal, categories, onClose, onSaved }: MealFormMo
         <div className="meal-form__sizes">
           <span className="meal-form__sizes-title">{t('admin.meals.sizes')}</span>
           {sizes.map((size) => (
-            <div className="meal-form__size-row" key={size.localKey}>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={size.price}
-                onChange={(event) => updateSizePrice(size.localKey, event.target.value)}
-                placeholder={t('admin.meals.price')}
-                required
-              />
-              <input
-                dir={activeLanguage === 'AR' ? 'rtl' : 'ltr'}
-                value={size.labels[activeLanguage]}
-                onChange={(event) => updateSizeLabel(size.localKey, activeLanguage, event.target.value)}
-                placeholder={t('admin.meals.sizeLabel', { language: activeLanguage })}
-                required={activeLanguage === 'EN'}
-              />
-              <button type="button" onClick={() => removeSize(size.localKey)} aria-label={t('admin.meals.removeSize')}>
-                &times;
-              </button>
+            <div key={size.localKey}>
+              <div className="meal-form__size-row">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={size.price}
+                  onChange={(event) => updateSizePrice(size.localKey, event.target.value)}
+                  placeholder={t('admin.meals.price')}
+                  required
+                />
+                <input
+                  dir={activeLanguage === 'AR' ? 'rtl' : 'ltr'}
+                  value={size.labels[activeLanguage]}
+                  onChange={(event) => updateSizeLabel(size.localKey, activeLanguage, event.target.value)}
+                  placeholder={t('admin.meals.sizeLabel', { language: activeLanguage })}
+                  required={activeLanguage === 'EN'}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeSize(size.localKey)}
+                  aria-label={t('admin.meals.removeSize')}
+                >
+                  &times;
+                </button>
+              </div>
+
+              {size.id == null ? (
+                <p className="meal-form__recipe-hint">{t('admin.meals.recipe.saveFirst')}</p>
+              ) : (
+                <div className="meal-form__recipe">
+                  <button type="button" className="meal-form__recipe-toggle" onClick={() => toggleRecipe(size)}>
+                    {expandedSizeKey === size.localKey
+                      ? t('admin.meals.recipe.hide')
+                      : t('admin.meals.recipe.show')}
+                  </button>
+                  {expandedSizeKey === size.localKey && (
+                    <div className="meal-form__recipe-editor">
+                      {recipeLoading[size.localKey] ? (
+                        <p>{t('admin.meals.recipe.loading')}</p>
+                      ) : (
+                        <>
+                          {(recipeLines[size.localKey] ?? []).map((line) => (
+                            <div className="meal-form__recipe-row" key={line.localKey}>
+                              <select
+                                value={line.rawMaterialId}
+                                onChange={(event) =>
+                                  updateRecipeLine(size.localKey, line.localKey, {
+                                    rawMaterialId: Number(event.target.value),
+                                  })
+                                }
+                              >
+                                {rawMaterials.map((rawMaterial) => (
+                                  <option key={rawMaterial.id} value={rawMaterial.id}>
+                                    {rawMaterial.name} ({rawMaterial.unit})
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={line.quantity}
+                                onChange={(event) =>
+                                  updateRecipeLine(size.localKey, line.localKey, { quantity: event.target.value })
+                                }
+                                placeholder={t('admin.meals.recipe.quantity')}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeRecipeLine(size.localKey, line.localKey)}
+                                aria-label={t('admin.meals.recipe.removeIngredient')}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))}
+                          <div className="meal-form__recipe-actions">
+                            <button
+                              type="button"
+                              onClick={() => addRecipeLine(size.localKey)}
+                              disabled={rawMaterials.length === 0}
+                            >
+                              {t('admin.meals.recipe.addIngredient')}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void saveRecipe(size)}
+                              disabled={recipeSaving[size.localKey]}
+                            >
+                              {t('admin.meals.recipe.save')}
+                            </button>
+                          </div>
+                          {recipeError[size.localKey] && (
+                            <p className="meal-form__error">{recipeError[size.localKey]}</p>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
           <button type="button" onClick={addSize} className="meal-form__add-size">
