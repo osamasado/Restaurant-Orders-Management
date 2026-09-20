@@ -78,6 +78,30 @@
   color: var(--text);
 }
 
+.admin-screen__logout {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: start;
+  padding: 0;
+}
+
+.admin-screen__logout:hover {
+  color: var(--text);
+}
+
+.admin-screen--denied {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
 .coming-soon-view__title {
   font-family: var(--font-display);
   font-size: 25px;

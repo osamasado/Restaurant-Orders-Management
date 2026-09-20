@@ -1,4 +1,7 @@
 import { NavLink, Outlet } from 'react-router'
+import { AuthProvider } from '../../auth/AuthProvider'
+import { useAuth } from '../../auth/auth-context'
+import { LoginForm } from '../../auth/LoginForm'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
@@ -18,6 +21,23 @@ const NAV_ITEMS = [
 
 function AdminScreenContent() {
   const { t } = useT()
+  const { staff, loading, logout } = useAuth()
+
+  if (loading) {
+    return null
+  }
+
+  if (!staff) {
+    return <LoginForm />
+  }
+
+  if (staff.role !== 'ADMIN') {
+    return (
+      <div className="admin-screen admin-screen--denied">
+        <p>{t('admin.auth.accessDenied')}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="admin-screen">
@@ -44,7 +64,10 @@ function AdminScreenContent() {
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
-          <span>{t('admin.notSignedIn')}</span>
+          <span>{t('admin.auth.signedInAs', { name: staff.name, role: staff.role })}</span>
+          <button className="admin-screen__logout" onClick={() => void logout()}>
+            {t('admin.auth.logout')}
+          </button>
         </div>
       </aside>
       <main className="admin-screen__content">
@@ -58,7 +81,9 @@ export function AdminScreen() {
   return (
     <ThemeProvider defaultTheme="light">
       <LanguageProvider defaultLanguage="de">
-        <AdminScreenContent />
+        <AuthProvider>
+          <AdminScreenContent />
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   )

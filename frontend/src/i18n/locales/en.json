@@ -50,7 +50,17 @@
       "settings": "Settings"
     },
     "notSignedIn": "Not signed in yet",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "auth": {
+      "title": "Sign in",
+      "name": "Name",
+      "pin": "PIN",
+      "submit": "Sign in",
+      "error": "Invalid name or PIN",
+      "accessDenied": "Your account doesn't have access to the management backend",
+      "signedInAs": "{{name}} · Role: {{role}}",
+      "logout": "Sign out"
+    }
   },
   "notFound": {
     "message": "Page not found"

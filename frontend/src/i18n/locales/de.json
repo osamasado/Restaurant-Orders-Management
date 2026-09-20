@@ -50,7 +50,17 @@
       "settings": "Einstellungen"
     },
     "notSignedIn": "Noch nicht angemeldet",
-    "comingSoon": "Demnächst verfügbar"
+    "comingSoon": "Demnächst verfügbar",
+    "auth": {
+      "title": "Anmelden",
+      "name": "Name",
+      "pin": "PIN",
+      "submit": "Anmelden",
+      "error": "Name oder PIN ungültig",
+      "accessDenied": "Ihr Konto hat keinen Zugriff auf den Verwaltungsbereich",
+      "signedInAs": "{{name}} · Rolle: {{role}}",
+      "logout": "Abmelden"
+    }
   },
   "notFound": {
     "message": "Seite nicht gefunden"
