@@ -80,6 +80,12 @@ public class MealService {
         return mealRepository.saveAndFlush(meal);
     }
 
+    /**
+     * @Transactional like every other mutation here - without it, findById()'s
+     * own annotation doesn't apply to this internal (non-proxied) call, so
+     * there'd be no active session for its Hibernate.initialize() calls.
+     */
+    @Transactional
     public void delete(Long id) {
         Meal meal = findById(id);
         imageStorageService.delete(meal.getImagePath());
