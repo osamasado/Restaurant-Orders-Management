@@ -107,6 +107,7 @@ public class MealService {
 
     private void initializeCollections(Meal meal) {
         Hibernate.initialize(meal.getTranslations());
+        meal.getTranslations().forEach(translation -> Hibernate.initialize(translation.getIngredients()));
         Hibernate.initialize(meal.getSizes());
         meal.getSizes().forEach(size -> Hibernate.initialize(size.getTranslations()));
     }
