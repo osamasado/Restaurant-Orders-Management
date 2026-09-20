@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.hibernate.Hibernate;
+import org.restaurantordersmanagement.backend.i18n.Language;
 import org.restaurantordersmanagement.backend.menu.model.Category;
 import org.restaurantordersmanagement.backend.menu.model.Meal;
 import org.restaurantordersmanagement.backend.menu.model.MealSize;
@@ -35,13 +37,25 @@ public class MealService {
         this.imageStorageService = imageStorageService;
     }
 
+    /**
+     * @Transactional (with spring.jpa.open-in-view=false, no request-scoped
+     * session exists otherwise) so the manual initialize() calls below run in
+     * the same session as the fetch - without it, the controller's later
+     * MealResponse.from(meal) would throw LazyInitializationException.
+     */
+    @Transactional(readOnly = true)
     public List<Meal> findAll() {
-        return mealRepository.findAll();
+        List<Meal> meals = mealRepository.findAll();
+        meals.forEach(this::initializeCollections);
+        return meals;
     }
 
+    @Transactional(readOnly = true)
     public Meal findById(Long id) {
-        return mealRepository.findById(id)
+        Meal meal = mealRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Meal not found"));
+        initializeCollections(meal);
+        return meal;
     }
 
     @Transactional
@@ -91,6 +105,12 @@ public class MealService {
         return mealRepository.saveAndFlush(meal);
     }
 
+    private void initializeCollections(Meal meal) {
+        Hibernate.initialize(meal.getTranslations());
+        Hibernate.initialize(meal.getSizes());
+        meal.getSizes().forEach(size -> Hibernate.initialize(size.getTranslations()));
+    }
+
     /** Every update fully replaces the translations and sizes collections - see the plan's "mapping strategy" note. */
     private void applyRequest(Meal meal, MealRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
@@ -98,45 +118,80 @@ public class MealService {
         meal.setCategory(category);
         meal.setAvailable(request.available());
 
-        meal.getTranslations().clear();
-        for (MealTranslationDto dto : request.translations()) {
-            MealTranslation translation = new MealTranslation();
-            translation.setMeal(meal);
+        replaceTranslations(meal, request.translations());
+        replaceSizes(meal, request.sizes());
+    }
+
+    /**
+     * Matches existing translations by language and updates them in place,
+     * rather than deleting and re-inserting rows that keep the same language -
+     * a blind clear()+re-add would have Hibernate flush the insert of the new
+     * row before the delete of the old one, violating the (meal_id, language)
+     * unique constraint whenever a language is kept across an update.
+     */
+    private void replaceTranslations(Meal meal, List<MealTranslationDto> dtos) {
+        Map<Language, MealTranslation> existingByLanguage =
+                meal.getTranslations().stream().collect(Collectors.toMap(MealTranslation::getLanguage, t -> t));
+
+        List<MealTranslation> updated = new ArrayList<>();
+        for (MealTranslationDto dto : dtos) {
+            MealTranslation translation = existingByLanguage.get(dto.language());
+            if (translation == null) {
+                translation = new MealTranslation();
+                translation.setMeal(meal);
+            }
             translation.setLanguage(dto.language());
             translation.setName(dto.name());
             translation.setDescription(dto.description());
             translation.setPreparationMethod(dto.preparationMethod());
+            translation.getIngredients().clear();
             if (dto.ingredients() != null) {
                 translation.getIngredients().addAll(dto.ingredients());
             }
-            meal.getTranslations().add(translation);
+            updated.add(translation);
         }
+        meal.getTranslations().clear();
+        meal.getTranslations().addAll(updated);
+    }
 
-        Map<Long, MealSize> existingSizesById = meal.getSizes().stream()
+    private void replaceSizes(Meal meal, List<MealSizeDto> dtos) {
+        Map<Long, MealSize> existingById = meal.getSizes().stream()
                 .filter(size -> size.getId() != null)
                 .collect(Collectors.toMap(MealSize::getId, size -> size));
 
         List<MealSize> updatedSizes = new ArrayList<>();
-        for (MealSizeDto dto : request.sizes()) {
-            MealSize size = dto.id() != null ? existingSizesById.get(dto.id()) : null;
+        for (MealSizeDto dto : dtos) {
+            MealSize size = dto.id() != null ? existingById.get(dto.id()) : null;
             if (size == null) {
                 size = new MealSize();
                 size.setMeal(meal);
-            } else {
-                size.getTranslations().clear();
             }
             size.setPrice(dto.price());
-            for (MealSizeTranslationDto translationDto : dto.translations()) {
-                MealSizeTranslation translation = new MealSizeTranslation();
-                translation.setMealSize(size);
-                translation.setLanguage(translationDto.language());
-                translation.setLabel(translationDto.label());
-                size.getTranslations().add(translation);
-            }
+            replaceSizeTranslations(size, dto.translations());
             updatedSizes.add(size);
         }
         meal.getSizes().clear();
         meal.getSizes().addAll(updatedSizes);
+    }
+
+    /** Same match-by-language-in-place strategy as replaceTranslations, and for the same reason. */
+    private void replaceSizeTranslations(MealSize size, List<MealSizeTranslationDto> dtos) {
+        Map<Language, MealSizeTranslation> existingByLanguage =
+                size.getTranslations().stream().collect(Collectors.toMap(MealSizeTranslation::getLanguage, t -> t));
+
+        List<MealSizeTranslation> updated = new ArrayList<>();
+        for (MealSizeTranslationDto dto : dtos) {
+            MealSizeTranslation translation = existingByLanguage.get(dto.language());
+            if (translation == null) {
+                translation = new MealSizeTranslation();
+                translation.setMealSize(size);
+            }
+            translation.setLanguage(dto.language());
+            translation.setLabel(dto.label());
+            updated.add(translation);
+        }
+        size.getTranslations().clear();
+        size.getTranslations().addAll(updated);
     }
 
 }
