@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { createMeal, deleteMealImage, updateMeal, uploadMealImage } from '../../../../api/menuApi'
 import type { CategoryResponse, Language, MealRequest, MealResponse } from '../../../../api/types'
 import { Modal } from '../../../../components/Modal'
+import { PhotoIcon } from '../../../../components/PhotoIcon'
 import { useT } from '../../../../i18n/useT'
 import './MealFormModal.css'
 
@@ -74,22 +75,6 @@ function categoryLabel(category: CategoryResponse, language: Language): string {
     category.translations.find((t) => t.language === 'EN') ??
     category.translations[0]
   return match?.name ?? `#${category.id}`
-}
-
-function PhotoIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="8.5" cy="10" r="1.5" fill="currentColor" />
-      <path
-        d="M3 16l5-4 4 3 5-5 4 4"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
 }
 
 export function MealFormModal({ meal, categories, onClose, onSaved }: MealFormModalProps) {

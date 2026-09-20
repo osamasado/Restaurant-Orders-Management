@@ -1,0 +1,108 @@
+.materials-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.materials-view__title {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 400;
+  margin: 0 0 var(--space-2);
+  color: var(--text);
+}
+
+.materials-view__subtitle {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.materials-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.materials-view__add-button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--accent-forest);
+}
+
+.materials-view__table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.material-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: var(--bg-card-alt);
+  box-shadow: var(--shadow-card);
+}
+
+.material-row__photo,
+.material-row__placeholder {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+.material-row__placeholder {
+  background: rgba(19, 18, 17, 0.06);
+}
+
+.material-row__name {
+  flex: 1;
+  min-width: 140px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.material-row__meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.material-row__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.material-row__actions button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  color: var(--text);
+}
+
+.materials-view__empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.materials-view__error {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--accent-clay);
+}

@@ -110,6 +110,28 @@
       "error": "Gericht konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
       "save": "Speichern"
+    },
+    "materials": {
+      "subtitle": "Rohstoff, Einheit, Bestand, Lieferant",
+      "loadError": "Rohstoffe konnten nicht geladen werden",
+      "add": "+ Rohstoff hinzufügen",
+      "empty": "Noch keine Rohstoffe",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "confirmDelete": "Diesen Rohstoff löschen?",
+      "deleteError": "Rohstoff konnte nicht gelöscht werden - er wird möglicherweise noch in einem Rezept verwendet",
+      "editTitle": "Rohstoff bearbeiten",
+      "addTitle": "Rohstoff hinzufügen",
+      "name": "Name",
+      "unit": "Einheit",
+      "inStockQuantity": "Bestand",
+      "inStock": "{{quantity}} auf Lager",
+      "supplier": "Lieferant",
+      "uploadImage": "Foto hochladen",
+      "removeImage": "Foto entfernen",
+      "error": "Rohstoff konnte nicht gespeichert werden",
+      "cancel": "Abbrechen",
+      "save": "Speichern"
     }
   },
   "notFound": {
