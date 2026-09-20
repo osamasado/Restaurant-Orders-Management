@@ -51,11 +51,21 @@ class RecipeControllerTest {
     private RecipeRepository recipeRepository;
 
     private final List<Long> createdMealIds = new ArrayList<>();
+    private final List<Long> createdMealSizeIds = new ArrayList<>();
     private final List<Long> createdCategoryIds = new ArrayList<>();
     private final List<Long> createdRawMaterialIds = new ArrayList<>();
 
+    /**
+     * Recipe rows must go first - deleting a meal cascades to its meal_size
+     * rows, which the FK from recipe.meal_size_id would otherwise block, and
+     * the PUT-recipe test creates real recipe rows this class never deletes
+     * any other way.
+     */
     @AfterEach
     void tearDown() {
+        for (Long mealSizeId : createdMealSizeIds) {
+            recipeRepository.deleteAll(recipeRepository.findByMealSizeId(mealSizeId));
+        }
         for (Long mealId : createdMealIds) {
             mealRepository.findById(mealId).ifPresent(mealRepository::delete);
         }
@@ -87,7 +97,9 @@ class RecipeControllerTest {
         Meal savedMeal = mealRepository.saveAndFlush(meal);
         createdMealIds.add(savedMeal.getId());
 
-        return savedMeal.getSizes().get(0).getId();
+        Long mealSizeId = savedMeal.getSizes().get(0).getId();
+        createdMealSizeIds.add(mealSizeId);
+        return mealSizeId;
     }
 
     private Long createRawMaterial(String name) {
