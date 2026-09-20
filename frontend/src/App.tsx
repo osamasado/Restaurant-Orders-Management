@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AdminScreen } from './screens/admin/AdminScreen'
 import { ComingSoonView } from './screens/admin/views/ComingSoonView'
+import { MealsView } from './screens/admin/views/meals/MealsView'
 import { GuestScreen } from './screens/guest/GuestScreen'
 import { HallScreen } from './screens/hall/HallScreen'
 import { HomeScreen } from './screens/home/HomeScreen'
@@ -19,7 +20,7 @@ function App() {
           <Route index element={<Navigate to="orders" replace />} />
           <Route path="orders" element={<ComingSoonView titleKey="admin.nav.orders" />} />
           <Route path="history" element={<ComingSoonView titleKey="admin.nav.history" />} />
-          <Route path="meals" element={<ComingSoonView titleKey="admin.nav.meals" />} />
+          <Route path="meals" element={<MealsView />} />
           <Route path="materials" element={<ComingSoonView titleKey="admin.nav.materials" />} />
           <Route path="tables" element={<ComingSoonView titleKey="admin.nav.tables" />} />
           <Route path="staff" element={<ComingSoonView titleKey="admin.nav.staff" />} />
