@@ -1,0 +1,118 @@
+.tables-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.tables-view__title {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 400;
+  margin: 0 0 var(--space-2);
+  color: var(--text);
+}
+
+.tables-view__subtitle {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.tables-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tables-view__add-button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--accent-forest);
+}
+
+.tables-view__table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.table-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: var(--bg-card-alt);
+  box-shadow: var(--shadow-card);
+}
+
+.table-row__name {
+  flex: 1;
+  min-width: 140px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.table-row__meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.table-row__device {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 9px;
+}
+
+.table-row__device--unpaired {
+  background: rgba(19, 18, 17, 0.06);
+  color: var(--text-secondary);
+}
+
+.table-row__device--offline {
+  background: rgba(179, 64, 44, 0.14);
+  color: var(--accent-clay);
+}
+
+.table-row__device--online {
+  background: rgba(31, 77, 58, 0.1);
+  color: var(--accent-forest);
+}
+
+.table-row__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.table-row__actions button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  color: var(--text);
+}
+
+.tables-view__empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tables-view__error {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--accent-clay);
+}

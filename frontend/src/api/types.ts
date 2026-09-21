@@ -88,3 +88,32 @@ export type RecipeLineDto = {
   unit: string
   quantity: number
 }
+
+export type DeviceStatus = 'UNPAIRED' | 'OFFLINE' | 'ONLINE'
+
+export type TableRequest = {
+  tableNumber: string
+  room: string
+  seats: number
+}
+
+export type TableResponse = {
+  id: number
+  tableNumber: string
+  room: string
+  seats: number
+  pairedDeviceId: string | null
+  deviceStatus: DeviceStatus
+  lastSeenAt: string | null
+}
+
+export type StaffAccountCreateRequest = {
+  name: string
+  role: Role
+  pin: string
+}
+
+export type StaffAccountUpdateRequest = {
+  name: string
+  role: Role
+}

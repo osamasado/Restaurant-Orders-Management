@@ -3,6 +3,8 @@ import { AdminScreen } from './screens/admin/AdminScreen'
 import { ComingSoonView } from './screens/admin/views/ComingSoonView'
 import { MealsView } from './screens/admin/views/meals/MealsView'
 import { MaterialsView } from './screens/admin/views/materials/MaterialsView'
+import { TablesView } from './screens/admin/views/tables/TablesView'
+import { StaffView } from './screens/admin/views/staff/StaffView'
 import { GuestScreen } from './screens/guest/GuestScreen'
 import { HallScreen } from './screens/hall/HallScreen'
 import { HomeScreen } from './screens/home/HomeScreen'
@@ -23,8 +25,8 @@ function App() {
           <Route path="history" element={<ComingSoonView titleKey="admin.nav.history" />} />
           <Route path="meals" element={<MealsView />} />
           <Route path="materials" element={<MaterialsView />} />
-          <Route path="tables" element={<ComingSoonView titleKey="admin.nav.tables" />} />
-          <Route path="staff" element={<ComingSoonView titleKey="admin.nav.staff" />} />
+          <Route path="tables" element={<TablesView />} />
+          <Route path="staff" element={<StaffView />} />
           <Route path="settings" element={<ComingSoonView titleKey="admin.nav.settings" />} />
         </Route>
         <Route path="*" element={<NotFoundScreen />} />
