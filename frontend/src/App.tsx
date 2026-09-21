@@ -5,6 +5,7 @@ import { MealsView } from './screens/admin/views/meals/MealsView'
 import { MaterialsView } from './screens/admin/views/materials/MaterialsView'
 import { TablesView } from './screens/admin/views/tables/TablesView'
 import { StaffView } from './screens/admin/views/staff/StaffView'
+import { SettingsView } from './screens/admin/views/settings/SettingsView'
 import { GuestScreen } from './screens/guest/GuestScreen'
 import { HallScreen } from './screens/hall/HallScreen'
 import { HomeScreen } from './screens/home/HomeScreen'
@@ -27,7 +28,7 @@ function App() {
           <Route path="materials" element={<MaterialsView />} />
           <Route path="tables" element={<TablesView />} />
           <Route path="staff" element={<StaffView />} />
-          <Route path="settings" element={<ComingSoonView titleKey="admin.nav.settings" />} />
+          <Route path="settings" element={<SettingsView />} />
         </Route>
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>

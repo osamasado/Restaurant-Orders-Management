@@ -200,6 +200,34 @@
       "error": "Could not save this staff account",
       "cancel": "Cancel",
       "save": "Save"
+    },
+    "settings": {
+      "subtitle": "Currency, tax, language and payment methods",
+      "loadError": "Could not load settings",
+      "currencyAndTax": "Currency & tax",
+      "currencyCode": "Currency code",
+      "currencySymbol": "Currency symbol",
+      "symbolPosition": "Symbol position",
+      "taxRate": "Tax rate (%)",
+      "defaultLanguage": "Default language",
+      "languages": {
+        "DE": "German",
+        "EN": "English",
+        "AR": "Arabic"
+      },
+      "paymentMethods": "Payment methods offered",
+      "paymentMethodNames": {
+        "CASH": "Cash",
+        "CARD": "Card",
+        "PAYPAL": "PayPal",
+        "CASH_DESK": "Cash desk"
+      },
+      "paymentMethodsCaption": "Switching one off removes it from the guest payment step immediately",
+      "on": "On",
+      "off": "Off",
+      "save": "Save",
+      "saved": "Settings saved",
+      "error": "Could not save settings"
     }
   },
   "notFound": {

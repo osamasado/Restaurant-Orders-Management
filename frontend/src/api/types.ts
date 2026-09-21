@@ -117,3 +117,26 @@ export type StaffAccountUpdateRequest = {
   name: string
   role: Role
 }
+
+export type SymbolPosition = 'PREFIX' | 'SUFFIX'
+
+export type PaymentMethod = 'CASH' | 'CARD' | 'PAYPAL' | 'CASH_DESK'
+
+export type ConfigRequest = {
+  currencyCode: string
+  currencySymbol: string
+  symbolPosition: SymbolPosition
+  taxRate: number
+  defaultLanguage: Language
+  enabledPaymentMethods: PaymentMethod[]
+}
+
+export type ConfigResponse = {
+  id: number
+  currencyCode: string
+  currencySymbol: string
+  symbolPosition: SymbolPosition
+  taxRate: number
+  defaultLanguage: Language
+  enabledPaymentMethods: PaymentMethod[]
+}
