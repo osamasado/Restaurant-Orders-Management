@@ -1,0 +1,65 @@
+.staff-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.staff-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.staff-form__field input,
+.staff-form__field select {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-card-alt);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card-inner);
+  padding: var(--space-3) var(--space-4);
+}
+
+.staff-form__error {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--accent-clay);
+  margin: 0;
+}
+
+.staff-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.staff-form__actions button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: var(--radius-card-inner);
+  padding: var(--space-3) var(--space-5);
+}
+
+.staff-form__actions button[type='submit'] {
+  color: var(--bg);
+  background: var(--accent-forest);
+}
+
+.staff-form__actions button[type='submit']:hover:not(:disabled) {
+  background: var(--accent-forest-hover);
+}
+
+.staff-form__actions button[type='submit']:disabled {
+  opacity: 0.6;
+}
+
+.staff-form__actions button[type='button'] {
+  color: var(--text-secondary);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
