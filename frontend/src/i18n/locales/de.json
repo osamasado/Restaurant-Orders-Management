@@ -200,6 +200,34 @@
       "error": "Personalkonto konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
       "save": "Speichern"
+    },
+    "settings": {
+      "subtitle": "Währung, Steuer, Sprache und Zahlungsmethoden",
+      "loadError": "Einstellungen konnten nicht geladen werden",
+      "currencyAndTax": "Währung & Steuer",
+      "currencyCode": "Währungscode",
+      "currencySymbol": "Währungssymbol",
+      "symbolPosition": "Symbolposition",
+      "taxRate": "Steuersatz (%)",
+      "defaultLanguage": "Standardsprache",
+      "languages": {
+        "DE": "Deutsch",
+        "EN": "Englisch",
+        "AR": "Arabisch"
+      },
+      "paymentMethods": "Angebotene Zahlungsmethoden",
+      "paymentMethodNames": {
+        "CASH": "Bar",
+        "CARD": "Karte",
+        "PAYPAL": "PayPal",
+        "CASH_DESK": "Kassenzahlung"
+      },
+      "paymentMethodsCaption": "Das Ausschalten entfernt die Methode sofort aus dem Zahlungsschritt des Gastes",
+      "on": "An",
+      "off": "Aus",
+      "save": "Speichern",
+      "saved": "Einstellungen gespeichert",
+      "error": "Einstellungen konnten nicht gespeichert werden"
     }
   },
   "notFound": {

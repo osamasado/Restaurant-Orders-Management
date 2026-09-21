@@ -200,6 +200,34 @@
       "error": "تعذر حفظ حساب الموظف هذا",
       "cancel": "إلغاء",
       "save": "حفظ"
+    },
+    "settings": {
+      "subtitle": "العملة والضريبة واللغة وطرق الدفع",
+      "loadError": "تعذر تحميل الإعدادات",
+      "currencyAndTax": "العملة والضريبة",
+      "currencyCode": "رمز العملة",
+      "currencySymbol": "رمز العملة",
+      "symbolPosition": "موضع الرمز",
+      "taxRate": "معدل الضريبة (%)",
+      "defaultLanguage": "اللغة الافتراضية",
+      "languages": {
+        "DE": "الألمانية",
+        "EN": "الإنجليزية",
+        "AR": "العربية"
+      },
+      "paymentMethods": "طرق الدفع المتاحة",
+      "paymentMethodNames": {
+        "CASH": "نقدًا",
+        "CARD": "بطاقة",
+        "PAYPAL": "PayPal",
+        "CASH_DESK": "الدفع عند الكاشير"
+      },
+      "paymentMethodsCaption": "إيقاف تشغيل طريقة يزيلها فورًا من خطوة الدفع للضيف",
+      "on": "مفعّل",
+      "off": "معطّل",
+      "save": "حفظ",
+      "saved": "تم حفظ الإعدادات",
+      "error": "تعذر حفظ الإعدادات"
     }
   },
   "notFound": {
