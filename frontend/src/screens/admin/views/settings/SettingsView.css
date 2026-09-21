@@ -1,0 +1,176 @@
+.settings-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.settings-view__title {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 400;
+  margin: 0 0 var(--space-2);
+  color: var(--text);
+}
+
+.settings-view__subtitle {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.settings-view__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+
+.settings-card {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--bg-card-alt);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.settings-card__title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.settings-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.settings-card__field input,
+.settings-card__field select {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-card-alt);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card-inner);
+  padding: var(--space-3) var(--space-4);
+}
+
+.settings-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.settings-card__toggle-group {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.settings-card__toggle-button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-card-inner);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  color: var(--text-secondary);
+}
+
+.settings-card__toggle-button--active {
+  color: var(--bg);
+  background: var(--text);
+  box-shadow: none;
+}
+
+.payment-method-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.payment-method-row:last-of-type {
+  border-bottom: none;
+}
+
+.payment-method-row__name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.payment-method-row__toggle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: 9px;
+}
+
+.payment-method-row__toggle--on {
+  background: rgba(31, 77, 58, 0.1);
+  color: var(--accent-forest);
+}
+
+.payment-method-row__toggle--off {
+  background: rgba(179, 64, 44, 0.14);
+  color: var(--accent-clay);
+}
+
+.settings-card__caption {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.settings-view__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.settings-view__save {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--bg);
+  background: var(--accent-forest);
+  border-radius: var(--radius-card-inner);
+  padding: var(--space-3) var(--space-6);
+  align-self: flex-start;
+}
+
+.settings-view__save:hover:not(:disabled) {
+  background: var(--accent-forest-hover);
+}
+
+.settings-view__save:disabled {
+  opacity: 0.6;
+}
+
+.settings-view__success {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--accent-forest);
+}
+
+.settings-view__error {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--accent-clay);
+}
