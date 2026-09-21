@@ -100,6 +100,18 @@ class StaffAccountControllerTest {
 
     @Test
     void createListUpdateAndDeleteRoundTrip() throws Exception {
+        // The delete step's self-delete guard needs a real StaffPrincipal, which the
+        // with(user(...)) shortcut below doesn't produce - log in for real instead.
+        createStaffAccount("Round Trip Admin", Role.ADMIN, "1234");
+        MvcResult loginResult = mockMvc.perform(post("/api/staff/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name": "Round Trip Admin", "pin": "1234"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn();
+        MockHttpSession adminSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+
         MvcResult createResult = mockMvc.perform(post("/api/staff/accounts")
                         .with(user("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -126,7 +138,7 @@ class StaffAccountControllerTest {
                 .andExpect(jsonPath("$.name").value("New Waiter (renamed)"))
                 .andExpect(jsonPath("$.role").value("CASHIER"));
 
-        mockMvc.perform(delete("/api/staff/accounts/" + id).with(user("admin").roles("ADMIN")))
+        mockMvc.perform(delete("/api/staff/accounts/" + id).session(adminSession))
                 .andExpect(status().isNoContent());
 
         assertTrue(staffAccountRepository.findById(id).isEmpty());
