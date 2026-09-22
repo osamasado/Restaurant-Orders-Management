@@ -22,6 +22,12 @@
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "Bestellen Sie direkt von Ihrem Tisch. Die Küche sieht die Bestellung, sobald Sie bestätigen."
+    },
+    "menu": {
+      "loading": "Speisekarte wird geladen...",
+      "loadError": "Speisekarte konnte nicht geladen werden",
+      "empty": "Derzeit steht nichts auf der Karte",
+      "fromPrice": "ab {{price}}"
     }
   },
   "kitchen": {

@@ -4,6 +4,7 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
+import { MenuScreen } from './MenuScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 import './GuestScreen.css'
 
@@ -52,11 +53,8 @@ function GuestScreenContent() {
         </div>
       </header>
       <main className="guest-screen__content">
-        <p>{t('guest.orderingComingSoon')}</p>
+        <MenuScreen />
       </main>
-      <div className="guest-screen__action-bar">
-        <span>{t('guest.continue')}</span>
-      </div>
     </div>
   )
 }
