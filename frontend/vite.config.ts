@@ -9,6 +9,9 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:8080'
+      },
+      '/images': {
+        target: 'http://localhost:8080'
       }
     }
   }
