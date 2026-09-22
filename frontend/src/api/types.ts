@@ -140,3 +140,26 @@ export type ConfigResponse = {
   defaultLanguage: Language
   enabledPaymentMethods: PaymentMethod[]
 }
+
+export type GuestMealSizeResponse = {
+  id: number
+  price: number
+  label: string
+}
+
+export type GuestMealResponse = {
+  id: number
+  categoryId: number
+  name: string
+  description: string | null
+  preparationMethod: string | null
+  ingredients: string[]
+  imageUrl: string | null
+  sizes: GuestMealSizeResponse[]
+}
+
+export type GuestCategoryResponse = {
+  id: number
+  name: string
+  meals: GuestMealResponse[]
+}
