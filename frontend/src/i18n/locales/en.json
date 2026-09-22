@@ -22,6 +22,12 @@
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "Order from your table. The kitchen sees it the moment you confirm."
+    },
+    "menu": {
+      "loading": "Loading menu...",
+      "loadError": "Could not load the menu",
+      "empty": "Nothing on the menu right now",
+      "fromPrice": "from {{price}}"
     }
   },
   "kitchen": {

@@ -22,6 +22,12 @@
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "اطلب من طاولتك مباشرة. يرى المطبخ طلبك فور تأكيده."
+    },
+    "menu": {
+      "loading": "جارٍ تحميل قائمة الطعام...",
+      "loadError": "تعذر تحميل قائمة الطعام",
+      "empty": "لا يوجد شيء في القائمة حاليًا",
+      "fromPrice": "من {{price}}"
     }
   },
   "kitchen": {
