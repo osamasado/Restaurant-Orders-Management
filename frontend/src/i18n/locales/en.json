@@ -18,7 +18,11 @@
   "guest": {
     "tableLabel": "Table not assigned yet",
     "orderingComingSoon": "Guest ordering, coming soon",
-    "continue": "Continue"
+    "continue": "Continue",
+    "welcome": {
+      "title": "Restaurant Orders Management",
+      "tagline": "Order from your table. The kitchen sees it the moment you confirm."
+    }
   },
   "kitchen": {
     "title": "Kitchen",

@@ -18,7 +18,11 @@
   "guest": {
     "tableLabel": "لم يتم تخصيص الطاولة بعد",
     "orderingComingSoon": "طلب الضيوف، قريبًا",
-    "continue": "متابعة"
+    "continue": "متابعة",
+    "welcome": {
+      "title": "Restaurant Orders Management",
+      "tagline": "اطلب من طاولتك مباشرة. يرى المطبخ طلبك فور تأكيده."
+    }
   },
   "kitchen": {
     "title": "المطبخ",

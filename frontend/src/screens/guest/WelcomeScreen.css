@@ -1,0 +1,86 @@
+/*
+ * Fixed brand panel - intentionally does NOT use the theme-conditional
+ * --accent-forest/--bg tokens (those flip for dark mode; this screen is a
+ * permanent forest/paper treatment regardless of the light/dark toggle,
+ * same rationale as tokens.css's own --device-bezel comment).
+ */
+.welcome-screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-7);
+  padding: var(--space-7) var(--space-6) var(--space-6);
+  background: #1f4d3a;
+  color: #f5f0e8;
+}
+
+.welcome-screen__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.55);
+}
+
+.welcome-screen__title {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.welcome-screen__tagline {
+  margin: var(--space-4) 0 0;
+  max-width: 24ch;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(245, 240, 232, 0.7);
+}
+
+.welcome-screen__languages {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.welcome-screen__languages-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+}
+
+.welcome-screen__language-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 17px var(--space-5);
+  border-radius: 14px;
+  min-height: 44px;
+  background: rgba(245, 240, 232, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(245, 240, 232, 0.2);
+  color: #f5f0e8;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  text-align: start;
+}
+
+.welcome-screen__language-button:hover {
+  background: rgba(245, 240, 232, 0.16);
+}
+
+.welcome-screen__language-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.6;
+}

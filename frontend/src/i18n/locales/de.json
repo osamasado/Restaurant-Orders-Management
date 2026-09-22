@@ -18,7 +18,11 @@
   "guest": {
     "tableLabel": "Tisch noch nicht zugewiesen",
     "orderingComingSoon": "Gästebestellung, demnächst verfügbar",
-    "continue": "Weiter"
+    "continue": "Weiter",
+    "welcome": {
+      "title": "Restaurant Orders Management",
+      "tagline": "Bestellen Sie direkt von Ihrem Tisch. Die Küche sieht die Bestellung, sobald Sie bestätigen."
+    }
   },
   "kitchen": {
     "title": "Küche",
