@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getGuestMenu, getGuestSettings } from '../../api/guestApi'
-import type {
-  ConfigResponse,
-  GuestCategoryResponse,
-  GuestMealResponse,
-  Language as GuestLanguage,
-} from '../../api/types'
+import { getGuestMenu } from '../../api/guestApi'
+import type { ConfigResponse, GuestCategoryResponse, GuestMealResponse, Language as GuestLanguage } from '../../api/types'
 import { PhotoIcon } from '../../components/PhotoIcon'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
@@ -21,23 +16,26 @@ function toGuestLanguage(language: string): GuestLanguage {
   return language.toUpperCase() as GuestLanguage
 }
 
-export function MenuScreen() {
+type MenuScreenProps = {
+  settings: ConfigResponse | null
+  onSelectMeal: (meal: GuestMealResponse) => void
+}
+
+export function MenuScreen({ settings, onSelectMeal }: MenuScreenProps) {
   const { t } = useT()
   const { language } = useLanguage()
 
   const [categories, setCategories] = useState<GuestCategoryResponse[]>([])
-  const [settings, setSettings] = useState<ConfigResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
 
-    Promise.all([getGuestMenu(toGuestLanguage(language)), getGuestSettings()])
-      .then(([menuResponse, settingsResponse]) => {
+    getGuestMenu(toGuestLanguage(language))
+      .then((menuResponse) => {
         if (cancelled) return
         setCategories(menuResponse)
-        setSettings(settingsResponse)
       })
       .catch(() => {
         if (!cancelled) setError(t('guest.menu.loadError'))
@@ -71,7 +69,12 @@ export function MenuScreen() {
           <span className="menu-category__label">{category.name}</span>
           <div className="menu-category__meals">
             {category.meals.map((meal) => (
-              <div className="meal-card" key={meal.id}>
+              <button
+                type="button"
+                className="meal-card"
+                key={meal.id}
+                onClick={() => onSelectMeal(meal)}
+              >
                 {meal.imageUrl ? (
                   <img src={meal.imageUrl} alt="" className="meal-card__photo" />
                 ) : (
@@ -90,7 +93,7 @@ export function MenuScreen() {
                     </span>
                   )}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </section>

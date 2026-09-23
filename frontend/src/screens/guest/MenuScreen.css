@@ -33,10 +33,20 @@
 .meal-card {
   display: flex;
   gap: var(--space-4);
+  width: 100%;
   padding: var(--space-4);
+  border: none;
   border-radius: var(--radius-card-inner);
   background: var(--bg-card-alt);
   box-shadow: var(--shadow-card);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.meal-card:hover,
+.meal-card:focus-visible {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .meal-card__photo,
