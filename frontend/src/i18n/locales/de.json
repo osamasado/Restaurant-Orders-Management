@@ -28,6 +28,18 @@
       "loadError": "Speisekarte konnte nicht geladen werden",
       "empty": "Derzeit steht nichts auf der Karte",
       "fromPrice": "ab {{price}}"
+    },
+    "detail": {
+      "back": "Zurück zur Speisekarte",
+      "preparation": "Zubereitung",
+      "ingredients": "Zutaten",
+      "size": "Größe",
+      "quantity": "Menge",
+      "decreaseQuantity": "Menge verringern",
+      "increaseQuantity": "Menge erhöhen",
+      "note": "Notiz für die Küche",
+      "notePlaceholder": "z. B. ohne Zwiebeln, ohne Sauce",
+      "addToOrder": "Zur Bestellung hinzufügen"
     }
   },
   "kitchen": {

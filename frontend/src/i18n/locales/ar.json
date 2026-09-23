@@ -28,6 +28,18 @@
       "loadError": "تعذر تحميل قائمة الطعام",
       "empty": "لا يوجد شيء في القائمة حاليًا",
       "fromPrice": "من {{price}}"
+    },
+    "detail": {
+      "back": "العودة إلى القائمة",
+      "preparation": "التحضير",
+      "ingredients": "المكونات",
+      "size": "الحجم",
+      "quantity": "الكمية",
+      "decreaseQuantity": "تقليل الكمية",
+      "increaseQuantity": "زيادة الكمية",
+      "note": "ملاحظة للمطبخ",
+      "notePlaceholder": "مثال: بدون بصل، بدون صلصة",
+      "addToOrder": "أضف إلى الطلب"
     }
   },
   "kitchen": {

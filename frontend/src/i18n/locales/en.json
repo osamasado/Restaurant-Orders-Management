@@ -28,6 +28,18 @@
       "loadError": "Could not load the menu",
       "empty": "Nothing on the menu right now",
       "fromPrice": "from {{price}}"
+    },
+    "detail": {
+      "back": "Back to menu",
+      "preparation": "Preparation",
+      "ingredients": "Ingredients",
+      "size": "Size",
+      "quantity": "Quantity",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "note": "Note for the kitchen",
+      "notePlaceholder": "e.g. no onions, serve without sauce",
+      "addToOrder": "Add to order"
     }
   },
   "kitchen": {
