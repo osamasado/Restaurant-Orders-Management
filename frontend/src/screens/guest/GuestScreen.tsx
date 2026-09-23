@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { getGuestSettings } from '../../api/guestApi'
+import type { ConfigResponse, GuestMealResponse } from '../../api/types'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
+import type { CartLineItem } from './cartTypes'
+import { MealDetailScreen } from './MealDetailScreen'
 import { MenuScreen } from './MenuScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 import './GuestScreen.css'
 
-type GuestStep = 'welcome' | 'ordering'
+type GuestStep = 'welcome' | 'ordering' | 'detail'
 
 /**
  * sessionStorage, not localStorage: scoped to this browser tab's sit-down,
@@ -29,6 +33,21 @@ function readInitialStep(): GuestStep {
 function GuestScreenContent() {
   const { t } = useT()
   const [step, setStep] = useState<GuestStep>(readInitialStep)
+  const [selectedMeal, setSelectedMeal] = useState<GuestMealResponse | null>(null)
+  // Hand-off point for issue #20's cart/checkout screen - a ref, not state,
+  // since nothing re-renders from it yet (no cart UI exists in this issue).
+  const cartItemsRef = useRef<CartLineItem[]>([])
+  const [settings, setSettings] = useState<ConfigResponse | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    getGuestSettings().then((response) => {
+      if (!cancelled) setSettings(response)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleLanguageSelected = () => {
     try {
@@ -39,8 +58,36 @@ function GuestScreenContent() {
     setStep('ordering')
   }
 
+  const handleSelectMeal = (meal: GuestMealResponse) => {
+    setSelectedMeal(meal)
+    setStep('detail')
+  }
+
+  const handleBackToMenu = () => {
+    setSelectedMeal(null)
+    setStep('ordering')
+  }
+
+  const handleAddToOrder = (line: CartLineItem) => {
+    cartItemsRef.current = [...cartItemsRef.current, line]
+    setSelectedMeal(null)
+    setStep('ordering')
+  }
+
   if (step === 'welcome') {
     return <WelcomeScreen onLanguageSelected={handleLanguageSelected} />
+  }
+
+  if (step === 'detail' && selectedMeal) {
+    return (
+      <MealDetailScreen
+        key={selectedMeal.id}
+        meal={selectedMeal}
+        settings={settings}
+        onBack={handleBackToMenu}
+        onAddToOrder={handleAddToOrder}
+      />
+    )
   }
 
   return (
@@ -53,7 +100,7 @@ function GuestScreenContent() {
         </div>
       </header>
       <main className="guest-screen__content">
-        <MenuScreen />
+        <MenuScreen settings={settings} onSelectMeal={handleSelectMeal} />
       </main>
     </div>
   )

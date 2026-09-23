@@ -1,0 +1,201 @@
+.meal-detail-screen {
+  padding: 0;
+}
+
+.meal-detail-screen__hero {
+  position: relative;
+  height: 196px;
+  flex: none;
+  background: rgba(19, 18, 17, 0.08);
+}
+
+.meal-detail-screen__hero-photo,
+.meal-detail-screen__hero-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.meal-detail-screen__back {
+  position: absolute;
+  top: var(--space-4);
+  inset-inline-start: var(--space-4);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(19, 18, 17, 0.6);
+  color: var(--bg-card);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.meal-detail-screen__body {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--space-6);
+}
+
+.meal-detail-screen__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.meal-detail-screen__description {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.meal-detail-screen__prep {
+  margin: var(--space-6) 0 0;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-card-inner);
+  background: rgba(31, 77, 58, 0.07);
+}
+
+.meal-detail-screen__prep-text {
+  margin: var(--space-2) 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.meal-detail-screen__label {
+  display: block;
+  margin: var(--space-6) 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.meal-detail-screen__label--forest {
+  margin-top: 0;
+  color: var(--accent-forest);
+}
+
+.meal-detail-screen__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.meal-detail-screen__chip {
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgba(19, 18, 17, 0.05);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.meal-detail-screen__sizes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.meal-detail-screen__size-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  border-radius: var(--radius-card-inner);
+  background: var(--bg-card-alt);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.meal-detail-screen__size-row span:last-child {
+  font-family: var(--font-mono);
+}
+
+.meal-detail-screen__size-row--selected {
+  background: rgba(31, 77, 58, 0.1);
+  box-shadow: inset 0 0 0 1.5px var(--accent-forest);
+}
+
+.meal-detail-screen__stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.meal-detail-screen__stepper-button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-card-inner);
+  background: rgba(19, 18, 17, 0.06);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.meal-detail-screen__stepper-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.meal-detail-screen__stepper-count {
+  min-width: 28px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 19px;
+}
+
+.meal-detail-screen__note-input {
+  width: 100%;
+  min-height: 72px;
+  padding: var(--space-4);
+  border-radius: var(--radius-card-inner);
+  border: 1px solid var(--hairline);
+  background: var(--bg-card-alt);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+}
+
+.meal-detail-screen__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.meal-detail-screen__cta-price {
+  font-family: var(--font-mono);
+}
+
+.meal-detail-screen__cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
