@@ -40,6 +40,24 @@
       "note": "Note for the kitchen",
       "notePlaceholder": "e.g. no onions, serve without sauce",
       "addToOrder": "Add to order"
+    },
+    "cart": {
+      "title": "Your order",
+      "back": "Back to menu",
+      "each": "{{size}} · {{price}} each",
+      "remove": "Remove",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "unavailable": "No longer available, please remove it",
+      "subtotal": "Subtotal",
+      "vat": "VAT {{rate}}%",
+      "total": "Total",
+      "calculating": "Calculating total...",
+      "quoteError": "Could not calculate the total, please try again",
+      "serverNote": "Calculated and verified on the server before the order is accepted.",
+      "addMore": "Add more items",
+      "choosePayment": "Choose payment",
+      "reviewOrder": "Review order"
     }
   },
   "kitchen": {
