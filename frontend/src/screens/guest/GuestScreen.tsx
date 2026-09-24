@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
-import { getGuestSettings } from '../../api/guestApi'
-import type { ConfigResponse, GuestMealResponse } from '../../api/types'
+import { claimDevice, getGuestSettings, submitOrder } from '../../api/guestApi'
+import { ApiError } from '../../api/http'
+import type {
+  ConfigResponse,
+  GuestMealResponse,
+  GuestOrderResponse,
+  GuestTableResponse,
+  Language as ApiLanguage,
+  PaymentMethod,
+} from '../../api/types'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useLanguage } from '../../i18n/language-context'
@@ -10,13 +18,20 @@ import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import { CartScreen } from './CartScreen'
 import { MAX_QUANTITY, MIN_QUANTITY, type CartLineItem } from './cartTypes'
+import { clearDeviceCode, readDeviceCode, writeDeviceCode } from './deviceStorage'
 import { MealDetailScreen } from './MealDetailScreen'
 import { MenuScreen } from './MenuScreen'
+import { OrderConfirmationScreen } from './OrderConfirmationScreen'
+import { PairingScreen } from './PairingScreen'
+import { PaymentScreen } from './PaymentScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 import { useCartQuote } from './useCartQuote'
 import './GuestScreen.css'
 
-type GuestStep = 'welcome' | 'ordering' | 'detail' | 'cart'
+type GuestStep = 'welcome' | 'ordering' | 'detail' | 'cart' | 'payment' | 'confirmation'
+
+/** 'checking' = a stored code is being re-validated with the server on start. */
+type DeviceStatus = 'checking' | 'paired' | 'unpaired'
 
 /**
  * sessionStorage, not localStorage: scoped to this browser tab's sit-down,
@@ -44,6 +59,42 @@ function GuestScreenContent() {
   const [cartItems, setCartItems] = useState<CartLineItem[]>([])
   const cartQuote = useCartQuote(cartItems)
   const [settings, setSettings] = useState<ConfigResponse | null>(null)
+
+  const [deviceCode, setDeviceCode] = useState<string | null>(readDeviceCode)
+  const [deviceStatus, setDeviceStatus] = useState<DeviceStatus>(() => (deviceCode ? 'checking' : 'unpaired'))
+  const [table, setTable] = useState<GuestTableResponse | null>(null)
+
+  const [cartNotice, setCartNotice] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [placedOrder, setPlacedOrder] = useState<GuestOrderResponse | null>(null)
+
+  // Re-check a stored code once on start: an admin may have unpaired the table since.
+  useEffect(() => {
+    const storedCode = readDeviceCode()
+    if (!storedCode) return
+    let cancelled = false
+    claimDevice(storedCode)
+      .then((claimed) => {
+        if (cancelled) return
+        setTable(claimed)
+        setDeviceStatus('paired')
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return
+        if (err instanceof ApiError && err.status === 404) {
+          clearDeviceCode()
+          setDeviceCode(null)
+          setDeviceStatus('unpaired')
+        } else {
+          // Server unreachable right now - keep the device usable; submission re-checks the code anyway.
+          setDeviceStatus('paired')
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -74,8 +125,23 @@ function GuestScreenContent() {
     setStep('ordering')
   }
 
+  const handlePaired = (code: string, claimed: GuestTableResponse) => {
+    writeDeviceCode(code)
+    setDeviceCode(code)
+    setTable(claimed)
+    setDeviceStatus('paired')
+  }
+
+  const forgetDevice = () => {
+    clearDeviceCode()
+    setDeviceCode(null)
+    setTable(null)
+    setDeviceStatus('unpaired')
+  }
+
   /** Same meal, size and note merges into one line; a different note stays a separate line. */
   const handleAddToOrder = (line: CartLineItem) => {
+    setCartNotice(null)
     setCartItems((items) => {
       const existing = items.find(
         (item) => item.mealId === line.mealId && item.sizeId === line.sizeId && item.note === line.note,
@@ -91,21 +157,95 @@ function GuestScreenContent() {
 
   const handleChangeQuantity = (lineId: string, quantity: number) => {
     const clamped = Math.min(MAX_QUANTITY, Math.max(MIN_QUANTITY, quantity))
+    setCartNotice(null)
     setCartItems((items) => items.map((item) => (item.id === lineId ? { ...item, quantity: clamped } : item)))
   }
 
   const handleRemoveLine = (lineId: string) => {
     const remaining = cartItems.filter((item) => item.id !== lineId)
+    setCartNotice(null)
     setCartItems(remaining)
     if (remaining.length === 0) setStep('ordering')
   }
+
+  const handleChoosePayment = () => {
+    setCartNotice(null)
+    setPaymentError(null)
+    setStep('payment')
+  }
+
+  /**
+   * The cart is only cleared once the server accepted the order. A 409 (a
+   * meal ran out meanwhile) goes back to the cart with a fresh quote, which
+   * flags the affected lines; a 403 means this device was unpaired.
+   */
+  const handleConfirmOrder = (paymentMethod: PaymentMethod) => {
+    if (!deviceCode || submitting) return
+    setSubmitting(true)
+    setPaymentError(null)
+    submitOrder({
+      deviceCode,
+      language: language.toUpperCase() as ApiLanguage,
+      paymentMethod,
+      items: cartItems.map((item) => ({ sizeId: item.sizeId, quantity: item.quantity, note: item.note })),
+    })
+      .then((order) => {
+        setPlacedOrder(order)
+        setCartItems([])
+        setStep('confirmation')
+      })
+      .catch((err: unknown) => {
+        if (err instanceof ApiError && err.status === 409) {
+          setCartNotice(t('guest.payment.unavailableError'))
+          cartQuote.refresh()
+          setStep('cart')
+        } else if (err instanceof ApiError && err.status === 403) {
+          forgetDevice()
+        } else {
+          setPaymentError(t('guest.payment.submitError'))
+        }
+      })
+      .finally(() => setSubmitting(false))
+  }
+
+  const handleNewOrder = () => {
+    setPlacedOrder(null)
+    setStep('ordering')
+  }
+
+  const tableLabel = table ? t('guest.tableLabel', { number: table.tableNumber }) : t('guest.tableUnknown')
 
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0)
   const price = (amount: number) =>
     settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
 
+  if (deviceStatus === 'checking') {
+    return <div className="guest-screen guest-screen__checking">{t('guest.pairing.checking')}</div>
+  }
+
+  if (deviceStatus === 'unpaired') {
+    return <PairingScreen onPaired={handlePaired} />
+  }
+
   if (step === 'welcome') {
-    return <WelcomeScreen onLanguageSelected={handleLanguageSelected} />
+    return <WelcomeScreen tableLabel={tableLabel} onLanguageSelected={handleLanguageSelected} />
+  }
+
+  if (step === 'confirmation' && placedOrder) {
+    return <OrderConfirmationScreen order={placedOrder} settings={settings} onNewOrder={handleNewOrder} />
+  }
+
+  if (step === 'payment' && cartItems.length > 0) {
+    return (
+      <PaymentScreen
+        settings={settings}
+        quote={cartQuote.quote}
+        submitting={submitting}
+        error={paymentError}
+        onBack={() => setStep('cart')}
+        onConfirm={handleConfirmOrder}
+      />
+    )
   }
 
   if (step === 'detail' && selectedMeal) {
@@ -131,6 +271,8 @@ function GuestScreenContent() {
         onBack={handleBackToMenu}
         onChangeQuantity={handleChangeQuantity}
         onRemove={handleRemoveLine}
+        onChoosePayment={handleChoosePayment}
+        notice={cartNotice}
       />
     )
   }
@@ -138,7 +280,7 @@ function GuestScreenContent() {
   return (
     <div className="guest-screen">
       <header className="guest-screen__header">
-        <span className="guest-screen__eyebrow">{t('guest.tableLabel')}</span>
+        <span className="guest-screen__eyebrow">{tableLabel}</span>
         <div className="guest-screen__header-controls">
           <LanguageSwitcher />
           <ThemeToggle />

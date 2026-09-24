@@ -15,6 +15,9 @@ type CartScreenProps = {
   onBack: () => void
   onChangeQuantity: (lineId: string, quantity: number) => void
   onRemove: (lineId: string) => void
+  onChoosePayment: () => void
+  /** Set when a submit bounced back here, e.g. because a meal ran out meanwhile. */
+  notice: string | null
 }
 
 /**
@@ -30,6 +33,8 @@ export function CartScreen({
   onBack,
   onChangeQuantity,
   onRemove,
+  onChoosePayment,
+  notice,
 }: CartScreenProps) {
   const { t } = useT()
   const { language } = useLanguage()
@@ -38,6 +43,8 @@ export function CartScreen({
     settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
 
   const unavailableSizeIds = new Set(quote?.lines.filter((line) => !line.available).map((line) => line.sizeId))
+  // Only move on with a current, error-free quote and nothing unavailable - the server would reject it anyway.
+  const canChoosePayment = Boolean(quote && !quoteLoading && !quoteError && unavailableSizeIds.size === 0)
 
   return (
     <div className="guest-screen cart-screen">
@@ -49,6 +56,11 @@ export function CartScreen({
       </header>
 
       <main className="guest-screen__content">
+        {notice && (
+          <p className="cart-screen__notice" role="alert">
+            {notice}
+          </p>
+        )}
         <ul className="cart-screen__lines">
           {items.map((item) => (
             <li className="cart-screen__line" key={item.id}>
@@ -126,8 +138,12 @@ export function CartScreen({
         </button>
       </main>
 
-      {/* Payment choice and submission arrive with #21. */}
-      <button type="button" className="guest-screen__action-bar meal-detail-screen__cta" disabled>
+      <button
+        type="button"
+        className="guest-screen__action-bar meal-detail-screen__cta"
+        onClick={onChoosePayment}
+        disabled={!canChoosePayment}
+      >
         <span>{t('guest.cart.choosePayment')}</span>
         <span aria-hidden="true">→</span>
       </button>

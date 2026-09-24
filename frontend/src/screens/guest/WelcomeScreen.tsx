@@ -19,10 +19,11 @@ const NATIVE_LANGUAGE_NAMES: Record<Language, { name: string; code: string }> = 
 const LANGUAGE_ORDER: Language[] = ['de', 'en', 'ar']
 
 type WelcomeScreenProps = {
+  tableLabel: string
   onLanguageSelected: () => void
 }
 
-export function WelcomeScreen({ onLanguageSelected }: WelcomeScreenProps) {
+export function WelcomeScreen({ tableLabel, onLanguageSelected }: WelcomeScreenProps) {
   const { t } = useT()
   const { setLanguage } = useLanguage()
 
@@ -34,7 +35,7 @@ export function WelcomeScreen({ onLanguageSelected }: WelcomeScreenProps) {
   return (
     <div className="welcome-screen">
       <div>
-        <span className="welcome-screen__eyebrow">{t('guest.tableLabel')}</span>
+        <span className="welcome-screen__eyebrow">{tableLabel}</span>
         <h1 className="welcome-screen__title">{t('guest.welcome.title')}</h1>
         <p className="welcome-screen__tagline">{t('guest.welcome.tagline')}</p>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { quoteCart } from '../../api/guestApi'
 import type { CartQuoteResponse } from '../../api/types'
 import type { CartLineItem } from './cartTypes'
@@ -16,6 +16,8 @@ type CartQuoteState = {
   quote: CartQuoteResponse | null
   loading: boolean
   error: boolean
+  /** Re-quote an unchanged cart, e.g. after a submit found a meal no longer available. */
+  refresh: () => void
 }
 
 /**
@@ -27,14 +29,18 @@ type CartQuoteState = {
  */
 export function useCartQuote(items: CartLineItem[]): CartQuoteState {
   const [result, setResult] = useState<QuoteResult>({ pricingKey: '', quote: null, error: false })
-  const pricingKey = items.map((item) => `${item.sizeId}x${item.quantity}`).join(',')
+  const [refreshCount, setRefreshCount] = useState(0)
+  const refresh = useCallback(() => setRefreshCount((count) => count + 1), [])
+  const itemsKey = items.map((item) => `${item.sizeId}x${item.quantity}`).join(',')
+  // refreshCount is part of the key so a refresh counts as "not current" (loading) until it lands.
+  const pricingKey = itemsKey === '' ? '' : `${itemsKey}#${refreshCount}`
 
   useEffect(() => {
     if (pricingKey === '') return
 
     let cancelled = false
     const request = {
-      items: pricingKey.split(',').map((entry) => {
+      items: pricingKey.split('#')[0].split(',').map((entry) => {
         const [sizeId, quantity] = entry.split('x').map(Number)
         return { sizeId, quantity }
       }),
@@ -55,7 +61,7 @@ export function useCartQuote(items: CartLineItem[]): CartQuoteState {
     }
   }, [pricingKey])
 
-  if (pricingKey === '') return { quote: null, loading: false, error: false }
+  if (pricingKey === '') return { quote: null, loading: false, error: false, refresh }
   const current = result.pricingKey === pricingKey
-  return { quote: result.quote, loading: !current, error: current && result.error }
+  return { quote: result.quote, loading: !current, error: current && result.error, refresh }
 }

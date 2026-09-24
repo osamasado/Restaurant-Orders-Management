@@ -146,3 +146,12 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.cart-screen__notice {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-card-inner);
+  background: rgba(179, 38, 30, 0.1);
+  color: #b3261e;
+  font-size: 14px;
+}
