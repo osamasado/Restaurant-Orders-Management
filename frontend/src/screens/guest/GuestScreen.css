@@ -89,3 +89,10 @@
     transform: translateY(0);
   }
 }
+
+.guest-screen__checking {
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+}

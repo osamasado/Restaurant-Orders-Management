@@ -16,7 +16,7 @@
     }
   },
   "guest": {
-    "tableLabel": "Table not assigned yet",
+    "tableLabel": "Table {{number}}",
     "orderingComingSoon": "Guest ordering, coming soon",
     "continue": "Continue",
     "welcome": {
@@ -57,7 +57,53 @@
       "serverNote": "Calculated and verified on the server before the order is accepted.",
       "addMore": "Add more items",
       "choosePayment": "Choose payment",
-      "reviewOrder": "Review order"
+      "reviewOrder": "Review order",
+      "vatAmount": "VAT"
+    },
+    "tableUnknown": "Table not assigned yet",
+    "pairing": {
+      "title": "Connect this device",
+      "hint": "Enter the pairing code shown for this table in the admin Tables view.",
+      "codeLabel": "Pairing code",
+      "connect": "Connect",
+      "connecting": "Connecting...",
+      "unknownCode": "This code is not paired with any table.",
+      "error": "Could not reach the server, please try again.",
+      "checking": "Connecting to the restaurant..."
+    },
+    "payment": {
+      "title": "How would you like to pay?",
+      "back": "Back to your order",
+      "totalToPay": "Total to pay",
+      "selectMethod": "Select a payment method",
+      "confirm": "Confirm order",
+      "sending": "Sending order...",
+      "submitError": "Your order could not be sent, please try again.",
+      "unavailableError": "Some items are no longer available. Please remove them and try again.",
+      "methods": {
+        "CASH": {
+          "name": "Cash",
+          "hint": "Paid to the waiter at the table"
+        },
+        "CARD": {
+          "name": "Card",
+          "hint": "Girocard or credit card at the table terminal"
+        },
+        "PAYPAL": {
+          "name": "PayPal",
+          "hint": "Opens on your own phone"
+        },
+        "CASH_DESK": {
+          "name": "Cash desk",
+          "hint": "Pay at the counter on the way out"
+        }
+      }
+    },
+    "confirmation": {
+      "eyebrow": "Your order number",
+      "guidance": "Watch for this number on the board in the dining hall.",
+      "paymentMethod": "Payment: {{method}}",
+      "newOrder": "Start a new order"
     }
   },
   "kitchen": {

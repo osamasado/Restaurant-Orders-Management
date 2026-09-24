@@ -9,4 +9,7 @@ public interface TableRepository extends JpaRepository<Table, Long> {
 
     Optional<Table> findByTableNumber(String tableNumber);
 
+    /** The admin-issued pairing code a guest device identifies itself with. */
+    Optional<Table> findByPairedDeviceId(String pairedDeviceId);
+
 }

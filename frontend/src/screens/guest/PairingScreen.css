@@ -1,0 +1,58 @@
+.pairing-screen {
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+.pairing-screen__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  font-family: var(--font-body);
+}
+
+.pairing-screen__title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.pairing-screen__hint {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.pairing-screen__input {
+  padding: var(--space-4);
+  border: 1px solid rgba(19, 18, 17, 0.2);
+  border-radius: var(--radius-card-inner);
+  background: var(--bg-card);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 28px;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+.pairing-screen__error {
+  margin: 0;
+  color: #b3261e;
+  font-size: 14px;
+}
+
+.pairing-screen__submit {
+  padding: var(--space-5);
+  border: none;
+  border-radius: var(--radius-card-inner);
+  background: var(--accent-forest);
+  color: var(--bg-card);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pairing-screen__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -177,3 +177,30 @@ export type CartQuoteResponse = {
   total: number
   lines: { sizeId: number; unitPrice: number; lineTotal: number; available: boolean }[]
 }
+
+/** The table a paired guest device belongs to - resolved server-side from the device's pairing code. */
+export type GuestTableResponse = {
+  tableId: number
+  tableNumber: string
+  room: string
+}
+
+/** No prices or table id: the server resolves both itself. */
+export type GuestOrderRequest = {
+  deviceCode: string
+  language: Language
+  paymentMethod: PaymentMethod
+  items: { sizeId: number; quantity: number; note: string | undefined }[]
+}
+
+/** The authoritative, server-computed result of a submission. */
+export type GuestOrderResponse = {
+  orderId: number
+  orderNumber: number
+  status: string
+  placedAt: string
+  paymentMethod: PaymentMethod
+  subtotal: number
+  taxAmount: number
+  total: number
+}
