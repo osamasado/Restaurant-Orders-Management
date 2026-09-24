@@ -69,13 +69,20 @@ public class OrderItem {
         return item;
     }
 
+    /**
+     * Same fallback as the guest menu (requested language, then EN, then
+     * whatever exists), so a guest ordering in AR a meal only named in EN
+     * gets the EN name snapshotted - the name they actually saw.
+     */
     private static <T> String translationFor(
             List<T> translations, Language language, Function<T, Language> languageOf, Function<T, String> valueOf) {
         return translations.stream()
                 .filter(translation -> languageOf.apply(translation) == language)
-                .map(valueOf)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No " + language + " translation available"));
+                .or(() -> translations.stream().filter(translation -> languageOf.apply(translation) == Language.EN).findFirst())
+                .or(() -> translations.stream().findFirst())
+                .map(valueOf)
+                .orElseThrow(() -> new IllegalStateException("No translations available"));
     }
 
 }

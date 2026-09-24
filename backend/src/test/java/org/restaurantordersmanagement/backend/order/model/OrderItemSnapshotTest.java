@@ -102,4 +102,45 @@ class OrderItemSnapshotTest {
         assertEquals("Extra sauce", reloadedItem.getNote());
     }
 
+    @Test
+    void snapshotFallsBackToEnglishWhenRequestedLanguageIsMissing() {
+        Category category = new Category();
+        category.setSortOrder(1);
+        category = categoryRepository.saveAndFlush(category);
+
+        Meal meal = new Meal();
+        meal.setCategory(category);
+        meal.setAvailable(true);
+
+        MealTranslation nameDe = new MealTranslation();
+        nameDe.setMeal(meal);
+        nameDe.setLanguage(Language.DE);
+        nameDe.setName("Kaesespaetzle");
+        meal.getTranslations().add(nameDe);
+
+        MealTranslation nameEn = new MealTranslation();
+        nameEn.setMeal(meal);
+        nameEn.setLanguage(Language.EN);
+        nameEn.setName("Cheese spaetzle");
+        meal.getTranslations().add(nameEn);
+
+        MealSize size = new MealSize();
+        size.setMeal(meal);
+        size.setPrice(new BigDecimal("12.00"));
+        MealSizeTranslation sizeLabelDe = new MealSizeTranslation();
+        sizeLabelDe.setMealSize(size);
+        sizeLabelDe.setLanguage(Language.DE);
+        sizeLabelDe.setLabel("Normal");
+        size.getTranslations().add(sizeLabelDe);
+        meal.getSizes().add(size);
+
+        meal = mealRepository.saveAndFlush(meal);
+
+        // No AR translation at all: the name falls back to EN, the size label
+        // (no EN either) to whatever exists.
+        OrderItem item = OrderItem.snapshotFrom(meal.getSizes().get(0), Language.AR, 1, null);
+        assertEquals("Cheese spaetzle", item.getName());
+        assertEquals("Normal", item.getSize());
+    }
+
 }
