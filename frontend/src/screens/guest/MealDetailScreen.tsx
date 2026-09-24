@@ -4,11 +4,8 @@ import { PhotoIcon } from '../../components/PhotoIcon'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
-import type { CartLineItem } from './cartTypes'
+import { MAX_QUANTITY, MIN_QUANTITY, type CartLineItem } from './cartTypes'
 import './MealDetailScreen.css'
-
-const MIN_QUANTITY = 1
-const MAX_QUANTITY = 20
 
 type MealDetailScreenProps = {
   meal: GuestMealResponse
@@ -35,8 +32,9 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
   const handleAddToOrder = () => {
     if (!selectedSize || !settings) return
     onAddToOrder({
-      id: `${meal.id}-${selectedSize.id}`,
+      id: `${meal.id}-${selectedSize.id}-${Date.now()}`,
       mealId: meal.id,
+      sizeId: selectedSize.id,
       name: meal.name,
       size: selectedSize.label,
       quantity,
