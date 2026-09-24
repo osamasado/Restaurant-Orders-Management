@@ -46,3 +46,46 @@
   background: var(--accent-forest);
   box-shadow: var(--shadow-primary-bar);
 }
+
+.guest-screen__cart-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  animation: cart-bar-rise 0.25s ease;
+}
+
+.guest-screen__cart-bar-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.guest-screen__cart-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--accent-forest);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 24px;
+}
+
+.guest-screen__cart-total {
+  font-family: var(--font-mono);
+}
+
+@keyframes cart-bar-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

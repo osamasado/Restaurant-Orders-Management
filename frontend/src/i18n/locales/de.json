@@ -40,6 +40,24 @@
       "note": "Notiz für die Küche",
       "notePlaceholder": "z. B. ohne Zwiebeln, ohne Sauce",
       "addToOrder": "Zur Bestellung hinzufügen"
+    },
+    "cart": {
+      "title": "Deine Bestellung",
+      "back": "Zurück zur Speisekarte",
+      "each": "{{size}} · je {{price}}",
+      "remove": "Entfernen",
+      "decreaseQuantity": "Menge verringern",
+      "increaseQuantity": "Menge erhöhen",
+      "unavailable": "Nicht mehr verfügbar, bitte entfernen",
+      "subtotal": "Zwischensumme",
+      "vat": "MwSt. {{rate}}%",
+      "total": "Gesamt",
+      "calculating": "Summe wird berechnet...",
+      "quoteError": "Summe konnte nicht berechnet werden, bitte erneut versuchen",
+      "serverNote": "Wird vor der Annahme der Bestellung auf dem Server berechnet und geprüft.",
+      "addMore": "Weitere Artikel hinzufügen",
+      "choosePayment": "Zahlungsart wählen",
+      "reviewOrder": "Bestellung ansehen"
     }
   },
   "kitchen": {

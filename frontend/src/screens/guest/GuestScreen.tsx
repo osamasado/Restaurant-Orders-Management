@@ -1,18 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getGuestSettings } from '../../api/guestApi'
 import type { ConfigResponse, GuestMealResponse } from '../../api/types'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
+import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
+import { formatMoney } from '../../lib/formatMoney'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
-import type { CartLineItem } from './cartTypes'
+import { CartScreen } from './CartScreen'
+import { MAX_QUANTITY, MIN_QUANTITY, type CartLineItem } from './cartTypes'
 import { MealDetailScreen } from './MealDetailScreen'
 import { MenuScreen } from './MenuScreen'
 import { WelcomeScreen } from './WelcomeScreen'
+import { useCartQuote } from './useCartQuote'
 import './GuestScreen.css'
 
-type GuestStep = 'welcome' | 'ordering' | 'detail'
+type GuestStep = 'welcome' | 'ordering' | 'detail' | 'cart'
 
 /**
  * sessionStorage, not localStorage: scoped to this browser tab's sit-down,
@@ -32,11 +36,13 @@ function readInitialStep(): GuestStep {
 
 function GuestScreenContent() {
   const { t } = useT()
+  const { language } = useLanguage()
   const [step, setStep] = useState<GuestStep>(readInitialStep)
   const [selectedMeal, setSelectedMeal] = useState<GuestMealResponse | null>(null)
-  // Hand-off point for issue #20's cart/checkout screen - a ref, not state,
-  // since nothing re-renders from it yet (no cart UI exists in this issue).
-  const cartItemsRef = useRef<CartLineItem[]>([])
+  // Lives here rather than in a screen so it survives menu/detail/cart
+  // navigation and language switches.
+  const [cartItems, setCartItems] = useState<CartLineItem[]>([])
+  const cartQuote = useCartQuote(cartItems)
   const [settings, setSettings] = useState<ConfigResponse | null>(null)
 
   useEffect(() => {
@@ -68,11 +74,35 @@ function GuestScreenContent() {
     setStep('ordering')
   }
 
+  /** Same meal, size and note merges into one line; a different note stays a separate line. */
   const handleAddToOrder = (line: CartLineItem) => {
-    cartItemsRef.current = [...cartItemsRef.current, line]
+    setCartItems((items) => {
+      const existing = items.find(
+        (item) => item.mealId === line.mealId && item.sizeId === line.sizeId && item.note === line.note,
+      )
+      if (!existing) return [...items, line]
+      return items.map((item) =>
+        item === existing ? { ...item, quantity: Math.min(MAX_QUANTITY, item.quantity + line.quantity) } : item,
+      )
+    })
     setSelectedMeal(null)
     setStep('ordering')
   }
+
+  const handleChangeQuantity = (lineId: string, quantity: number) => {
+    const clamped = Math.min(MAX_QUANTITY, Math.max(MIN_QUANTITY, quantity))
+    setCartItems((items) => items.map((item) => (item.id === lineId ? { ...item, quantity: clamped } : item)))
+  }
+
+  const handleRemoveLine = (lineId: string) => {
+    const remaining = cartItems.filter((item) => item.id !== lineId)
+    setCartItems(remaining)
+    if (remaining.length === 0) setStep('ordering')
+  }
+
+  const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0)
+  const price = (amount: number) =>
+    settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
 
   if (step === 'welcome') {
     return <WelcomeScreen onLanguageSelected={handleLanguageSelected} />
@@ -90,6 +120,21 @@ function GuestScreenContent() {
     )
   }
 
+  if (step === 'cart' && cartItems.length > 0) {
+    return (
+      <CartScreen
+        items={cartItems}
+        settings={settings}
+        quote={cartQuote.quote}
+        quoteLoading={cartQuote.loading}
+        quoteError={cartQuote.error}
+        onBack={handleBackToMenu}
+        onChangeQuantity={handleChangeQuantity}
+        onRemove={handleRemoveLine}
+      />
+    )
+  }
+
   return (
     <div className="guest-screen">
       <header className="guest-screen__header">
@@ -102,6 +147,15 @@ function GuestScreenContent() {
       <main className="guest-screen__content">
         <MenuScreen settings={settings} onSelectMeal={handleSelectMeal} />
       </main>
+      {cartItems.length > 0 && (
+        <button type="button" className="guest-screen__action-bar guest-screen__cart-bar" onClick={() => setStep('cart')}>
+          <span className="guest-screen__cart-bar-label">
+            <span className="guest-screen__cart-count">{itemCount}</span>
+            <span>{t('guest.cart.reviewOrder')}</span>
+          </span>
+          <span className="guest-screen__cart-total">{cartQuote.quote ? price(cartQuote.quote.total) : ''}</span>
+        </button>
+      )}
     </div>
   )
 }

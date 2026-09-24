@@ -163,3 +163,17 @@ export type GuestCategoryResponse = {
   name: string
   meals: GuestMealResponse[]
 }
+
+/** Guest cart preview - sizeId/quantity only, prices always come from the server. */
+export type CartQuoteRequest = {
+  items: { sizeId: number; quantity: number }[]
+}
+
+/** taxRate is a percentage (19 means 19%). */
+export type CartQuoteResponse = {
+  subtotal: number
+  taxRate: number
+  taxAmount: number
+  total: number
+  lines: { sizeId: number; unitPrice: number; lineTotal: number; available: boolean }[]
+}
