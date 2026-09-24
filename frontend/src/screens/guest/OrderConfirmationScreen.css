@@ -1,0 +1,32 @@
+.order-confirmation-screen__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-6);
+  margin-bottom: var(--space-6);
+  background: var(--accent-forest);
+  color: var(--bg-card);
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+.order-confirmation-screen__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.order-confirmation-screen__number {
+  font-family: var(--font-mono);
+  font-size: 76px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.order-confirmation-screen__guidance {
+  margin: 0;
+  opacity: 0.85;
+}
