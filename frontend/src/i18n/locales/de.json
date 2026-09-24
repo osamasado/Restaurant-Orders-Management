@@ -16,7 +16,7 @@
     }
   },
   "guest": {
-    "tableLabel": "Tisch noch nicht zugewiesen",
+    "tableLabel": "Tisch {{number}}",
     "orderingComingSoon": "Gästebestellung, demnächst verfügbar",
     "continue": "Weiter",
     "welcome": {
@@ -57,7 +57,53 @@
       "serverNote": "Wird vor der Annahme der Bestellung auf dem Server berechnet und geprüft.",
       "addMore": "Weitere Artikel hinzufügen",
       "choosePayment": "Zahlungsart wählen",
-      "reviewOrder": "Bestellung ansehen"
+      "reviewOrder": "Bestellung ansehen",
+      "vatAmount": "MwSt."
+    },
+    "tableUnknown": "Tisch noch nicht zugewiesen",
+    "pairing": {
+      "title": "Gerät verbinden",
+      "hint": "Gib den Kopplungscode ein, der für diesen Tisch in der Tischverwaltung angezeigt wird.",
+      "codeLabel": "Kopplungscode",
+      "connect": "Verbinden",
+      "connecting": "Wird verbunden...",
+      "unknownCode": "Dieser Code ist mit keinem Tisch gekoppelt.",
+      "error": "Server nicht erreichbar, bitte erneut versuchen.",
+      "checking": "Verbindung zum Restaurant wird hergestellt..."
+    },
+    "payment": {
+      "title": "Wie möchtest du bezahlen?",
+      "back": "Zurück zur Bestellung",
+      "totalToPay": "Zu zahlen",
+      "selectMethod": "Zahlungsart wählen",
+      "confirm": "Bestellung bestätigen",
+      "sending": "Bestellung wird gesendet...",
+      "submitError": "Deine Bestellung konnte nicht gesendet werden, bitte erneut versuchen.",
+      "unavailableError": "Einige Artikel sind nicht mehr verfügbar. Bitte entferne sie und versuche es erneut.",
+      "methods": {
+        "CASH": {
+          "name": "Bar",
+          "hint": "Bezahlung beim Servicepersonal am Tisch"
+        },
+        "CARD": {
+          "name": "Karte",
+          "hint": "Girocard oder Kreditkarte am Tischterminal"
+        },
+        "PAYPAL": {
+          "name": "PayPal",
+          "hint": "Öffnet sich auf deinem eigenen Handy"
+        },
+        "CASH_DESK": {
+          "name": "Kassenzahlung",
+          "hint": "Bezahlung an der Kasse beim Hinausgehen"
+        }
+      }
+    },
+    "confirmation": {
+      "eyebrow": "Deine Bestellnummer",
+      "guidance": "Achte auf diese Nummer an der Anzeigetafel im Speisesaal.",
+      "paymentMethod": "Zahlung: {{method}}",
+      "newOrder": "Neue Bestellung starten"
     }
   },
   "kitchen": {
