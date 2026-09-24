@@ -25,8 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class GuestCartQuoteService {
 
     /** Same bounds as the guest detail screen's quantity stepper. */
-    static final int MIN_QUANTITY = 1;
-    static final int MAX_QUANTITY = 20;
+    public static final int MIN_QUANTITY = 1;
+    public static final int MAX_QUANTITY = 20;
 
     private final MealSizeRepository mealSizeRepository;
     private final SettingsService settingsService;
