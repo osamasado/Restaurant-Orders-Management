@@ -3,12 +3,14 @@ package org.restaurantordersmanagement.backend.guest.service;
 import java.util.ArrayList;
 import java.util.List;
 import org.restaurantordersmanagement.backend.guest.web.GuestOrderRequest;
+import org.restaurantordersmanagement.backend.guest.web.GuestOrderStatusResponse;
 import org.restaurantordersmanagement.backend.i18n.Language;
 import org.restaurantordersmanagement.backend.menu.model.MealSize;
 import org.restaurantordersmanagement.backend.menu.repository.MealSizeRepository;
 import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderItem;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
+import org.restaurantordersmanagement.backend.order.repository.OrderRepository;
 import org.restaurantordersmanagement.backend.order.service.OrderStateMachineService;
 import org.restaurantordersmanagement.backend.settings.service.SettingsService;
 import org.restaurantordersmanagement.backend.table.model.Table;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
  * transition then assigns the locked order number and the authoritative
  * pricing (OrderStateMachineService), all in this one transaction - a
  * rejected line means no order and no consumed order number.
+ * Also serves a paired device the live status of its own table's orders (#22).
  */
 @Service
 public class GuestOrderService {
@@ -33,16 +36,19 @@ public class GuestOrderService {
     private final SettingsService settingsService;
     private final MealSizeRepository mealSizeRepository;
     private final OrderStateMachineService orderStateMachineService;
+    private final OrderRepository orderRepository;
 
     public GuestOrderService(
             GuestDeviceService guestDeviceService,
             SettingsService settingsService,
             MealSizeRepository mealSizeRepository,
-            OrderStateMachineService orderStateMachineService) {
+            OrderStateMachineService orderStateMachineService,
+            OrderRepository orderRepository) {
         this.guestDeviceService = guestDeviceService;
         this.settingsService = settingsService;
         this.mealSizeRepository = mealSizeRepository;
         this.orderStateMachineService = orderStateMachineService;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -85,6 +91,19 @@ public class GuestOrderService {
         return orderStateMachineService.transition(order, OrderStatus.SUBMITTED, null);
     }
 
+    @Transactional(readOnly = true)
+    public GuestOrderStatusResponse getStatus(Long orderId, String deviceCode) {
+        Table deviceTable = guestDeviceService.requirePairedTable(deviceCode);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(GuestOrderService::orderNotFound);
+
+        if (!deviceTable.getId().equals(order.getTable().getId())) {
+            throw orderNotFound();
+        }
+
+        return GuestOrderStatusResponse.from(order);
+    }
+
     private MealSize resolveSize(GuestOrderRequest.Line line) {
         if (line == null || line.sizeId() == null) {
             throw badRequest("sizeId is required");
@@ -105,6 +124,10 @@ public class GuestOrderService {
 
     private static ResponseStatusException badRequest(String message) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+    }
+
+    private static ResponseStatusException orderNotFound() {
+        return new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
     }
 
 }
