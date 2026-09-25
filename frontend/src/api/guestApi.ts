@@ -6,6 +6,7 @@ import type {
   GuestCategoryResponse,
   GuestOrderRequest,
   GuestOrderResponse,
+  GuestOrderStatusResponse,
   GuestTableResponse,
   Language,
 } from './types'
@@ -28,4 +29,8 @@ export function claimDevice(code: string): Promise<GuestTableResponse> {
 
 export function submitOrder(request: GuestOrderRequest): Promise<GuestOrderResponse> {
   return apiFetch('/guest/orders', { method: 'POST', body: request })
+}
+
+export function getOrderStatus(orderId: number, deviceCode: string): Promise<GuestOrderStatusResponse> {
+  return apiFetch(`/guest/orders/${orderId}`, { headers: { 'X-Device-Code': deviceCode } })
 }

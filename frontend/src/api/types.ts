@@ -122,6 +122,8 @@ export type SymbolPosition = 'PREFIX' | 'SUFFIX'
 
 export type PaymentMethod = 'CASH' | 'CARD' | 'PAYPAL' | 'CASH_DESK'
 
+export type OrderStatus = 'DRAFT' | 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'CANCELLED'
+
 export type ConfigRequest = {
   currencyCode: string
   currencySymbol: string
@@ -197,10 +199,23 @@ export type GuestOrderRequest = {
 export type GuestOrderResponse = {
   orderId: number
   orderNumber: number
-  status: string
+  status: OrderStatus
   placedAt: string
   paymentMethod: PaymentMethod
   subtotal: number
   taxAmount: number
   total: number
+}
+
+/** Live status of one of this device's orders - polled by the confirmation screen (#22). */
+export type GuestOrderStatusResponse = {
+  orderId: number
+  orderNumber: number
+  status: OrderStatus
+  placedAt: string
+  paymentMethod: PaymentMethod
+  subtotal: number
+  taxAmount: number
+  total: number
+  history: { status: OrderStatus; changedAt: string }[]
 }
