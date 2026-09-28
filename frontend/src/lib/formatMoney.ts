@@ -7,7 +7,7 @@ import type { SymbolPosition } from '../api/types'
  * rather than a hardcoded separator - the design doc calls this out
  * explicitly ("Numbers and currency format follow the language").
  */
-const LOCALE_BY_LANGUAGE: Record<Language, string> = {
+export const LOCALE_BY_LANGUAGE: Record<Language, string> = {
   de: 'de-DE',
   en: 'en-US',
   ar: 'ar-EG',

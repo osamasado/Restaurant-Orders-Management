@@ -11,9 +11,16 @@ import org.restaurantordersmanagement.backend.table.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @Transactional so the seeded rows are rolled back afterwards - the test
+ * DB is shared across test classes, and leftover demo tables ("1", "2",
+ * "9", ...) collided with tables other tests create, depending on run order.
+ */
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
+@Transactional
 class DemoDataSeederTest {
 
     @Autowired

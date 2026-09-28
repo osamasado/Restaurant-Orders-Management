@@ -2,6 +2,7 @@ package org.restaurantordersmanagement.backend.guest.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +29,7 @@ import org.restaurantordersmanagement.backend.order.model.OrderItem;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.restaurantordersmanagement.backend.order.model.OrderStatusHistory;
 import org.restaurantordersmanagement.backend.order.repository.OrderRepository;
+import org.restaurantordersmanagement.backend.order.service.OrderStateMachineService;
 import org.restaurantordersmanagement.backend.settings.model.Config;
 import org.restaurantordersmanagement.backend.settings.model.PaymentMethod;
 import org.restaurantordersmanagement.backend.settings.service.SettingsService;
@@ -77,6 +79,9 @@ class GuestOrderControllerTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    private OrderStateMachineService orderStateMachineService;
+
     private final List<Long> createdOrderIds = new ArrayList<>();
     private final List<Long> createdMealIds = new ArrayList<>();
     private final List<Long> createdCategoryIds = new ArrayList<>();
@@ -90,12 +95,12 @@ class GuestOrderControllerTest {
         createdTableIds.forEach(tableRepository::deleteById);
     }
 
-    private Table createPairedTable() {
+    private Table createPairedTable(String deviceCode) {
         Table table = new Table();
         table.setTableNumber("G-" + UUID.randomUUID());
         table.setRoom("Main room");
         table.setSeats(4);
-        table.setPairedDeviceId(DEVICE_CODE);
+        table.setPairedDeviceId(deviceCode);
         table = tableRepository.saveAndFlush(table);
         createdTableIds.add(table.getId());
         return table;
@@ -143,9 +148,19 @@ class GuestOrderControllerTest {
         return id.longValue();
     }
 
+    private ResultActions getStatus(Long orderId, String deviceCode) throws Exception {
+        return mockMvc.perform(get("/api/guest/orders/" + orderId).header("X-Device-Code", deviceCode));
+    }
+
+    private Long submitSoupOrder() throws Exception {
+        Long size = createMealSize("Soup", "4.30", true);
+        return trackOrder(submit(DEVICE_CODE, "CASH", "{\"sizeId\":" + size + ",\"quantity\":1}")
+                .andExpect(status().isCreated()));
+    }
+
     @Test
     void submitCreatesASubmittedOrderWithServerPricingAndSnapshots() throws Exception {
-        Table table = createPairedTable();
+        Table table = createPairedTable(DEVICE_CODE);
         Long sizeA = createMealSize("Schnitzel", "8.40", true);
         Long sizeB = createMealSize("Soup", "4.30", true);
 
@@ -166,7 +181,7 @@ class GuestOrderControllerTest {
             Order order = orderRepository.findById(orderId).orElseThrow();
             assertEquals(table.getId(), order.getTable().getId());
             assertEquals(2, order.getItems().size());
-            OrderItem first = order.getItems().get(0);
+            OrderItem first = order.getItems().getFirst();
             assertEquals("Schnitzel", first.getName());
             assertEquals("Regular", first.getSize());
             assertEquals(new BigDecimal("8.40"), first.getUnitPrice());
@@ -174,7 +189,7 @@ class GuestOrderControllerTest {
             assertNull(order.getItems().get(1).getNote());
 
             assertEquals(1, order.getHistory().size());
-            OrderStatusHistory entry = order.getHistory().get(0);
+            OrderStatusHistory entry = order.getHistory().getFirst();
             assertEquals(OrderStatus.SUBMITTED, entry.getStatus());
             assertNull(entry.getChangedBy());
         });
@@ -182,7 +197,7 @@ class GuestOrderControllerTest {
 
     @Test
     void consecutiveSubmitsGetConsecutiveOrderNumbers() throws Exception {
-        createPairedTable();
+        createPairedTable(DEVICE_CODE);
         Long size = createMealSize("Soup", "4.30", true);
         String item = "{\"sizeId\":" + size + ",\"quantity\":1}";
 
@@ -198,7 +213,7 @@ class GuestOrderControllerTest {
 
     @Test
     void unavailableMealIsRejectedAndNoOrderIsCreated() throws Exception {
-        createPairedTable();
+        createPairedTable(DEVICE_CODE);
         Long available = createMealSize("Soup", "4.30", true);
         Long soldOut = createMealSize("Sold out", "9.00", false);
         long ordersBefore = orderRepository.count();
@@ -212,7 +227,7 @@ class GuestOrderControllerTest {
 
     @Test
     void disabledPaymentMethodIsRejected() throws Exception {
-        createPairedTable();
+        createPairedTable(DEVICE_CODE);
         Long size = createMealSize("Soup", "4.30", true);
         Config original = settingsService.getConfig();
         ConfigRequest restore = new ConfigRequest(original.getCurrencyCode(), original.getCurrencySymbol(),
@@ -239,20 +254,84 @@ class GuestOrderControllerTest {
 
     @Test
     void emptyCartIsRejected() throws Exception {
-        createPairedTable();
+        createPairedTable(DEVICE_CODE);
 
         submit(DEVICE_CODE, "CASH", "").andExpect(status().isBadRequest());
     }
 
     @Test
     void outOfRangeQuantityAndUnknownSizeAreRejected() throws Exception {
-        createPairedTable();
+        createPairedTable(DEVICE_CODE);
         Long size = createMealSize("Soup", "4.30", true);
 
         submit(DEVICE_CODE, "CASH", "{\"sizeId\":" + size + ",\"quantity\":21}")
                 .andExpect(status().isBadRequest());
         submit(DEVICE_CODE, "CASH", "{\"sizeId\":999999999,\"quantity\":1}")
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void statusOfAFreshOrderShowsSubmittedWithOneHistoryEntry() throws Exception {
+        createPairedTable(DEVICE_CODE);
+        Long orderId = submitSoupOrder();
+
+        getStatus(orderId, DEVICE_CODE)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").value(orderId))
+                .andExpect(jsonPath("$.status").value("SUBMITTED"))
+                .andExpect(jsonPath("$.orderNumber").isNumber())
+                .andExpect(jsonPath("$.total").value(5.12)) // 4.30 + 19% = 5.117 -> 5.12
+                .andExpect(jsonPath("$.history.length()").value(1))
+                .andExpect(jsonPath("$.history[0].status").value("SUBMITTED"))
+                .andExpect(jsonPath("$.history[0].changedBy").doesNotExist());
+    }
+
+    @Test
+    void statusReflectsLaterTransition() throws Exception {
+        createPairedTable(DEVICE_CODE);
+        Long orderId = submitSoupOrder();
+
+        transactionTemplate.executeWithoutResult(tx -> {
+            Order order = orderRepository.findById(orderId).orElseThrow();
+            orderStateMachineService.transition(order, OrderStatus.PREPARING, null);
+        });
+
+        getStatus(orderId, DEVICE_CODE)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").value(orderId))
+                .andExpect(jsonPath("$.status").value("PREPARING"))
+                .andExpect(jsonPath("$.history.length()").value(2))
+                .andExpect(jsonPath("$.history[0].status").value("SUBMITTED"))
+                .andExpect(jsonPath("$.history[1].status").value("PREPARING"));
+    }
+
+    @Test
+    void otherTablesDeviceCannotReadTheOrder() throws Exception {
+        createPairedTable(DEVICE_CODE);
+        createPairedTable("OTH3R9");
+        Long orderId = submitSoupOrder();
+
+        getStatus(orderId, "OTH3R9").andExpect(status().isNotFound());
+    }
+
+    @Test
+    void unpairedDeviceCannotReadStatus() throws Exception {
+        createPairedTable(DEVICE_CODE);
+        Long orderId = submitSoupOrder();
+
+        getStatus(orderId, "NOTPAIRED").andExpect(status().isForbidden());
+    }
+
+    @Test
+    void unknownOrderIsNotFound() throws Exception {
+        createPairedTable(DEVICE_CODE);
+
+        getStatus(999999999L, DEVICE_CODE).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void missingDeviceHeaderIsRejected() throws Exception {
+        mockMvc.perform(get("/api/guest/orders/1")).andExpect(status().isBadRequest());
     }
 
 }
