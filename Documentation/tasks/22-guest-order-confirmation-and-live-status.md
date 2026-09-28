@@ -63,4 +63,7 @@ Issues caught in review before commit:
 - **Test setup:** `unpairedDeviceCannotReadStatus` first failed on its *setup*, because the submit got 403 when no table was paired. Fixed by pairing the ordering table, so only the reading device is unpaired.
 - **Endless "Loading…":** the confirmation screen would have shown "Loading…" forever if the first poll failed permanently. This became reachable once the id was restored from storage, and was fixed with the error-plus-button state.
 
+Found by CI after the PR was opened:
+- **Leaking seed data:** `OrderStateMachineServiceTest` and `OrderPricingServiceTest` failed with `duplicate key ... uk_restaurant_table_table_number`. This was an older bug, not #22 code. `DemoDataSeederTest` committed the demo tables ("1", "2", "9", ...) to the shared test DB and never cleaned up, so whenever it happened to run first, those tests' fixed table numbers collided. It was reproduced locally with `-Dsurefire.runOrder=reversealphabetical` and fixed by making `DemoDataSeederTest` `@Transactional`, so its seeded rows roll back. The full suite then passed in that order too: 116 tests, 0 failures.
+
 Known gap: the status is polled, not pushed (out of scope this iteration).
