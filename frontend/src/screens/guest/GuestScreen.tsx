@@ -4,7 +4,6 @@ import { ApiError } from '../../api/http'
 import type {
   ConfigResponse,
   GuestMealResponse,
-  GuestOrderResponse,
   GuestTableResponse,
   Language as ApiLanguage,
   PaymentMethod,
@@ -22,6 +21,7 @@ import { clearDeviceCode, readDeviceCode, writeDeviceCode } from './deviceStorag
 import { MealDetailScreen } from './MealDetailScreen'
 import { MenuScreen } from './MenuScreen'
 import { OrderConfirmationScreen } from './OrderConfirmationScreen'
+import { clearStoredOrderId, readStoredOrderId, writeStoredOrderId } from './orderStorage'
 import { PairingScreen } from './PairingScreen'
 import { PaymentScreen } from './PaymentScreen'
 import { WelcomeScreen } from './WelcomeScreen'
@@ -42,6 +42,7 @@ type DeviceStatus = 'checking' | 'paired' | 'unpaired'
 const SESSION_STEP_KEY = 'rom-guest-step'
 
 function readInitialStep(): GuestStep {
+  if (readStoredOrderId() !== null) return 'confirmation'
   try {
     return window.sessionStorage.getItem(SESSION_STEP_KEY) === 'ordering' ? 'ordering' : 'welcome'
   } catch {
@@ -67,7 +68,7 @@ function GuestScreenContent() {
   const [cartNotice, setCartNotice] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [paymentError, setPaymentError] = useState<string | null>(null)
-  const [placedOrder, setPlacedOrder] = useState<GuestOrderResponse | null>(null)
+  const [placedOrderId, setPlacedOrderId] = useState<number | null>(readStoredOrderId)
 
   // Re-check a stored code once on start: an admin may have unpaired the table since.
   useEffect(() => {
@@ -190,7 +191,8 @@ function GuestScreenContent() {
       items: cartItems.map((item) => ({ sizeId: item.sizeId, quantity: item.quantity, note: item.note })),
     })
       .then((order) => {
-        setPlacedOrder(order)
+        writeStoredOrderId(order.orderId)
+        setPlacedOrderId(order.orderId)
         setCartItems([])
         setStep('confirmation')
       })
@@ -209,7 +211,8 @@ function GuestScreenContent() {
   }
 
   const handleNewOrder = () => {
-    setPlacedOrder(null)
+    clearStoredOrderId()
+    setPlacedOrderId(null)
     setStep('ordering')
   }
 
@@ -231,10 +234,10 @@ function GuestScreenContent() {
     return <WelcomeScreen tableLabel={tableLabel} onLanguageSelected={handleLanguageSelected} />
   }
 
-  if (step === 'confirmation' && placedOrder && deviceCode) {
+  if (step === 'confirmation' && placedOrderId !== null && deviceCode) {
     return (
       <OrderConfirmationScreen
-        orderId={placedOrder.orderId}
+        orderId={placedOrderId}
         deviceCode={deviceCode}
         settings={settings}
         onNewOrder={handleNewOrder}

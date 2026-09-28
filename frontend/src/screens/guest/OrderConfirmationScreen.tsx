@@ -29,7 +29,20 @@ export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOr
     settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
 
   if (!status) {
-    return <div className="guest-screen guest-screen__checking">{t('guest.status.loading')}</div>
+    return (
+      <div className="guest-screen guest-screen__checking">
+        {connectionLost ? (
+          <>
+            <p>{t('guest.status.loadError')}</p>
+            <button type="button" className="cart-screen__add-more" onClick={onNewOrder}>
+              {t('guest.confirmation.newOrder')}
+            </button>
+          </>
+        ) : (
+          t('guest.status.loading')
+        )}
+      </div>
+    )
   }
 
   return (
