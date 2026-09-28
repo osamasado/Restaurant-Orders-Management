@@ -1,0 +1,74 @@
+.order-status-timeline {
+  font-family: var(--font-body);
+}
+
+.order-status-timeline__eyebrow {
+  display: block;
+  margin-bottom: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.order-status-timeline__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.order-status-timeline__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-7);
+}
+
+/* Connector line from this dot down to the next one - not after the last row. */
+.order-status-timeline__row:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 26px;
+  bottom: 0;
+  inset-inline-start: 12px;
+  width: 2px;
+  background: var(--hairline);
+}
+
+.order-status-timeline__dot {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(19, 18, 17, 0.14);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.order-status-timeline__row--reached .order-status-timeline__dot {
+  background: var(--accent-forest);
+  color: var(--bg-card);
+}
+
+.order-status-timeline__label {
+  flex: 1;
+  font-weight: 600;
+}
+
+.order-status-timeline__time {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.order-status-timeline__cancelled {
+  margin: 0;
+  padding: var(--space-5);
+  border-radius: var(--radius-card-inner);
+  background: rgba(179, 64, 44, 0.12);
+  color: var(--accent-clay);
+  font-weight: 600;
+}
