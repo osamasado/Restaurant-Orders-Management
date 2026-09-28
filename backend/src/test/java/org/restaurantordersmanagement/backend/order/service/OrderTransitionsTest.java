@@ -1,9 +1,11 @@
 package org.restaurantordersmanagement.backend.order.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -56,6 +58,17 @@ class OrderTransitionsTest {
         for (OrderStatus status : OrderStatus.values()) {
             assertFalse(OrderTransitions.isLegal(status, status));
         }
+    }
+
+    @Test
+    void legalTargetsFromSubmittedArePreparingOrCancelled() {
+        assertEquals(Set.of(OrderStatus.PREPARING, OrderStatus.CANCELLED),
+                OrderTransitions.legalTargets(OrderStatus.SUBMITTED));
+    }
+
+    @Test
+    void legalTargetsFromServedAreEmpty() {
+        assertEquals(Set.of(), OrderTransitions.legalTargets(OrderStatus.SERVED));
     }
 
 }
