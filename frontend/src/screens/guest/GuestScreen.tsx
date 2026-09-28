@@ -231,8 +231,15 @@ function GuestScreenContent() {
     return <WelcomeScreen tableLabel={tableLabel} onLanguageSelected={handleLanguageSelected} />
   }
 
-  if (step === 'confirmation' && placedOrder) {
-    return <OrderConfirmationScreen order={placedOrder} settings={settings} onNewOrder={handleNewOrder} />
+  if (step === 'confirmation' && placedOrder && deviceCode) {
+    return (
+      <OrderConfirmationScreen
+        orderId={placedOrder.orderId}
+        deviceCode={deviceCode}
+        settings={settings}
+        onNewOrder={handleNewOrder}
+      />
+    )
   }
 
   if (step === 'payment' && cartItems.length > 0) {

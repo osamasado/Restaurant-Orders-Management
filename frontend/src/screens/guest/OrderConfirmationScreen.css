@@ -30,3 +30,13 @@
   margin: 0;
   opacity: 0.85;
 }
+
+.order-confirmation-screen .cart-screen__totals {
+  margin-top: var(--space-6);
+}
+
+.order-confirmation-screen__reconnecting {
+  margin: var(--space-3) 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
