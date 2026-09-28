@@ -104,6 +104,18 @@
       "guidance": "Achte auf diese Nummer an der Anzeigetafel im Speisesaal.",
       "paymentMethod": "Zahlung: {{method}}",
       "newOrder": "Neue Bestellung starten"
+    },
+    "status": {
+      "title": "Status",
+      "submitted": "Aufgegeben",
+      "preparing": "In Zubereitung",
+      "ready": "Fertig",
+      "served": "Serviert",
+      "cancelled": "Storniert",
+      "cancelledNotice": "Diese Bestellung wurde storniert. Bitte wende dich an das Servicepersonal.",
+      "loading": "Deine Bestellung wird geladen...",
+      "loadError": "Diese Bestellung konnte nicht geladen werden.",
+      "reconnecting": "Verbindung unterbrochen, neuer Versuch..."
     }
   },
   "kitchen": {

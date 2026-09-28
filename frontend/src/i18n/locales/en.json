@@ -104,6 +104,18 @@
       "guidance": "Watch for this number on the board in the dining hall.",
       "paymentMethod": "Payment: {{method}}",
       "newOrder": "Start a new order"
+    },
+    "status": {
+      "title": "Status",
+      "submitted": "Submitted",
+      "preparing": "In preparation",
+      "ready": "Ready",
+      "served": "Served",
+      "cancelled": "Cancelled",
+      "cancelledNotice": "This order was cancelled. Please ask a member of staff.",
+      "loading": "Loading your order...",
+      "loadError": "We could not load this order.",
+      "reconnecting": "Connection lost, trying again..."
     }
   },
   "kitchen": {
