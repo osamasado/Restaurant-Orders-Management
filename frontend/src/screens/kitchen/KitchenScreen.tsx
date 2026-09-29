@@ -1,3 +1,6 @@
+import { AuthProvider } from '../../auth/AuthProvider'
+import { useAuth } from '../../auth/auth-context'
+import { LoginForm } from '../../auth/LoginForm'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
@@ -13,18 +16,43 @@ const COLUMNS = [
 
 function KitchenScreenContent() {
   const { t } = useT()
+  const { staff, loading, logout } = useAuth()
+
+  if (loading) {
+    return null
+  }
+
+  if (!staff) {
+    return <LoginForm />
+  }
+
+  if (staff.role !== 'KITCHEN' && staff.role !== 'ADMIN') {
+    return (
+      <div className="kitchen-screen kitchen-screen--denied">
+        <p>{t('kitchen.accessDenied')}</p>
+        <button type="button" className="kitchen-screen__logout" onClick={() => void logout()}>
+          {t('kitchen.logout')}
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="kitchen-screen">
       <header className="kitchen-screen__header">
         <div>
           <h1 className="kitchen-screen__title">{t('kitchen.title')}</h1>
-          <p className="kitchen-screen__eyebrow">{t('kitchen.station')}</p>
+          <p className="kitchen-screen__eyebrow">
+            {t('kitchen.station')} · {t('kitchen.onShift', { name: staff.name })}
+          </p>
         </div>
         <div className="kitchen-screen__header-right">
           <span className="kitchen-screen__clock">--:--</span>
           <LanguageSwitcher />
           <ThemeToggle />
+          <button type="button" className="kitchen-screen__logout" onClick={() => void logout()}>
+            {t('kitchen.logout')}
+          </button>
         </div>
       </header>
 
@@ -52,7 +80,9 @@ export function KitchenScreen() {
   return (
     <ThemeProvider defaultTheme="dark">
       <LanguageProvider defaultLanguage="de">
-        <KitchenScreenContent />
+        <AuthProvider>
+          <KitchenScreenContent />
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   )

@@ -97,3 +97,21 @@
   text-transform: uppercase;
   color: var(--text-secondary);
 }
+
+.kitchen-screen--denied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.kitchen-screen__logout {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
