@@ -1,0 +1,58 @@
+import type { KitchenOrderResponse, OrderStatus } from '../../api/types'
+import { useT } from '../../i18n/useT'
+import './KitchenOrderCard.css'
+
+/**
+ * One button per kitchen step, keyed by the server's nextStatus - the card
+ * never decides what's legal, it only draws what the server allows.
+ */
+const ACTIONS: Partial<Record<OrderStatus, { labelKey: string; variant: string }>> = {
+  PREPARING: { labelKey: 'kitchen.actions.start', variant: 'start' },
+  READY: { labelKey: 'kitchen.actions.ready', variant: 'ready' },
+  SERVED: { labelKey: 'kitchen.actions.served', variant: 'served' },
+}
+
+type KitchenOrderCardProps = {
+  order: KitchenOrderResponse
+  /** True while this card's own request is in flight - blocks double taps. */
+  busy: boolean
+  onAdvance: (order: KitchenOrderResponse) => void
+}
+
+export function KitchenOrderCard({ order, busy, onAdvance }: KitchenOrderCardProps) {
+  const { t } = useT()
+  const action = order.nextStatus ? ACTIONS[order.nextStatus] : undefined
+
+  return (
+    <article className="kitchen-order-card">
+      <header className="kitchen-order-card__header">
+        <span className="kitchen-order-card__number">{order.orderNumber}</span>
+        <span className="kitchen-order-card__table">{t('kitchen.table', { number: order.tableNumber })}</span>
+      </header>
+
+      <ul className="kitchen-order-card__items">
+        {order.items.map((item, index) => (
+          <li key={index} className="kitchen-order-card__item">
+            <div className="kitchen-order-card__item-line">
+              <span className="kitchen-order-card__quantity">{item.quantity}×</span>
+              <span className="kitchen-order-card__name">{item.name}</span>
+              <span className="kitchen-order-card__size">{item.size}</span>
+            </div>
+            {item.note && <p className="kitchen-order-card__note">{item.note}</p>}
+          </li>
+        ))}
+      </ul>
+
+      {action && (
+        <button
+          type="button"
+          className={`kitchen-order-card__action kitchen-order-card__action--${action.variant}`}
+          disabled={busy}
+          onClick={() => onAdvance(order)}
+        >
+          {t(action.labelKey)}
+        </button>
+      )}
+    </article>
+  )
+}

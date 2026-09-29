@@ -26,4 +26,9 @@ public final class OrderTransitions {
         return LEGAL_TARGETS.getOrDefault(from, Set.of()).contains(to);
     }
 
+    /** Every status {@code from} may move to - empty for the terminal SERVED/CANCELLED. */
+    public static Set<OrderStatus> legalTargets(OrderStatus from) {
+        return LEGAL_TARGETS.getOrDefault(from, Set.of());
+    }
+
 }
