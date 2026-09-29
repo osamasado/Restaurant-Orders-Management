@@ -219,3 +219,14 @@ export type GuestOrderStatusResponse = {
   total: number
   history: { status: OrderStatus; changedAt: string }[]
 }
+
+/** One card on the kitchen board. nextStatus is the one forward step the server allows, or null. */
+export type KitchenOrderResponse = {
+  orderId: number
+  orderNumber: number
+  tableNumber: string
+  status: OrderStatus
+  placedAt: string
+  items: { name: string; size: string; quantity: number; note: string | null }[]
+  nextStatus: OrderStatus | null
+}
