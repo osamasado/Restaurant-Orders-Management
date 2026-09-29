@@ -126,7 +126,21 @@
       "preparing": "In Zubereitung",
       "ready": "Fertig"
     },
-    "ranOut": "Ausverkauft?"
+    "ranOut": "Ausverkauft?",
+    "table": "Tisch {{number}}",
+    "onShift": "{{name}} im Dienst",
+    "logout": "Abmelden",
+    "accessDenied": "Ihr Konto hat keinen Zugriff auf die Küchenanzeige",
+    "loading": "Bestellungen werden geladen...",
+    "empty": "Hier ist nichts.",
+    "connectionLost": "Verbindung unterbrochen, neuer Versuch...",
+    "actionConflict": "Diese Bestellung wurde bereits an einem anderen Bildschirm geändert. Die Anzeige wurde aktualisiert.",
+    "actionError": "Das hat nicht geklappt, bitte erneut versuchen.",
+    "actions": {
+      "start": "Starten",
+      "ready": "Fertig",
+      "served": "Vom Service abgeholt"
+    }
   },
   "hall": {
     "title": "Restaurant Orders Management",

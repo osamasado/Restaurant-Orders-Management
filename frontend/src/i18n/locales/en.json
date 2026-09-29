@@ -126,7 +126,21 @@
       "preparing": "In preparation",
       "ready": "Ready"
     },
-    "ranOut": "Ran out?"
+    "ranOut": "Ran out?",
+    "table": "Table {{number}}",
+    "onShift": "{{name}} on shift",
+    "logout": "Sign out",
+    "accessDenied": "Your account doesn't have access to the kitchen display",
+    "loading": "Loading orders...",
+    "empty": "Nothing here.",
+    "connectionLost": "Connection lost, trying again...",
+    "actionConflict": "This order was already changed on another screen. The board has been refreshed.",
+    "actionError": "That didn't work, please try again.",
+    "actions": {
+      "start": "Start",
+      "ready": "Ready",
+      "served": "Picked up by waiter"
+    }
   },
   "hall": {
     "title": "Restaurant Orders Management",
