@@ -12,6 +12,7 @@ import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import { KitchenOrderCard } from './KitchenOrderCard'
 import { useKitchenOrders } from './useKitchenOrders'
+import { useNow } from './useNow'
 import './KitchenScreen.css'
 
 const COLUMNS = [
@@ -31,6 +32,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
   const { orders, connectionLost, sessionExpired, refresh } = useKitchenOrders()
   const [busyOrderId, setBusyOrderId] = useState<number | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const now = useNow()
 
   // The server forgot this session (e.g. it restarted) - sign out, so the login form comes back.
   useEffect(() => {
@@ -95,6 +97,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
                     <KitchenOrderCard
                       key={order.orderId}
                       order={order}
+                      now={now}
                       busy={busyOrderId === order.orderId}
                       onAdvance={handleAdvance}
                     />

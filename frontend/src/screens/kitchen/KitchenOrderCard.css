@@ -97,3 +97,27 @@
   border-color: var(--hairline);
   color: var(--text);
 }
+
+.kitchen-order-card__timer {
+  margin-inline-start: auto;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-chip);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kitchen-order-card__timer--neutral {
+  background: var(--hairline);
+  color: var(--text-secondary);
+}
+
+.kitchen-order-card__timer--warning {
+  background: color-mix(in srgb, var(--accent-amber) 18%, transparent);
+  color: var(--accent-amber);
+}
+
+.kitchen-order-card__timer--late {
+  background: color-mix(in srgb, var(--accent-clay) 18%, transparent);
+  color: var(--accent-clay);
+}
