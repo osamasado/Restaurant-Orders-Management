@@ -13,6 +13,8 @@ import { ThemeToggle } from '../../theme/ThemeToggle'
 import { KitchenOrderCard } from './KitchenOrderCard'
 import { useKitchenOrders } from './useKitchenOrders'
 import { useNow } from './useNow'
+import { LOCALE_BY_LANGUAGE } from '../../lib/formatMoney'
+import { useLanguage } from '../../i18n/language-context'
 import './KitchenScreen.css'
 
 const COLUMNS = [
@@ -33,6 +35,13 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
   const [busyOrderId, setBusyOrderId] = useState<number | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const now = useNow()
+  const { language } = useLanguage()
+
+  const clockFormat = new Intl.DateTimeFormat(LOCALE_BY_LANGUAGE[language], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  })
 
   // The server forgot this session (e.g. it restarted) - sign out, so the login form comes back.
   useEffect(() => {
@@ -65,7 +74,9 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
           </p>
         </div>
         <div className="kitchen-screen__header-right">
-          <span className="kitchen-screen__clock">--:--</span>
+          <time className="kitchen-screen__clock" dateTime={new Date(now).toISOString()}>
+            {clockFormat.format(now)}
+          </time>
           <LanguageSwitcher />
           <ThemeToggle />
           <button type="button" className="kitchen-screen__logout" onClick={() => void onSignOut()}>
