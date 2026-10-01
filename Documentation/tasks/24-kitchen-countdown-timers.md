@@ -27,6 +27,10 @@ The header clock was a hard-coded `--:--` placeholder from #23. It now shows the
 1. `npx eslint src/screens/kitchen src/lib`: clean. The 15 lint problems from a full `npm run lint` are all in other files and were there before this change.
 2. `npm run build`: passes.
 3. `npx tsc -b` on the intermediate commit (timer chip without the clock): passes, so each commit builds on its own.
+4. Manual run (dev profile + Vite):
+   - An order backdated to 6 and then 12 minutes in psql (`placed_at = now() - interval '…'`) turned the chip amber, then clay, on the next poll.
+   - In Arabic the chip sat on the left of the card header, and it was readable in both light and dark themes.
+   - The header clock showed the current 24-hour time.
 
 Issue caught in review before commit:
 - **Overwritten CSS rules:** while adding the timer rules, `.kitchen-order-card__action--ready` and `--served` were overwritten, leaving a dangling `.kitchen-order-card__action--read` selector.
