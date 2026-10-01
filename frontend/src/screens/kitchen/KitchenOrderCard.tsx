@@ -1,5 +1,6 @@
 import type { KitchenOrderResponse, OrderStatus } from '../../api/types'
 import { useT } from '../../i18n/useT'
+import { elapsedMs, timerLevel, formatElapsed } from '../../lib/orderTimer'
 import './KitchenOrderCard.css'
 
 /**
@@ -14,20 +15,30 @@ const ACTIONS: Partial<Record<OrderStatus, { labelKey: string; variant: string }
 
 type KitchenOrderCardProps = {
   order: KitchenOrderResponse
+  /** Current time from the board's one shared tick, so all cards change together. */
+  now: number
   /** True while this card's own request is in flight - blocks double taps. */
   busy: boolean
   onAdvance: (order: KitchenOrderResponse) => void
 }
 
-export function KitchenOrderCard({ order, busy, onAdvance }: KitchenOrderCardProps) {
+export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCardProps) {
   const { t } = useT()
   const action = order.nextStatus ? ACTIONS[order.nextStatus] : undefined
+  const elapsed = elapsedMs(order.placedAt, now)
+  const level = timerLevel(elapsed)
 
   return (
     <article className="kitchen-order-card">
       <header className="kitchen-order-card__header">
         <span className="kitchen-order-card__number">{order.orderNumber}</span>
         <span className="kitchen-order-card__table">{t('kitchen.table', { number: order.tableNumber })}</span>
+        <time
+          className={`kitchen-order-card__timer kitchen-order-card__timer--${level}`}
+          dateTime={order.placedAt}
+        >
+          {formatElapsed(elapsed)}
+        </time>
       </header>
 
       <ul className="kitchen-order-card__items">
