@@ -127,6 +127,10 @@
       "ready": "Ready"
     },
     "ranOut": "Ran out?",
+    "cancelled": {
+      "banner": "Cancelled by admin · table {{table}} · stop work",
+      "acknowledge": "Acknowledge"
+    },
     "table": "Table {{number}}",
     "onShift": "{{name}} on shift",
     "logout": "Sign out",

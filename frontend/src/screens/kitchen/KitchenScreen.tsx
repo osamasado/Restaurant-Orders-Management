@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ApiError } from '../../api/http'
-import { advanceKitchenOrder } from '../../api/kitchenApi'
-import type { KitchenOrderResponse, StaffResponse } from '../../api/types'
+import { acknowledgeCancellation, advanceKitchenOrder } from '../../api/kitchenApi'
+import type { CancelledOrderResponse, KitchenOrderResponse, StaffResponse } from '../../api/types'
 import { AuthProvider } from '../../auth/AuthProvider'
 import { useAuth } from '../../auth/auth-context'
 import { LoginForm } from '../../auth/LoginForm'
@@ -10,6 +10,7 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
+import { CancelledOrderBanner } from './CancelledOrderBanner'
 import { KitchenOrderCard } from './KitchenOrderCard'
 import { useKitchenOrders } from './useKitchenOrders'
 import { useNow } from './useNow'
@@ -31,8 +32,9 @@ type KitchenBoardProps = {
 /** The live board - only rendered once the guard below let a kitchen or admin account through. */
 function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
   const { t } = useT()
-  const { orders, connectionLost, sessionExpired, refresh } = useKitchenOrders()
+  const { orders, cancelledOrders, connectionLost, sessionExpired, refresh } = useKitchenOrders()
   const [busyOrderId, setBusyOrderId] = useState<number | null>(null)
+  const [busyCancelledOrderId, setBusyCancelledOrderId] = useState<number | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const now = useNow()
   const { language } = useLanguage()
@@ -64,6 +66,17 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
       })
   }
 
+  const handleAcknowledge = (order: CancelledOrderResponse) => {
+    setBusyCancelledOrderId(order.orderId)
+    setNotice(null)
+    acknowledgeCancellation(order.orderId)
+      .catch(() => setNotice(t('kitchen.actionError')))
+      .finally(() => {
+        setBusyCancelledOrderId(null)
+        refresh()
+      })
+  }
+
   return (
     <div className="kitchen-screen">
       <header className="kitchen-screen__header">
@@ -87,6 +100,12 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
 
       {notice && <p className="kitchen-screen__notice">{notice}</p>}
       {connectionLost && <p className="kitchen-screen__notice">{t('kitchen.connectionLost')}</p>}
+
+      <CancelledOrderBanner
+        orders={cancelledOrders}
+        busyOrderId={busyCancelledOrderId}
+        onAcknowledge={handleAcknowledge}
+      />
 
       <div className="kitchen-screen__board">
         {COLUMNS.map((column) => {

@@ -127,6 +127,10 @@
       "ready": "Fertig"
     },
     "ranOut": "Ausverkauft?",
+    "cancelled": {
+      "banner": "Vom Admin storniert · Tisch {{table}} · Arbeit einstellen",
+      "acknowledge": "Bestätigen"
+    },
     "table": "Tisch {{number}}",
     "onShift": "{{name}} im Dienst",
     "logout": "Abmelden",

@@ -127,6 +127,10 @@
       "ready": "جاهز"
     },
     "ranOut": "نفذت الكمية؟",
+    "cancelled": {
+      "banner": "ألغاها المدير · طاولة {{table}} · أوقفوا العمل",
+      "acknowledge": "تم الاطلاع"
+    },
     "table": "طاولة {{number}}",
     "onShift": "{{name}} في المناوبة",
     "logout": "تسجيل الخروج",
