@@ -3,6 +3,7 @@ package org.restaurantordersmanagement.backend.kitchen.web;
 import java.util.List;
 import org.restaurantordersmanagement.backend.kitchen.service.KitchenOrderService;
 import org.restaurantordersmanagement.backend.staff.security.StaffPrincipal;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,6 +33,21 @@ public class KitchenOrderController {
     @PreAuthorize("hasAnyRole('KITCHEN', 'ADMIN')")
     public List<KitchenOrderResponse> list() {
         return kitchenOrderService.listActive();
+    }
+
+    @GetMapping("/cancelled")
+    @PreAuthorize("hasAnyRole('KITCHEN', 'ADMIN')")
+    public List<CancelledOrderResponse> listCancelled() {
+        return kitchenOrderService.listUnacknowledgedCancellations();
+    }
+
+    @PostMapping("/{orderId}/acknowledge-cancellation")
+    @PreAuthorize("hasAnyRole('KITCHEN', 'ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void acknowledgeCancellation(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal StaffPrincipal principal) {
+        kitchenOrderService.acknowledgeCancellation(orderId, principal.getStaffAccount().getId());
     }
 
     @PostMapping("/{orderId}/transition")

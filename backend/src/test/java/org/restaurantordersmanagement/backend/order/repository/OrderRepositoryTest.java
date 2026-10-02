@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
@@ -89,6 +90,54 @@ class OrderRepositoryTest {
         assertEquals(submittedAt, found.get().getHistory().get(0).getChangedAt());
         assertEquals(OrderStatus.PREPARING, found.get().getHistory().get(1).getStatus());
         assertEquals("Test Kitchen", found.get().getHistory().get(1).getChangedBy().getName());
+    }
+
+    @Test
+    void unacknowledgedCancellationsExcludeAcknowledgedDraftAndActiveOrders() {
+        Table table = new Table();
+        table.setTableNumber("43");
+        table.setRoom("Front room");
+        table.setSeats(4);
+        table = tableRepository.saveAndFlush(table);
+
+        StaffAccount kitchen = new StaffAccount();
+        kitchen.setName("Ack Kitchen");
+        kitchen.setRole(Role.KITCHEN);
+        kitchen = staffAccountRepository.saveAndFlush(kitchen);
+
+        Instant placedAt = Instant.parse("2026-09-18T10:00:00Z");
+
+        Order unacknowledged = cancelledOrder(table, placedAt);
+
+        Order acknowledged = cancelledOrder(table, placedAt.plusSeconds(60));
+        acknowledged.setCancellationAcknowledgedAt(placedAt.plusSeconds(120));
+        acknowledged.setCancellationAcknowledgedBy(kitchen);
+
+        Order cancelledDraft = cancelledOrder(table, null);
+
+        Order active = new Order();
+        active.setTable(table);
+        active.setPlacedAt(placedAt);
+
+        orderRepository.saveAllAndFlush(List.of(unacknowledged, acknowledged, cancelledDraft, active));
+
+        List<Long> bannerOrderIds = orderRepository
+                .findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(
+                        OrderStatus.CANCELLED)
+                .stream()
+                .map(Order::getId)
+                .toList();
+
+        assertEquals(List.of(unacknowledged.getId()), bannerOrderIds);
+    }
+
+    /** A CANCELLED order; a null placedAt stands for a draft cancelled before the kitchen saw it. */
+    private Order cancelledOrder(Table table, Instant placedAt) {
+        Order order = new Order();
+        order.setTable(table);
+        order.setPlacedAt(placedAt);
+        order.recordTransition(OrderStatus.CANCELLED, Instant.parse("2026-09-18T11:00:00Z"), null);
+        return order;
     }
 
 }

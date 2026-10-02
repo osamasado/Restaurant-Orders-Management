@@ -1,6 +1,8 @@
 package org.restaurantordersmanagement.backend.kitchen.service;
 
+import java.time.Instant;
 import java.util.List;
+import org.restaurantordersmanagement.backend.kitchen.web.CancelledOrderResponse;
 import org.restaurantordersmanagement.backend.kitchen.web.KitchenOrderResponse;
 import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
@@ -43,6 +45,40 @@ public class KitchenOrderService {
         return orderRepository.findByStatusInOrderByPlacedAtAsc(ACTIVE_STATUSES).stream()
                 .map(KitchenOrderResponse::from)
                 .toList();
+    }
+
+    /** Cancelled orders nobody in the kitchen has acknowledged yet, oldest first. */
+    @Transactional(readOnly = true)
+    public List<CancelledOrderResponse> listUnacknowledgedCancellations() {
+        return orderRepository
+                .findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(
+                        OrderStatus.CANCELLED)
+                .stream()
+                .map(CancelledOrderResponse::from)
+                .toList();
+    }
+
+    /**
+     * Records that the kitchen has seen a cancellation. Only the read-receipt
+     * fields change, never the status. Acknowledging twice keeps the first
+     * receipt, so two screens pressing the button at once is harmless.
+     */
+    @Transactional
+    public void acknowledgeCancellation(Long orderId, Long staffAccountId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order with id " + orderId + " not found"));
+
+        if (order.getStatus() != OrderStatus.CANCELLED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Order with id " + orderId + " is not cancelled");
+        }
+
+        if (order.getCancellationAcknowledgedAt() != null) {
+            return;
+        }
+
+        order.setCancellationAcknowledgedAt(Instant.now());
+        order.setCancellationAcknowledgedBy(staffAccountRepository.getReferenceById(staffAccountId));
+        orderRepository.saveAndFlush(order);
     }
 
     @Transactional

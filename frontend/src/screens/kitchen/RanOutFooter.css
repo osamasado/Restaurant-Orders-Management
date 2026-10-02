@@ -1,0 +1,41 @@
+.ran-out {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.ran-out__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.ran-out__chip {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.ran-out__chip--sold-out {
+  border-color: var(--accent-clay);
+  background: var(--accent-clay);
+  color: #fff;
+}
+
+.ran-out__chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ran-out__note {
+  margin: var(--space-3) 0 0;
+  letter-spacing: normal;
+  text-transform: none;
+}

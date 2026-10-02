@@ -17,4 +17,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = {"items", "table"})
     List<Order> findByStatusInOrderByPlacedAtAsc(Collection<OrderStatus> statuses);
 
+    /**
+     * Cancelled orders the kitchen has not acknowledged yet - the banner's
+     * source. placedAt IS NOT NULL leaves out drafts cancelled before the
+     * kitchen ever saw them.
+     */
+    @EntityGraph(attributePaths = {"table"})
+    List<Order> findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(OrderStatus status);
+
 }

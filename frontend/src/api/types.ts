@@ -230,3 +230,17 @@ export type KitchenOrderResponse = {
   items: { name: string; size: string; quantity: number; note: string | null }[]
   nextStatus: OrderStatus | null
 }
+
+/** One line of the kitchen's cancelled-order banner - shown until a kitchen screen acknowledges it. */
+export type CancelledOrderResponse = {
+  orderId: number
+  orderNumber: number
+  tableNumber: string
+}
+
+/** One chip of the kitchen's "ran out?" footer - every translated name, so the screen picks its own language. */
+export type KitchenMealResponse = {
+  id: number
+  available: boolean
+  names: { language: Language; name: string }[]
+}

@@ -88,6 +88,16 @@ public class Order {
     private List<OrderStatusHistory> history = new ArrayList<>();
 
     /**
+     * Kitchen read-receipt for a cancellation, not a status - both fields
+     * stay null until a kitchen staff member acknowledges the banner.
+     */
+    private Instant cancellationAcknowledgedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "cancellation_acknowledged_by")
+    private StaffAccount cancellationAcknowledgedBy;
+
+    /**
      * The only way to change {@link #status} - mechanically changes it and
      * appends the matching audit row in the same call. Does not validate
      * legality; that's the service's job.

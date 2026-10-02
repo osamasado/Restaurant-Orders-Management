@@ -127,6 +127,15 @@
       "ready": "جاهز"
     },
     "ranOut": "نفذت الكمية؟",
+    "availability": {
+      "available": "متاح",
+      "soldOut": "نفد",
+      "note": "تعطيل وجبة يزيلها فوراً من جميع أجهزة الطاولات."
+    },
+    "cancelled": {
+      "banner": "ألغاها المدير · طاولة {{table}} · أوقفوا العمل",
+      "acknowledge": "تم الاطلاع"
+    },
     "table": "طاولة {{number}}",
     "onShift": "{{name}} في المناوبة",
     "logout": "تسجيل الخروج",

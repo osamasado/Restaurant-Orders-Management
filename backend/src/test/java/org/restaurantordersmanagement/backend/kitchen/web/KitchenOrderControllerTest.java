@@ -2,6 +2,7 @@ package org.restaurantordersmanagement.backend.kitchen.web;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -186,6 +188,81 @@ class KitchenOrderControllerTest {
     @Test
     void unknownOrderIsNotFound() throws Exception {
         advance(9999999L, "PREPARING").andExpect(status().isNotFound());
+    }
+
+    private ResultActions acknowledge(Long orderId) throws Exception {
+        return mockMvc.perform(post("/api/kitchen/orders/" + orderId + "/acknowledge-cancellation")
+                .with(asKitchen()));
+    }
+
+    private Order cancelledOrder() {
+        return orderStateMachineService.transition(submittedOrder(), OrderStatus.CANCELLED, null);
+    }
+
+    @Test
+    void anonymousAndWaiterCannotSeeCancellations() throws Exception {
+        mockMvc.perform(get("/api/kitchen/orders/cancelled"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/kitchen/orders/cancelled").with(user("waiter").roles("WAITER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void waiterCannotAcknowledge() throws Exception {
+        Order order = cancelledOrder();
+
+        mockMvc.perform(post("/api/kitchen/orders/" + order.getId() + "/acknowledge-cancellation")
+                .with(user("waiter").roles("WAITER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void cancelledOrderShowsUntilAcknowledgedAndRecordsWho() throws Exception {
+        Order order = cancelledOrder();
+        String thisOrder = "$[?(@.orderId == " + order.getId() + ")]";
+
+        mockMvc.perform(get("/api/kitchen/orders/cancelled").with(asKitchen()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(thisOrder + ".orderNumber").value(contains(order.getOrderNumber())))
+                .andExpect(jsonPath(thisOrder + ".tableNumber")
+                        .value(contains(order.getTable().getTableNumber())));
+
+        acknowledge(order.getId()).andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/kitchen/orders/cancelled").with(asKitchen()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(thisOrder).isEmpty());
+
+        Order reloaded = orderRepository.findById(order.getId()).orElseThrow();
+        assertNotNull(reloaded.getCancellationAcknowledgedAt());
+        assertEquals(kitchenStaff.getId(), reloaded.getCancellationAcknowledgedBy().getId());
+        assertEquals(OrderStatus.CANCELLED, reloaded.getStatus());
+    }
+
+    @Test
+    void acknowledgingTwiceKeepsTheFirstReceipt() throws Exception {
+        Order order = cancelledOrder();
+
+        acknowledge(order.getId()).andExpect(status().isNoContent());
+        Instant firstReceipt = orderRepository.findById(order.getId()).orElseThrow()
+                .getCancellationAcknowledgedAt();
+
+        acknowledge(order.getId()).andExpect(status().isNoContent());
+
+        assertEquals(firstReceipt,
+                orderRepository.findById(order.getId()).orElseThrow().getCancellationAcknowledgedAt());
+    }
+
+    @Test
+    void onlyCancelledOrdersCanBeAcknowledged() throws Exception {
+        Order order = submittedOrder();
+
+        acknowledge(order.getId()).andExpect(status().isConflict());
+    }
+
+    @Test
+    void acknowledgingAnUnknownOrderIsNotFound() throws Exception {
+        acknowledge(9999999L).andExpect(status().isNotFound());
     }
 
 }

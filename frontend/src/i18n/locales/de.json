@@ -127,6 +127,15 @@
       "ready": "Fertig"
     },
     "ranOut": "Ausverkauft?",
+    "availability": {
+      "available": "verfügbar",
+      "soldOut": "ausverkauft",
+      "note": "Eine als nicht verfügbar markierte Speise verschwindet sofort von allen Tischgeräten."
+    },
+    "cancelled": {
+      "banner": "Vom Admin storniert · Tisch {{table}} · Arbeit einstellen",
+      "acknowledge": "Bestätigen"
+    },
     "table": "Tisch {{number}}",
     "onShift": "{{name}} im Dienst",
     "logout": "Abmelden",
