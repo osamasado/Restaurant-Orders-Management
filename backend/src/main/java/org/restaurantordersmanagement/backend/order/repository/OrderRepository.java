@@ -25,4 +25,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = {"table"})
     List<Order> findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(OrderStatus status);
 
+    /**
+     * Only the order numbers of one status, lowest first - the hall board's
+     * source. A closed projection, so just the order_number column is
+     * selected: the table, items and prices are never even loaded.
+     */
+    List<OrderNumberOnly> findByStatusOrderByOrderNumberAsc(OrderStatus status);
+
+    interface OrderNumberOnly {
+
+        Integer getOrderNumber();
+
+    }
+
 }
