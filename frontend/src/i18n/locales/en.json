@@ -127,6 +127,11 @@
       "ready": "Ready"
     },
     "ranOut": "Ran out?",
+    "availability": {
+      "available": "available",
+      "soldOut": "sold out",
+      "note": "Marking a meal unavailable removes it from every table device at once."
+    },
     "cancelled": {
       "banner": "Cancelled by admin · table {{table}} · stop work",
       "acknowledge": "Acknowledge"
