@@ -1,5 +1,6 @@
 import type { KitchenOrderResponse, OrderStatus } from '../../api/types'
 import { useT } from '../../i18n/useT'
+import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import { elapsedMs, timerLevel, formatElapsed } from '../../lib/orderTimer'
 import './KitchenOrderCard.css'
 
@@ -31,7 +32,7 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
   return (
     <article className="kitchen-order-card">
       <header className="kitchen-order-card__header">
-        <span className="kitchen-order-card__number">{order.orderNumber}</span>
+        <span className={`kitchen-order-card__number kitchen-order-card__number--${order.status.toLowerCase()}`}>{formatOrderNumber(order.orderNumber)}</span>
         <span className="kitchen-order-card__table">{t('kitchen.table', { number: order.tableNumber })}</span>
         <time
           className={`kitchen-order-card__timer kitchen-order-card__timer--${level}`}

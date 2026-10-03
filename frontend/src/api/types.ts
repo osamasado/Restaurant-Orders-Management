@@ -244,3 +244,14 @@ export type KitchenMealResponse = {
   available: boolean
   names: { language: Language; name: string }[]
 }
+
+/** One line of the hall board: the order's number and the table it is for - nothing else (no names, prices or items). */
+export type HallBoardEntry = {
+  orderNumber: number
+  tableNumber: string
+}
+
+export type HallBoardResponse = {
+  preparing: HallBoardEntry[]
+  ready: HallBoardEntry[]
+}

@@ -2,6 +2,7 @@ import type { ConfigResponse } from '../../api/types'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
+import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import { OrderStatusTimeline } from './OrderStatusTimeline'
 import { useOrderStatus } from './useOrderStatus'
 import './MealDetailScreen.css'
@@ -50,7 +51,7 @@ export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOr
       <section className="order-confirmation-screen__hero">
         <span className="order-confirmation-screen__eyebrow">{t('guest.confirmation.eyebrow')}</span>
         <span className="order-confirmation-screen__number" dir="ltr">
-          {status.orderNumber}
+          {formatOrderNumber(status.orderNumber)}
         </span>
         <p className="order-confirmation-screen__guidance">{t('guest.confirmation.guidance')}</p>
       </section>

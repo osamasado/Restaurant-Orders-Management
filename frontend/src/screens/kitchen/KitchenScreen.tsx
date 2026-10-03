@@ -14,7 +14,7 @@ import { CancelledOrderBanner } from './CancelledOrderBanner'
 import { KitchenOrderCard } from './KitchenOrderCard'
 import { RanOutFooter } from './RanOutFooter'
 import { useKitchenOrders } from './useKitchenOrders'
-import { useNow } from './useNow'
+import { useNow } from '../../lib/useNow'
 import { LOCALE_BY_LANGUAGE } from '../../lib/formatMoney'
 import { useLanguage } from '../../i18n/language-context'
 import './KitchenScreen.css'
@@ -124,7 +124,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
         {COLUMNS.map((column) => {
           const columnOrders = orders?.filter((order) => order.status === column.status) ?? []
           return (
-            <section key={column.key} className="kitchen-screen__column">
+            <section key={column.key} className={`kitchen-screen__column kitchen-screen__column--${column.key}`}>
               <header className="kitchen-screen__column-header">
                 <span className={`kitchen-screen__dot kitchen-screen__dot--${column.key}`} />
                 <span>{t(column.labelKey)}</span>

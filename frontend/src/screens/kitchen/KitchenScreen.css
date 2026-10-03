@@ -120,16 +120,25 @@
   cursor: pointer;
 }
 
+/* Same colours as the hall board: amber while it is being prepared, green once it is ready. New stays neutral. */
 .kitchen-screen__dot--new {
-  background: #7dbe9b;
+  background: var(--text-secondary);
 }
 
 .kitchen-screen__dot--preparing {
-  background: #f3c77a;
+  background: var(--accent-amber);
 }
 
 .kitchen-screen__dot--ready {
-  background: #f5f0e8;
+  background: var(--accent-forest);
+}
+
+.kitchen-screen__column--preparing .kitchen-screen__column-header {
+  color: var(--accent-amber);
+}
+
+.kitchen-screen__column--ready .kitchen-screen__column-header {
+  color: var(--accent-forest);
 }
 
 .kitchen-screen__empty {

@@ -131,6 +131,39 @@ class OrderRepositoryTest {
         assertEquals(List.of(unacknowledged.getId()), bannerOrderIds);
     }
 
+    @Test
+    void hallBoardRowsAreOnlyThatStatusInAscendingOrderWithTheirTableNumber() {
+        Table table = new Table();
+        table.setTableNumber("44");
+        table.setRoom("Front room");
+        table.setSeats(4);
+        table = tableRepository.saveAndFlush(table);
+
+        Instant at = Instant.parse("2026-09-18T10:00:00Z");
+        orderRepository.saveAllAndFlush(List.of(
+                numberedOrder(table, 9003, OrderStatus.PREPARING, at),
+                numberedOrder(table, 9001, OrderStatus.PREPARING, at),
+                numberedOrder(table, 9002, OrderStatus.READY, at),
+                numberedOrder(table, 9004, OrderStatus.SERVED, at)));
+
+        List<OrderRepository.HallBoardRow> preparing =
+                orderRepository.findHallBoardRows(OrderStatus.PREPARING).stream()
+                        .filter(row -> row.getOrderNumber() >= 9000)
+                        .toList();
+
+        assertEquals(List.of(9001, 9003), preparing.stream().map(OrderRepository.HallBoardRow::getOrderNumber).toList());
+        assertEquals(List.of("44", "44"), preparing.stream().map(OrderRepository.HallBoardRow::getTableNumber).toList());
+    }
+
+    private Order numberedOrder(Table table, int orderNumber, OrderStatus status, Instant at) {
+        Order order = new Order();
+        order.setTable(table);
+        order.setOrderNumber(orderNumber);
+        order.setPlacedAt(at);
+        order.recordTransition(status, at, null);
+        return order;
+    }
+
     /** A CANCELLED order; a null placedAt stands for a draft cancelled before the kitchen saw it. */
     private Order cancelledOrder(Table table, Instant placedAt) {
         Order order = new Order();
