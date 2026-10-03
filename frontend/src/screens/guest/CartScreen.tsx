@@ -70,7 +70,7 @@ export function CartScreen({
                 <div>
                   <div className="cart-screen__line-name">{item.name}</div>
                   <div className="cart-screen__line-meta">
-                    {t('guest.cart.each', { size: isolate(item.size), price: isolate(price(item.unitPrice)) })}
+                    {t('guest.cart.each', { size: isolate(item.size), price: price(item.unitPrice) })}
                   </div>
                 </div>
                 <span className="cart-screen__line-total">{price(item.unitPrice * item.quantity)}</span>
