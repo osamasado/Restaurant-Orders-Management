@@ -81,3 +81,29 @@
   letter-spacing: 0.05em;
   color: var(--text-secondary);
 }
+
+.hall-screen__number {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sized to be read from the back of the room: 74px in preparation, 86px ready (design doc). */
+.hall-screen__number--preparing {
+  font-size: 74px;
+  opacity: 0.72;
+}
+
+.hall-screen__number--ready {
+  font-size: 86px;
+}
+
+.hall-screen__notice {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-chip);
+  background: rgba(179, 64, 44, 0.16);
+  color: var(--accent-clay);
+  font-size: 14px;
+}
