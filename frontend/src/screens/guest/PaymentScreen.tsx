@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { CartQuoteResponse, ConfigResponse, PaymentMethod } from '../../api/types'
+import { DirectionalArrow } from '../../components/DirectionalArrow'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
@@ -54,7 +55,7 @@ export function PaymentScreen({ settings, quote, submitting, error, onBack, onCo
           disabled={submitting}
           aria-label={t('guest.payment.back')}
         >
-          <span aria-hidden="true">←</span>
+          <DirectionalArrow direction="back" />
         </button>
         <h1 className="cart-screen__title">{t('guest.payment.title')}</h1>
       </header>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ConfigResponse, GuestMealResponse } from '../../api/types'
 import { PhotoIcon } from '../../components/PhotoIcon'
+import { DirectionalArrow } from '../../components/DirectionalArrow'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
@@ -59,7 +60,7 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
           onClick={onBack}
           aria-label={t('guest.detail.back')}
         >
-          <span aria-hidden="true">←</span>
+          <DirectionalArrow direction="back" />
         </button>
       </div>
 

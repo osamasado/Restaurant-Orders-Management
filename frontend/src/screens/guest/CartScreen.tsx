@@ -1,4 +1,5 @@
 import type { CartQuoteResponse, ConfigResponse } from '../../api/types'
+import { DirectionalArrow } from '../../components/DirectionalArrow'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
@@ -50,7 +51,7 @@ export function CartScreen({
     <div className="guest-screen cart-screen">
       <header className="guest-screen__header cart-screen__header">
         <button type="button" className="cart-screen__back" onClick={onBack} aria-label={t('guest.cart.back')}>
-          <span aria-hidden="true">←</span>
+          <DirectionalArrow direction="back" />
         </button>
         <h1 className="cart-screen__title">{t('guest.cart.title')}</h1>
       </header>
@@ -145,7 +146,7 @@ export function CartScreen({
         disabled={!canChoosePayment}
       >
         <span>{t('guest.cart.choosePayment')}</span>
-        <span aria-hidden="true">→</span>
+        <DirectionalArrow direction="forward" />
       </button>
     </div>
   )
