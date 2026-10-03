@@ -85,7 +85,7 @@ Ground `#131211`. Header: restaurant name in DM Serif Display 26px, live clock i
 - **In preparation** — subtle paper-tint panel, label in `#F3C77A` with a blinking dot (2s, opacity 1→.25), order numbers in mono 74px in amber
 - **Ready — please collect** — forest `#1F4D3A` panel with a `rgba(125,190,155,.35)` ring, label `#A8DCC0`, order numbers in mono 86px in green; each number fades/rises in when it arrives (0.4s ease)
 
-Each panel lists its orders stacked vertically, one entry per row: the order number with the table number beside it in amber mono (about 28px, "TABLE 7"). Order numbers are shown with at least three digits (`001`, `002`). Nothing else identifying appears: no names, no prices, no items.
+Each panel lists its orders stacked vertically, one entry per row: the order number with the table number beside it in amber mono (about 15px, "TABLE 7"). Order numbers are shown with at least three digits (`001`, `002`). Nothing else identifying appears: no names, no prices, no items.
 
 Footer: "Order numbers and table numbers only, no names, no prices on this screen."
 
