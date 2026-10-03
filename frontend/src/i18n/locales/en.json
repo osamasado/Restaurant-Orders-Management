@@ -18,8 +18,6 @@
   },
   "guest": {
     "tableLabel": "Table {{number}}",
-    "orderingComingSoon": "Guest ordering, coming soon",
-    "continue": "Continue",
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "Order from your table. The kitchen sees it the moment you confirm."
@@ -173,7 +171,6 @@
       "staff": "Staff accounts",
       "settings": "Settings"
     },
-    "notSignedIn": "Not signed in yet",
     "comingSoon": "Coming soon",
     "auth": {
       "title": "Sign in",
@@ -313,7 +310,8 @@
         "ADMIN": "Admin",
         "KITCHEN": "Kitchen",
         "WAITER": "Waiter",
-        "CASHIER": "Cashier"
+        "CASHIER": "Cashier",
+        "USER": "User"
       },
       "resetPin": "Reset PIN",
       "resetPinPrompt": "Enter the new PIN",

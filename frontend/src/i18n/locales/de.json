@@ -18,8 +18,6 @@
   },
   "guest": {
     "tableLabel": "Tisch {{number}}",
-    "orderingComingSoon": "Gästebestellung, demnächst verfügbar",
-    "continue": "Weiter",
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "Bestellen Sie direkt von Ihrem Tisch. Die Küche sieht die Bestellung, sobald Sie bestätigen."
@@ -173,7 +171,6 @@
       "staff": "Personalkonten",
       "settings": "Einstellungen"
     },
-    "notSignedIn": "Noch nicht angemeldet",
     "comingSoon": "Demnächst verfügbar",
     "auth": {
       "title": "Anmelden",
@@ -313,7 +310,8 @@
         "ADMIN": "Admin",
         "KITCHEN": "Küche",
         "WAITER": "Kellner",
-        "CASHIER": "Kassierer"
+        "CASHIER": "Kassierer",
+        "USER": "Benutzer"
       },
       "resetPin": "PIN zurücksetzen",
       "resetPinPrompt": "Neue PIN eingeben",
