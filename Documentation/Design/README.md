@@ -70,9 +70,11 @@ Ground `#0E0D0C`. Header: "Kitchen display" (DM Serif Display 23px) + "WALL MONI
 A cancelled-order banner appears above the columns when any cancelled order is unacknowledged: clay 1.5px ring, 16% clay fill, order number in `#FF8E75`, text "Cancelled by admin · table 4 · stop work", and an "Acknowledge" button.
 
 Three equal columns in a responsive grid (`minmax(270px, 1fr)`), each with a header (colored dot + uppercase mono label + count) and a scrolling card list:
-- **New** — dot `#7DBE9B`; card action: full-width forest "Start"
-- **In preparation** — dot `#F3C77A`; action: full-width amber "Ready" with ink text
-- **Ready** — dot paper; action: outlined "Picked up by waiter"
+- **New** — neutral dot (muted text colour); card action: full-width forest "Start"
+- **In preparation** — amber dot and label (`#F3C77A` on dark), card order number in amber; action: full-width amber "Ready" with ink text
+- **Ready** — green dot and label (`#7DBE9B` on dark), card order number in green; action: outlined "Picked up by waiter"
+
+Stage colours are shared with the hall board: amber means in preparation, green means ready. New is neutral because green is reserved for Ready.
 
 Order card: number in mono 27px, "TABLE 7" eyebrow, and a timer chip on the right — neutral under 6 minutes, amber `#D98F00` from 6, clay `#B3402C` from 12. Then one row per item: quantity in forest-tint mono ("1×"), item name 14px/600, size in muted 11.5px, and — if present — the guest's note as an amber-tinted strip. Empty columns read "Nothing here."
 
@@ -80,10 +82,14 @@ Footer strip: "RAN OUT?" label followed by one toggle chip per main/dessert read
 
 ### 3. Hall status board — screen in the dining area
 Ground `#131211`. Header: restaurant name in DM Serif Display 26px, live clock in mono 22px right. Two panels in a responsive grid:
-- **In preparation** — subtle paper-tint panel, label in `#F3C77A` with a blinking dot (2s, opacity 1→.25), numbers in mono 74px at 72% opacity
-- **Ready — please collect** — forest `#1F4D3A` panel with a `rgba(125,190,155,.35)` ring, label `#A8DCC0`, numbers in mono 86px full-opacity paper; each number fades/rises in when it arrives (0.4s ease)
+- **In preparation** — subtle paper-tint panel, label in `#F3C77A` with a blinking dot (2s, opacity 1→.25), order numbers in mono 74px in amber
+- **Ready — please collect** — forest `#1F4D3A` panel with a `rgba(125,190,155,.35)` ring, label `#A8DCC0`, order numbers in mono 86px in green; each number fades/rises in when it arrives (0.4s ease)
 
-Footer: "Numbers only — no names, no prices, no table numbers on this screen."
+Each panel lists its orders stacked vertically, one entry per row: the order number with the table number beside it in amber mono (about 28px, "TABLE 7"). Order numbers are shown with at least three digits (`001`, `002`). Nothing else identifying appears: no names, no prices, no items.
+
+Footer: "Order numbers and table numbers only, no names, no prices on this screen."
+
+`shots/hall.png` is the original prototype capture: it predates the table numbers and the stacked, per-column-coloured layout, so it still shows numbers only in a single colour.
 
 ### 4. Management backend — office computer
 Two-pane layout: 224px sidebar on `#EFE9DF` with a "MANAGEMENT" label and seven nav items (Orders `live`, Audit history `log`, Meals `8`, Raw materials `24`, Tables & devices `14`, Staff accounts `7`, Settings); the active item is an ink pill with paper text. A signed-in card at the bottom shows "O. Sado / ROLE: ADMIN". Content pane on `#F5F0E8` with a DM Serif Display 25px title plus a muted subtitle.
@@ -96,7 +102,7 @@ Two-pane layout: 224px sidebar on `#EFE9DF` with a "MANAGEMENT" label and seven 
 
 ## Interactions & behavior
 - Guest: welcome → menu → detail → cart → payment → confirm → status. Back buttons return one step; the cart survives navigation and the language switch.
-- Confirming an order issues the order number and moves the guest to the status view.
+- Confirming an order issues the order number, shown with at least three digits (`001`, `002`, ... `999`, then four digits so numbers never repeat), and moves the guest to the status view.
 - Kitchen "Start" → in preparation; "Ready" → ready (the number appears on the hall board); "Picked up by waiter" → served (leaves the boards).
 - Cancel is admin-only and possible from any stage before served; the kitchen shows the red banner until acknowledged.
 - Marking a meal unavailable removes it from every table device; it must not be orderable.
