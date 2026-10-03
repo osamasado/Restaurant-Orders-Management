@@ -245,8 +245,13 @@ export type KitchenMealResponse = {
   names: { language: Language; name: string }[]
 }
 
-/** Everything the hall board may show: order numbers, nothing else (no names, prices or table numbers). */
+/** One line of the hall board: the order's number and the table it is for - nothing else (no names, prices or items). */
+export type HallBoardEntry = {
+  orderNumber: number
+  tableNumber: string
+}
+
 export type HallBoardResponse = {
-  preparing: number[]
-  ready: number[]
+  preparing: HallBoardEntry[]
+  ready: HallBoardEntry[]
 }

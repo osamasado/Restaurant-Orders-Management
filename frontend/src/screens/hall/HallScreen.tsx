@@ -3,6 +3,7 @@ import { LanguageProvider } from '../../i18n/LanguageProvider'
 import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useT } from '../../i18n/useT'
 import { LOCALE_BY_LANGUAGE } from '../../lib/formatMoney'
+import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import { useNow } from '../../lib/useNow'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
@@ -44,18 +45,21 @@ function HallScreenContent() {
 
       <div className="hall-screen__board">
         {PANELS.map((panel) => (
-          <section key={panel.key} className="hall-screen__panel">
+          <section key={panel.key} className={`hall-screen__panel hall-screen__panel--${panel.key}`}>
             <header className="hall-screen__panel-header">
               <span className="hall-screen__dot" />
               <span>{t(panel.labelKey)}</span>
             </header>
-            <div className="hall-screen__numbers">
-              {board?.[panel.key].map((orderNumber) => (
-                <span key={orderNumber} className={`hall-screen__number hall-screen__number--${panel.key}`}>
-                  {orderNumber}
-                </span>
+            <ul className="hall-screen__numbers">
+              {board?.[panel.key].map((entry) => (
+                <li key={entry.orderNumber} className="hall-screen__entry">
+                  <span className="hall-screen__number" dir="ltr">
+                    {formatOrderNumber(entry.orderNumber)}
+                  </span>
+                  <span className="hall-screen__table">{t('hall.table', { number: entry.tableNumber })}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         ))}
       </div>

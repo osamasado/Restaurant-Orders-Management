@@ -68,9 +68,11 @@
 
 .hall-screen__numbers {
   min-height: 140px;
-  margin-top: var(--space-5);
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--space-5);
 }
 
@@ -82,6 +84,12 @@
   color: var(--text-secondary);
 }
 
+.hall-screen__entry {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+}
+
 .hall-screen__number {
   font-family: var(--font-mono);
   font-weight: 600;
@@ -90,13 +98,38 @@
 }
 
 /* Sized to be read from the back of the room: 74px in preparation, 86px ready (design doc). */
-.hall-screen__number--preparing {
+.hall-screen__panel--preparing .hall-screen__number {
   font-size: 74px;
-  opacity: 0.72;
+  color: var(--accent-amber);
 }
 
-.hall-screen__number--ready {
+.hall-screen__panel--ready .hall-screen__number {
   font-size: 86px;
+  color: var(--accent-forest);
+}
+
+/* The table the order is for, beside its number. */
+.hall-screen__table {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--accent-amber);
+}
+
+.hall-screen__panel--preparing .hall-screen__panel-header {
+  color: var(--accent-amber);
+}
+
+.hall-screen__panel--ready .hall-screen__panel-header {
+  color: var(--accent-forest);
+}
+
+.hall-screen__panel--preparing .hall-screen__dot {
+  background: var(--accent-amber);
+}
+
+.hall-screen__panel--ready .hall-screen__dot {
+  background: var(--accent-forest);
 }
 
 .hall-screen__notice {
