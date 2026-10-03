@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "Schließen",
     "theme": {
       "light": "Hell",
       "dark": "Dunkel",

@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "Close",
     "theme": {
       "light": "Light",
       "dark": "Dark",

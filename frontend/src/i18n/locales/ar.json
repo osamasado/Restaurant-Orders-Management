@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "إغلاق",
     "theme": {
       "light": "فاتح",
       "dark": "داكن",
