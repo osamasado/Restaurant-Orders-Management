@@ -75,6 +75,8 @@ class DemoDataSeederTest {
             }
             for (MealSize size : meal.getSizes()) {
                 assertEquals(Language.values().length, size.getTranslations().size());
+                String englishLabel = sizeLabel(size, Language.EN);
+                assertFalse(sizeLabel(size, Language.AR).equals(englishLabel), "Arabic size label for " + englishLabel);
             }
         }
     }
@@ -95,6 +97,16 @@ class DemoDataSeederTest {
         }
         // An admin has already written their own German description.
         translation(edited, Language.DE).setDescription("Eigener Text vom Admin");
+        // Arabic size labels that were never translated (still the English text), and one an admin changed.
+        for (MealSize size : emptied.getSizes()) {
+            size.getTranslations().stream()
+                    .filter(translation -> translation.getLanguage() == Language.AR)
+                    .forEach(translation -> translation.setLabel(sizeLabel(size, Language.EN)));
+        }
+        MealSize editedSize = edited.getSizes().get(0);
+        editedSize.getTranslations().stream()
+                .filter(translation -> translation.getLanguage() == Language.AR)
+                .forEach(translation -> translation.setLabel("حجم من المدير"));
         mealRepository.saveAllAndFlush(List.of(emptied, edited));
 
         demoDataSeeder.seedAll();
@@ -105,7 +117,19 @@ class DemoDataSeederTest {
             assertFalse(refilled.getIngredients().isEmpty(), language + " ingredients");
         }
         assertEquals("Eigener Text vom Admin", translation(edited, Language.DE).getDescription());
+        for (MealSize size : emptied.getSizes()) {
+            assertFalse(sizeLabel(size, Language.AR).equals(sizeLabel(size, Language.EN)), "refilled Arabic size label");
+        }
+        assertEquals("حجم من المدير", sizeLabel(editedSize, Language.AR));
         assertTrue(mealRepository.count() == 8);
+    }
+
+    private static String sizeLabel(MealSize size, Language language) {
+        return size.getTranslations().stream()
+                .filter(translation -> translation.getLanguage() == language)
+                .findFirst()
+                .orElseThrow()
+                .getLabel();
     }
 
     private static MealTranslation translation(Meal meal, Language language) {
