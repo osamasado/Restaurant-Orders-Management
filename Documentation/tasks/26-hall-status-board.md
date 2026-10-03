@@ -40,10 +40,11 @@ Frontend:
 2. Ran the repository test with SQL logging to confirm the hall query selects only `order_number` and `table_number`.
 3. `npx tsc -b`, `npm run build`, and eslint on `src/screens/hall src/screens/kitchen src/screens/guest src/api src/lib src/i18n`: clean.
 4. The first version was reviewed in the browser against a running backend. That review led to the stacked layout, the column colours, the three-digit numbers and the table number.
-5. A read-only `curl` against the already running dev backend showed it was still the older build (plain numbers, not entries), so the final layout has not yet been checked against the rebuilt backend.
+5. Manual run (dev profile + Vite) on the restarted backend, after a read-only `curl` first showed the previously running backend was the older build (plain numbers, not entries):
+   - A guest order moved through Start, Ready and Picked up in the kitchen, and `/hall` moved its number from In preparation to Ready and then removed it.
+   - Each entry showed the table number beside the order number, with numbers stacked and three-digit on every screen.
+   - The Arabic layout was mirrored and the digits matched the guest screen.
+   - With the backend stopped, the connection-lost notice appeared and the numbers stayed. It cleared after the restart.
 
 Issues found along the way:
 - **Over-wide projection:** when the table number was added, a nested derived projection looked right and its javadoc said only two columns were selected, but the SQL log showed the full `restaurant_table` row being loaded, including the pairing code. It was never in the response, but it should not be loaded for a public endpoint. Replaced with the explicit two-column query, and the log re-checked.
-
-Not yet verified:
-- Visual check of the stacked layout, colours and table number on the rebuilt backend, including Arabic. Restart the backend first, because the running one predates the table-number change.
