@@ -132,7 +132,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void orderNumbersByStatusAreOnlyThatStatusInAscendingOrder() {
+    void hallBoardRowsAreOnlyThatStatusInAscendingOrderWithTheirTableNumber() {
         Table table = new Table();
         table.setTableNumber("44");
         table.setRoom("Front room");
@@ -146,12 +146,13 @@ class OrderRepositoryTest {
                 numberedOrder(table, 9002, OrderStatus.READY, at),
                 numberedOrder(table, 9004, OrderStatus.SERVED, at)));
 
-        List<Integer> preparing = orderRepository.findByStatusOrderByOrderNumberAsc(OrderStatus.PREPARING).stream()
-                .map(OrderRepository.OrderNumberOnly::getOrderNumber)
-                .filter(number -> number >= 9000)
-                .toList();
+        List<OrderRepository.HallBoardRow> preparing =
+                orderRepository.findHallBoardRows(OrderStatus.PREPARING).stream()
+                        .filter(row -> row.getOrderNumber() >= 9000)
+                        .toList();
 
-        assertEquals(List.of(9001, 9003), preparing);
+        assertEquals(List.of(9001, 9003), preparing.stream().map(OrderRepository.HallBoardRow::getOrderNumber).toList());
+        assertEquals(List.of("44", "44"), preparing.stream().map(OrderRepository.HallBoardRow::getTableNumber).toList());
     }
 
     private Order numberedOrder(Table table, int orderNumber, OrderStatus status, Instant at) {

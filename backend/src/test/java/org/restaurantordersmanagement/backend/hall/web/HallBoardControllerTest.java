@@ -1,5 +1,6 @@
 package org.restaurantordersmanagement.backend.hall.web;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -102,18 +103,18 @@ class HallBoardControllerTest {
 
         Order preparing = advance(order, OrderStatus.PREPARING);
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing").value(hasItem(number)))
-                .andExpect(jsonPath("$.ready").value(not(hasItem(number))));
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(hasItem(number)))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(number))));
 
         Order ready = advance(preparing, OrderStatus.READY);
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing").value(not(hasItem(number))))
-                .andExpect(jsonPath("$.ready").value(hasItem(number)));
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(number))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(hasItem(number)));
 
         advance(ready, OrderStatus.SERVED);
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing").value(not(hasItem(number))))
-                .andExpect(jsonPath("$.ready").value(not(hasItem(number))));
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(number))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(number))));
     }
 
     @Test
@@ -122,21 +123,32 @@ class HallBoardControllerTest {
         Order cancelled = advance(submittedOrder(), OrderStatus.CANCELLED);
 
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing").value(not(hasItem(notStarted.getOrderNumber()))))
-                .andExpect(jsonPath("$.ready").value(not(hasItem(notStarted.getOrderNumber()))))
-                .andExpect(jsonPath("$.preparing").value(not(hasItem(cancelled.getOrderNumber()))))
-                .andExpect(jsonPath("$.ready").value(not(hasItem(cancelled.getOrderNumber()))));
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(notStarted.getOrderNumber()))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(notStarted.getOrderNumber()))))
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(cancelled.getOrderNumber()))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(cancelled.getOrderNumber()))));
     }
 
     @Test
-    void boardExposesNothingButOrderNumbers() throws Exception {
+    void entryShowsTheOrderNumberBesideItsTableNumber() throws Exception {
+        Order preparing = advance(submittedOrder(), OrderStatus.PREPARING);
+
+        mockMvc.perform(get("/api/hall/orders"))
+                .andExpect(jsonPath("$.preparing[?(@.orderNumber == " + preparing.getOrderNumber() + ")].tableNumber")
+                        .value(contains(preparing.getTable().getTableNumber())));
+    }
+
+    @Test
+    void boardExposesNothingButOrderAndTableNumbers() throws Exception {
         advance(submittedOrder(), OrderStatus.PREPARING);
 
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing[0]").isNumber())
-                .andExpect(jsonPath("$..tableNumber").doesNotExist())
+                .andExpect(jsonPath("$.preparing[0].length()").value(2))
+                .andExpect(jsonPath("$.preparing[0].orderNumber").isNumber())
+                .andExpect(jsonPath("$.preparing[0].tableNumber").isString())
                 .andExpect(jsonPath("$..items").doesNotExist())
-                .andExpect(jsonPath("$..total").doesNotExist());
+                .andExpect(jsonPath("$..total").doesNotExist())
+                .andExpect(jsonPath("$..unitPrice").doesNotExist());
     }
 
 }
