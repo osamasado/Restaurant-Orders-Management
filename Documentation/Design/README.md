@@ -140,6 +140,7 @@ German, English, Arabic. Interface labels and menu content are both translated: 
 Decisions made while building it:
 - **Arabic uses Latin digits** (`25.11`, `10:41:08`, `001`), not Arabic-Indic digits. Order numbers, table numbers, timers and quantities are Latin on every screen, so prices and times match them instead of switching digit style mid-screen. Decimal separators, currency position and date order still follow the language.
 - **Direction-aware icons:** back and forward arrows swap sides in Arabic (back points right), so they always point the way the text reads.
+- **Data text is isolated:** sizes (`300 g`), device codes, room names and guests' notes are wrapped in `<bdi>` (or a Unicode isolate inside translated sentences), so they keep their own order inside an Arabic line instead of rendering as `g 300`. Size labels in the Arabic menu use Arabic units (`300 غرام`, `0.3 لتر`).
 - **Missing translations are caught early:** `npm run check:i18n` (in `frontend/`) fails if the three locale files have different keys or placeholders, or if the code uses a key that does not exist.
 
 ## Assets
