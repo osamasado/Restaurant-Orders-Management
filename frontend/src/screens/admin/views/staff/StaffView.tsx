@@ -2,16 +2,21 @@ import { useEffect, useState } from 'react'
 import { deleteAccount, listAccounts, resetPin } from '../../../../api/staffApi'
 import type { StaffResponse } from '../../../../api/types'
 import { useAuth } from '../../../../auth/auth-context'
+import { useLanguage } from '../../../../i18n/language-context'
 import { useT } from '../../../../i18n/useT'
+import { LOCALE_BY_LANGUAGE } from '../../../../lib/formatMoney'
+import type { Language } from '../../../../i18n/i18n'
 import { StaffFormModal } from './StaffFormModal'
 import './StaffView.css'
 
-function formatLastSeenAt(lastSeenAt: string): string {
-  return new Date(lastSeenAt).toLocaleString()
+/** In the app's language, not the browser's - otherwise an Arabic screen can show German dates. */
+function formatLastSeenAt(lastSeenAt: string, language: Language): string {
+  return new Date(lastSeenAt).toLocaleString(LOCALE_BY_LANGUAGE[language])
 }
 
 export function StaffView() {
   const { t } = useT()
+  const { language } = useLanguage()
   const { staff: currentStaff } = useAuth()
 
   const [accounts, setAccounts] = useState<StaffResponse[]>([])
@@ -100,7 +105,7 @@ export function StaffView() {
               {[
                 t(`admin.staff.roles.${account.role}`),
                 account.lastSeenAt
-                  ? t('admin.staff.lastSeenAt', { date: formatLastSeenAt(account.lastSeenAt) })
+                  ? t('admin.staff.lastSeenAt', { date: formatLastSeenAt(account.lastSeenAt, language) })
                   : t('admin.staff.neverSignedIn'),
               ].join(' · ')}
             </span>
