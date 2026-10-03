@@ -111,7 +111,7 @@
 /* The table the order is for, beside its number. */
 .hall-screen__table {
   font-family: var(--font-mono);
-  font-size: 28px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--accent-amber);
 }
