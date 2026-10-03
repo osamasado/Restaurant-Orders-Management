@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-/** Re-renders once per interval - drives the card timers and the header clock. */
+/** Re-renders once per interval - drives the kitchen card timers and the kitchen and hall header clocks. */
 export function useNow(intervalMs = 1000): number {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
