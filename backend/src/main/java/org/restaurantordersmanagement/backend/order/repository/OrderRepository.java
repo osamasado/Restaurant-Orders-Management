@@ -6,6 +6,8 @@ import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -26,15 +28,20 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(OrderStatus status);
 
     /**
-     * Only the order numbers of one status, lowest first - the hall board's
-     * source. A closed projection, so just the order_number column is
-     * selected: the table, items and prices are never even loaded.
+     * Only the order number and table number of one status, lowest number
+     * first - the hall board's source. A closed projection, so just those two
+     * columns are selected: items, prices and everything else on the order
+     * are never even loaded.
      */
-    List<OrderNumberOnly> findByStatusOrderByOrderNumberAsc(OrderStatus status);
+    @Query("select o.orderNumber as orderNumber, o.table.tableNumber as tableNumber "
+            + "from Order o where o.status = :status order by o.orderNumber")
+    List<HallBoardRow> findHallBoardRows(@Param("status") OrderStatus status);
 
-    interface OrderNumberOnly {
+    interface HallBoardRow {
 
         Integer getOrderNumber();
+
+        String getTableNumber();
 
     }
 

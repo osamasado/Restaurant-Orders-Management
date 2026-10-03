@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The dining-area board's view of orders: PREPARING and READY order numbers.
+ * The dining-area board's view of orders: PREPARING and READY order and table numbers.
  * A submitted order the kitchen has not started yet, and anything served or
  * cancelled, is not on the board - so a number leaves it the moment it is served.
  */
@@ -26,9 +26,9 @@ public class HallBoardService {
         return new HallBoardResponse(numbersWith(OrderStatus.PREPARING), numbersWith(OrderStatus.READY));
     }
 
-    private List<Integer> numbersWith(OrderStatus status) {
-        return orderRepository.findByStatusOrderByOrderNumberAsc(status).stream()
-                .map(OrderRepository.OrderNumberOnly::getOrderNumber)
+    private List<HallBoardResponse.Entry> numbersWith(OrderStatus status) {
+        return orderRepository.findHallBoardRows(status).stream()
+                .map(row -> new HallBoardResponse.Entry(row.getOrderNumber(), row.getTableNumber()))
                 .toList();
     }
 
