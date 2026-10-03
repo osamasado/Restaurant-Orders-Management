@@ -135,7 +135,12 @@ Rules from the proposal that the implementation must honor:
 - Also required by the proposal but only represented as static tables in the prototype: raw materials, recipes (meal size → raw materials), tables + paired devices, staff accounts with roles
 
 ## Localisation
-German, English, Arabic. Interface labels and menu content are both translated. Arabic is fully right-to-left (not mirrored English) — **this is not built in the prototype**; only the language choice exists. Numbers and currency format follow the language (the prototype uses German-style decimals: `25,11 €`).
+German, English, Arabic. Interface labels and menu content are both translated: every meal has a name, description, preparation method and ingredient list in all three languages. Arabic is fully right-to-left (not mirrored English) — **this is not built in the prototype**; only the language choice exists. Numbers and currency format follow the language (the prototype uses German-style decimals: `25,11 €`).
+
+Decisions made while building it:
+- **Arabic uses Latin digits** (`25.11`, `10:41:08`, `001`), not Arabic-Indic digits. Order numbers, table numbers, timers and quantities are Latin on every screen, so prices and times match them instead of switching digit style mid-screen. Decimal separators, currency position and date order still follow the language.
+- **Direction-aware icons:** back and forward arrows swap sides in Arabic (back points right), so they always point the way the text reads.
+- **Missing translations are caught early:** `npm run check:i18n` (in `frontend/`) fails if the three locale files have different keys or placeholders, or if the code uses a key that does not exist.
 
 ## Assets
 - No photography included. Meal photos are empty drop slots in the prototype; production needs an image upload per meal (and per size, if useful).
