@@ -176,7 +176,8 @@ export function MealsView() {
               <div className="meal-row__info">
                 <span className="meal-row__name">{mealName(meal, language)}</span>
                 <span className="meal-row__meta">
-                  {category ? categoryName(category, language) : ''} · {mealSizeLabels(meal, language)} ·{' '}
+                  <bdi>{category ? categoryName(category, language) : ''}</bdi> ·{' '}
+                  <bdi>{mealSizeLabels(meal, language)}</bdi> ·{' '}
                   {t('admin.meals.ingredientsCount', { count: mealIngredientCount(meal, language) })}
                 </span>
               </div>

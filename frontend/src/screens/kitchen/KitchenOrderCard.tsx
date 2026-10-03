@@ -47,10 +47,14 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
           <li key={index} className="kitchen-order-card__item">
             <div className="kitchen-order-card__item-line">
               <span className="kitchen-order-card__quantity">{item.quantity}×</span>
-              <span className="kitchen-order-card__name">{item.name}</span>
-              <span className="kitchen-order-card__size">{item.size}</span>
+              <span className="kitchen-order-card__name"><bdi>{item.name}</bdi></span>
+              <span className="kitchen-order-card__size"><bdi>{item.size}</bdi></span>
             </div>
-            {item.note && <p className="kitchen-order-card__note">{item.note}</p>}
+            {item.note && (
+              <p className="kitchen-order-card__note">
+                <bdi>{item.note}</bdi>
+              </p>
+            )}
           </li>
         ))}
       </ul>

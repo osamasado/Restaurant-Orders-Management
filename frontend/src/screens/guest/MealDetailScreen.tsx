@@ -104,7 +104,9 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
                   }
                   onClick={() => setSelectedSizeId(size.id)}
                 >
-                  <span>{size.label}</span>
+                  <span>
+                    <bdi>{size.label}</bdi>
+                  </span>
                   <span>{price(size.price)}</span>
                 </button>
               ))}

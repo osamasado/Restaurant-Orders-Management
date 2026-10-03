@@ -2,6 +2,7 @@ import type { CartQuoteResponse, ConfigResponse } from '../../api/types'
 import { DirectionalArrow } from '../../components/DirectionalArrow'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
+import { isolate } from '../../lib/bidi'
 import { formatMoney } from '../../lib/formatMoney'
 import { MAX_QUANTITY, MIN_QUANTITY, type CartLineItem } from './cartTypes'
 import './MealDetailScreen.css'
@@ -69,7 +70,7 @@ export function CartScreen({
                 <div>
                   <div className="cart-screen__line-name">{item.name}</div>
                   <div className="cart-screen__line-meta">
-                    {t('guest.cart.each', { size: item.size, price: price(item.unitPrice) })}
+                    {t('guest.cart.each', { size: isolate(item.size), price: isolate(price(item.unitPrice)) })}
                   </div>
                 </div>
                 <span className="cart-screen__line-total">{price(item.unitPrice * item.quantity)}</span>
