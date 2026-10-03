@@ -7,10 +7,15 @@ import type { SymbolPosition } from '../api/types'
  * rather than a hardcoded separator - the design doc calls this out
  * explicitly ("Numbers and currency format follow the language").
  */
+/**
+ * Arabic uses Latin digits (the -u-nu-latn extension): order numbers, table
+ * numbers, timers and quantities are Latin everywhere, so prices and times
+ * match them instead of switching to Arabic-Indic digits mid-screen.
+ */
 export const LOCALE_BY_LANGUAGE: Record<Language, string> = {
   de: 'de-DE',
   en: 'en-US',
-  ar: 'ar-EG',
+  ar: 'ar-EG-u-nu-latn',
 }
 
 export function formatMoney(

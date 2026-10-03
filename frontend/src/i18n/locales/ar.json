@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "إغلاق",
     "theme": {
       "light": "فاتح",
       "dark": "داكن",
@@ -17,8 +18,6 @@
   },
   "guest": {
     "tableLabel": "طاولة {{number}}",
-    "orderingComingSoon": "طلب الضيوف، قريبًا",
-    "continue": "متابعة",
     "welcome": {
       "title": "Restaurant Orders Management",
       "tagline": "اطلب من طاولتك مباشرة. يرى المطبخ طلبك فور تأكيده."
@@ -172,7 +171,6 @@
       "staff": "حسابات الموظفين",
       "settings": "الإعدادات"
     },
-    "notSignedIn": "لم يتم تسجيل الدخول بعد",
     "comingSoon": "قريبًا",
     "auth": {
       "title": "تسجيل الدخول",
@@ -312,7 +310,8 @@
         "ADMIN": "مدير",
         "KITCHEN": "المطبخ",
         "WAITER": "نادل",
-        "CASHIER": "أمين الصندوق"
+        "CASHIER": "أمين الصندوق",
+        "USER": "مستخدم"
       },
       "resetPin": "إعادة تعيين الرقم السري",
       "resetPinPrompt": "أدخل الرقم السري الجديد",

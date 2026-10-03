@@ -14,11 +14,6 @@
   cursor: pointer;
 }
 
-[dir='rtl'] .cart-screen__back span {
-  display: inline-block;
-  transform: scaleX(-1);
-}
-
 .cart-screen__title {
   margin: 0;
   font-size: 22px;

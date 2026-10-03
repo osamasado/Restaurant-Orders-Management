@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { deleteTable, listTables, pairTable, unpairTable } from '../../../../api/tableApi'
 import type { DeviceStatus, TableResponse } from '../../../../api/types'
 import { useT } from '../../../../i18n/useT'
@@ -110,9 +110,18 @@ export function TablesView() {
           <div className="table-row" key={table.id}>
             <span className="table-row__name">{table.tableNumber}</span>
             <span className="table-row__meta">
-              {[table.room, t('admin.tables.seatsCount', { count: table.seats }), table.pairedDeviceId]
-                .filter(Boolean)
-                .join(' · ')}
+              {[
+                { key: 'room', node: table.room && <bdi>{table.room}</bdi> },
+                { key: 'seats', node: t('admin.tables.seatsCount', { count: table.seats }) },
+                { key: 'device', node: table.pairedDeviceId && <bdi>{table.pairedDeviceId}</bdi> },
+              ]
+                .filter((part) => part.node)
+                .map((part, index) => (
+                  <Fragment key={part.key}>
+                    {index > 0 && ' · '}
+                    {part.node}
+                  </Fragment>
+                ))}
             </span>
             <span
               className={`table-row__device table-row__device--${table.deviceStatus.toLowerCase()}`}

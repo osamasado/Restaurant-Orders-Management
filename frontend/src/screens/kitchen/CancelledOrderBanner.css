@@ -18,12 +18,12 @@
 .cancelled-banner__number {
   font-family: var(--font-mono);
   font-size: 19px;
-  color: #ff8e75;
+  color: var(--accent-clay);
 }
 
 .cancelled-banner__text {
   flex: 1;
-  color: #ffc6b6;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -32,7 +32,7 @@
   border: 1px solid var(--accent-clay);
   border-radius: var(--radius-pill);
   background: none;
-  color: #ffc6b6;
+  color: var(--text);
   font: inherit;
   cursor: pointer;
 }

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
+import { useT } from '../i18n/useT'
 import './Modal.css'
 
 type ModalProps = {
@@ -10,6 +11,8 @@ type ModalProps = {
 
 /** First shared modal/dialog primitive in this frontend - built for issue #13's meal/category forms. */
 export function Modal({ title, onClose, children }: ModalProps) {
+  const { t } = useT()
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
@@ -27,7 +30,7 @@ export function Modal({ title, onClose, children }: ModalProps) {
       <div className="modal__card" role="dialog" aria-modal="true" aria-label={title}>
         <div className="modal__header">
           <h2 className="modal__title">{title}</h2>
-          <button type="button" className="modal__close" onClick={onClose} aria-label="Close">
+          <button type="button" className="modal__close" onClick={onClose} aria-label={t('common.close')}>
             &times;
           </button>
         </div>
