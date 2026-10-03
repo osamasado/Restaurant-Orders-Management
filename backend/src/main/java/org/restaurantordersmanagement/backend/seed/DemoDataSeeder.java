@@ -3,7 +3,11 @@ package org.restaurantordersmanagement.backend.seed;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.restaurantordersmanagement.backend.i18n.Language;
 import org.restaurantordersmanagement.backend.menu.model.Category;
@@ -21,6 +25,7 @@ import org.restaurantordersmanagement.backend.table.model.Table;
 import org.restaurantordersmanagement.backend.table.repository.TableRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Demo data reused verbatim from the project's own design prototype
@@ -29,6 +34,10 @@ import org.springframework.stereotype.Component;
  * project's demos. Always registered as a bean but does nothing on its
  * own - {@link DemoDataStartupRunner} is what actually calls
  * {@link #seedAll()}, and only in the dev profile.
+ *
+ * The German and Arabic meal content (descriptions, preparation, ingredients)
+ * was written for this project, since the prototype only has English text;
+ * have a native speaker review the Arabic before a real demo.
  */
 @Slf4j
 @Component
@@ -56,6 +65,11 @@ public class DemoDataSeeder {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * One transaction, so a failed seed leaves nothing half-written - and so
+     * the lazy translations are loaded when an already-seeded menu is topped up.
+     */
+    @Transactional
     public void seedAll() {
         seedMenu();
         seedTables();
@@ -64,71 +78,177 @@ public class DemoDataSeeder {
 
     private void seedMenu() {
         if (categoryRepository.count() > 0) {
-            log.info("Demo menu already seeded, skipping");
+            log.info("Demo menu already seeded, filling in any missing DE/AR meal content");
+            fillMissingMealContent();
             return;
         }
 
-        Category starters = category(1, "Starters", "Vorspeisen", "المقبلات");
-        Category mains = category(2, "Mains", "Hauptspeisen", "الأطباق الرئيسية");
-        Category desserts = category(3, "Desserts", "Desserts", "الحلويات");
-        Category drinks = category(4, "Drinks", "Getränke", "المشروبات");
+        Map<Integer, Category> categories = Map.of(
+                1, category(1, "Starters", "Vorspeisen", "المقبلات"),
+                2, category(2, "Mains", "Hauptspeisen", "الأطباق الرئيسية"),
+                3, category(3, "Desserts", "Desserts", "الحلويات"),
+                4, category(4, "Drinks", "Getränke", "المشروبات"));
 
-        meal(starters, "Pumpkin Soup", "Kürbissuppe", "شوربة اليقطين", true,
-                "Hokkaido pumpkin, roasted until sweet, finished with pumpkin-seed oil and crème fraîche.",
-                "Roasted, blended, passed through a fine sieve. Served at 68°C.",
-                List.of("Hokkaido pumpkin", "Onion", "Vegetable stock", "Cream", "Pumpkin-seed oil", "Nutmeg"),
-                size("Cup", "Tasse", "كوب", "6.50"),
-                size("Bowl", "Schüssel", "وعاء", "8.90"));
-
-        meal(starters, "Flammkuchen", "Flammkuchen", "فلامكوخن", true,
-                "Thin Alsatian tart with crème fraîche, smoked bacon and onion, baked on the stone.",
-                "Stone oven, 320°C, 4 minutes. Cut into six pieces.",
-                List.of("Wheat flour", "Crème fraîche", "Smoked bacon", "Onion", "Chives"),
-                size("Half board", "Halbes Blech", "نصف صينية", "9.80"),
-                size("Full board", "Ganzes Blech", "صينية كاملة", "14.50"));
-
-        meal(mains, "Wiener Schnitzel", "Wiener Schnitzel", "شنيتزل فيينا", true,
-                "Veal escalope in a light breadcrumb coating, pan-fried in clarified butter. With potato salad and lingonberry.",
-                "Beaten to 4 mm, breaded in flour, egg and breadcrumbs, fried swimming in clarified butter.",
-                List.of("Veal", "Wheat flour", "Egg", "Breadcrumbs", "Clarified butter", "Lingonberry"),
-                size("200 g", "200 g", "200 g", "18.90"),
-                size("300 g", "300 g", "300 g", "22.50"));
-
-        meal(mains, "Käsespätzle", "Käsespätzle", "شبيتسله بالجبن", true,
-                "Hand-scraped spätzle layered with mountain cheese and crowned with dark roasted onions.",
-                "Scraped fresh to order, gratinated for 6 minutes.",
-                List.of("Wheat flour", "Egg", "Bergkäse", "Emmental", "Onion", "Butter"),
-                size("Regular", "Normal", "عادي", "14.50"),
-                size("Large", "Groß", "كبير", "17.90"));
-
-        meal(mains, "Rinderroulade", "Rinderroulade", "لفائف لحم البقر", false,
-                "Beef roulade with mustard, bacon and pickled cucumber, braised two hours in its own sauce.",
-                "Seared, then braised at 140°C for 120 minutes. Sauce reduced and strained.",
-                List.of("Beef", "Mustard", "Bacon", "Pickled cucumber", "Onion", "Red wine"),
-                size("One roll", "Eine Rolle", "لفة واحدة", "19.80"),
-                size("Two rolls", "Zwei Rollen", "لفتان", "26.40"));
-
-        meal(desserts, "Apfelstrudel", "Apfelstrudel", "شتراودل التفاح", true,
-                "Pulled strudel dough, Elstar apples, raisins and cinnamon. Served warm with vanilla sauce.",
-                "Dough pulled by hand, baked 25 minutes, rested 5 minutes before serving.",
-                List.of("Wheat flour", "Elstar apple", "Raisins", "Cinnamon", "Butter", "Vanilla"),
-                size("Slice", "Stück", "قطعة", "7.20"));
-
-        meal(desserts, "Kaiserschmarrn", "Kaiserschmarrn", "كايزرشمارن", true,
-                "Shredded sweet pancake, caramelised in butter, dusted with icing sugar. With plum compote.",
-                "Pan-baked, torn, caramelised. Takes 14 minutes, started on order.",
-                List.of("Wheat flour", "Milk", "Egg", "Butter", "Icing sugar", "Plum"),
-                size("For one", "Für eine Person", "لشخص واحد", "8.40"),
-                size("To share", "Zum Teilen", "للمشاركة", "13.90"));
-
-        meal(drinks, "Radler", "Radler", "رادلر", true,
-                "Helles beer cut with cloudy lemonade, poured cold.",
-                "Poured on order, 4°C.",
-                List.of("Helles beer", "Cloudy lemonade"),
-                size("0.3 l", "0,3 l", "0.3 l", "4.20"),
-                size("0.5 l", "0,5 l", "0.5 l", "5.60"));
+        for (MealSeed seed : mealSeeds()) {
+            meal(categories.get(seed.categorySortOrder()), seed);
+        }
 
         log.info("Seeded demo menu: 4 categories, 8 meals");
+    }
+
+    /** The demo menu: category 1 starters, 2 mains, 3 desserts, 4 drinks. Ingredient lists are in the same order in every language. */
+    private List<MealSeed> mealSeeds() {
+        return List.of(
+                mealSeed(1, "Pumpkin Soup", "Kürbissuppe", "شوربة اليقطين", true,
+                        text("Hokkaido pumpkin, roasted until sweet, finished with pumpkin-seed oil and crème fraîche.",
+                                "Roasted, blended, passed through a fine sieve. Served at 68°C.",
+                                "Hokkaido pumpkin", "Onion", "Vegetable stock", "Cream", "Pumpkin-seed oil", "Nutmeg"),
+                        text("Hokkaido-Kürbis, bis zur Süße geröstet, verfeinert mit Kürbiskernöl und Crème fraîche.",
+                                "Geröstet, püriert und durch ein feines Sieb gestrichen. Serviert bei 68 °C.",
+                                "Hokkaido-Kürbis", "Zwiebel", "Gemüsebrühe", "Sahne", "Kürbiskernöl", "Muskat"),
+                        text("يقطين هوكايدو محمّص حتى تظهر حلاوته، ويُقدَّم مع زيت بذور اليقطين والكريم فريش.",
+                                "يُحمَّص ثم يُهرس ويُمرَّر عبر منخل ناعم. يُقدَّم على حرارة 68 درجة مئوية.",
+                                "يقطين هوكايدو", "بصل", "مرق خضار", "قشدة", "زيت بذور اليقطين", "جوزة الطيب"),
+                        size("Cup", "Tasse", "كوب", "6.50"),
+                        size("Bowl", "Schüssel", "وعاء", "8.90")),
+
+                mealSeed(1, "Flammkuchen", "Flammkuchen", "فلامكوخن", true,
+                        text("Thin Alsatian tart with crème fraîche, smoked bacon and onion, baked on the stone.",
+                                "Stone oven, 320°C, 4 minutes. Cut into six pieces.",
+                                "Wheat flour", "Crème fraîche", "Smoked bacon", "Onion", "Chives"),
+                        text("Dünner elsässischer Fladen mit Crème fraîche, geräuchertem Speck und Zwiebeln, auf dem Stein gebacken.",
+                                "Steinofen, 320 °C, 4 Minuten. In sechs Stücke geschnitten.",
+                                "Weizenmehl", "Crème fraîche", "Geräucherter Speck", "Zwiebel", "Schnittlauch"),
+                        text("فطيرة رقيقة من منطقة الألزاس بالكريم فريش والبيكون المدخّن والبصل، تُخبز على الحجر.",
+                                "فرن حجري، 320 درجة مئوية، 4 دقائق. تُقطَّع إلى ست قطع.",
+                                "طحين القمح", "كريم فريش", "بيكون مدخّن", "بصل", "ثوم معمّر"),
+                        size("Half board", "Halbes Blech", "نصف صينية", "9.80"),
+                        size("Full board", "Ganzes Blech", "صينية كاملة", "14.50")),
+
+                mealSeed(2, "Wiener Schnitzel", "Wiener Schnitzel", "شنيتزل فيينا", true,
+                        text("Veal escalope in a light breadcrumb coating, pan-fried in clarified butter. With potato salad and lingonberry.",
+                                "Beaten to 4 mm, breaded in flour, egg and breadcrumbs, fried swimming in clarified butter.",
+                                "Veal", "Wheat flour", "Egg", "Breadcrumbs", "Clarified butter", "Lingonberry"),
+                        text("Kalbsschnitzel in leichter Semmelbrösel-Panade, in Butterschmalz ausgebacken. Dazu Kartoffelsalat und Preiselbeeren.",
+                                "Auf 4 mm geklopft, in Mehl, Ei und Semmelbröseln gewendet und schwimmend in Butterschmalz ausgebacken.",
+                                "Kalbfleisch", "Weizenmehl", "Ei", "Semmelbrösel", "Butterschmalz", "Preiselbeeren"),
+                        text("شريحة لحم عجل بغلاف خفيف من فتات الخبز، مقلية في السمن المصفّى. تُقدَّم مع سلطة البطاطا والتوت البري الأحمر.",
+                                "تُطرَّق حتى سماكة 4 ملم، وتُغطّى بالطحين والبيض وفتات الخبز، ثم تُقلى غائصةً في السمن المصفّى.",
+                                "لحم عجل", "طحين القمح", "بيض", "فتات الخبز", "سمن مصفّى", "التوت البري الأحمر"),
+                        size("200 g", "200 g", "200 g", "18.90"),
+                        size("300 g", "300 g", "300 g", "22.50")),
+
+                mealSeed(2, "Käsespätzle", "Käsespätzle", "شبيتسله بالجبن", true,
+                        text("Hand-scraped spätzle layered with mountain cheese and crowned with dark roasted onions.",
+                                "Scraped fresh to order, gratinated for 6 minutes.",
+                                "Wheat flour", "Egg", "Bergkäse", "Emmental", "Onion", "Butter"),
+                        text("Handgeschabte Spätzle, geschichtet mit Bergkäse und gekrönt von dunkel gerösteten Zwiebeln.",
+                                "Frisch auf Bestellung geschabt, 6 Minuten überbacken.",
+                                "Weizenmehl", "Ei", "Bergkäse", "Emmentaler", "Zwiebel", "Butter"),
+                        text("شبيتسله مبشورة يدويًا، مطبوخة على طبقات مع جبن الجبال، وتعلوها شرائح بصل محمّرة داكنة.",
+                                "تُحضَّر طازجة عند الطلب وتُحمَّر في الفرن 6 دقائق.",
+                                "طحين القمح", "بيض", "جبن الجبال (بيرغكيزه)", "جبن إيمنتال", "بصل", "زبدة"),
+                        size("Regular", "Normal", "عادي", "14.50"),
+                        size("Large", "Groß", "كبير", "17.90")),
+
+                mealSeed(2, "Rinderroulade", "Rinderroulade", "لفائف لحم البقر", false,
+                        text("Beef roulade with mustard, bacon and pickled cucumber, braised two hours in its own sauce.",
+                                "Seared, then braised at 140°C for 120 minutes. Sauce reduced and strained.",
+                                "Beef", "Mustard", "Bacon", "Pickled cucumber", "Onion", "Red wine"),
+                        text("Rinderroulade mit Senf, Speck und Gewürzgurke, zwei Stunden in der eigenen Sauce geschmort.",
+                                "Angebraten, dann 120 Minuten bei 140 °C geschmort. Sauce eingekocht und passiert.",
+                                "Rindfleisch", "Senf", "Speck", "Gewürzgurke", "Zwiebel", "Rotwein"),
+                        text("لفائف لحم بقري محشوة بالخردل والبيكون والخيار المخلّل، تُطهى ببطء ساعتين في صلصتها.",
+                                "تُحمَّر أولًا ثم تُطهى ببطء على 140 درجة مئوية لمدة 120 دقيقة. تُركَّز الصلصة وتُصفّى.",
+                                "لحم بقري", "خردل", "بيكون", "خيار مخلّل", "بصل", "نبيذ أحمر"),
+                        size("One roll", "Eine Rolle", "لفة واحدة", "19.80"),
+                        size("Two rolls", "Zwei Rollen", "لفتان", "26.40")),
+
+                mealSeed(3, "Apfelstrudel", "Apfelstrudel", "شتراودل التفاح", true,
+                        text("Pulled strudel dough, Elstar apples, raisins and cinnamon. Served warm with vanilla sauce.",
+                                "Dough pulled by hand, baked 25 minutes, rested 5 minutes before serving.",
+                                "Wheat flour", "Elstar apple", "Raisins", "Cinnamon", "Butter", "Vanilla"),
+                        text("Handgezogener Strudelteig, Elstar-Äpfel, Rosinen und Zimt. Warm serviert mit Vanillesauce.",
+                                "Teig von Hand ausgezogen, 25 Minuten gebacken, vor dem Servieren 5 Minuten ruhen gelassen.",
+                                "Weizenmehl", "Elstar-Apfel", "Rosinen", "Zimt", "Butter", "Vanille"),
+                        text("عجينة شتراودل مشدودة يدويًا، مع تفاح إلستار والزبيب والقرفة. تُقدَّم دافئة مع صلصة الفانيليا.",
+                                "تُمدّ العجينة يدويًا، وتُخبز 25 دقيقة، وتُترك 5 دقائق قبل التقديم.",
+                                "طحين القمح", "تفاح إلستار", "زبيب", "قرفة", "زبدة", "فانيليا"),
+                        size("Slice", "Stück", "قطعة", "7.20")),
+
+                mealSeed(3, "Kaiserschmarrn", "Kaiserschmarrn", "كايزرشمارن", true,
+                        text("Shredded sweet pancake, caramelised in butter, dusted with icing sugar. With plum compote.",
+                                "Pan-baked, torn, caramelised. Takes 14 minutes, started on order.",
+                                "Wheat flour", "Milk", "Egg", "Butter", "Icing sugar", "Plum"),
+                        text("Zerrissener süßer Pfannkuchen, in Butter karamellisiert, mit Puderzucker bestäubt. Dazu Zwetschgenröster.",
+                                "In der Pfanne gebacken, zerrissen, karamellisiert. Dauert 14 Minuten, wird auf Bestellung gestartet.",
+                                "Weizenmehl", "Milch", "Ei", "Butter", "Puderzucker", "Zwetschgen"),
+                        text("فطيرة حلوة مقطّعة إلى قطع صغيرة، مكرمَلة بالزبدة ومرشوشة بسكر البودرة. تُقدَّم مع كومبوت البرقوق.",
+                                "تُخبز في المقلاة ثم تُمزَّق وتُكرمَل. تستغرق 14 دقيقة وتبدأ عند الطلب.",
+                                "طحين القمح", "حليب", "بيض", "زبدة", "سكر بودرة", "برقوق"),
+                        size("For one", "Für eine Person", "لشخص واحد", "8.40"),
+                        size("To share", "Zum Teilen", "للمشاركة", "13.90")),
+
+                mealSeed(4, "Radler", "Radler", "رادلر", true,
+                        text("Helles beer cut with cloudy lemonade, poured cold.",
+                                "Poured on order, 4°C.",
+                                "Helles beer", "Cloudy lemonade"),
+                        text("Helles Bier mit trüber Zitronenlimonade gemischt, kalt eingeschenkt.",
+                                "Auf Bestellung eingeschenkt, 4 °C.",
+                                "Helles Bier", "Trübe Zitronenlimonade"),
+                        text("بيرة هيلس ممزوجة بليموناضة غائمة، تُقدَّم باردة.",
+                                "تُسكب عند الطلب على حرارة 4 درجات مئوية.",
+                                "بيرة هيلس", "ليموناضة غائمة"),
+                        size("0.3 l", "0,3 l", "0.3 l", "4.20"),
+                        size("0.5 l", "0,5 l", "0.5 l", "5.60")));
+    }
+
+    /**
+     * Tops up a menu that was seeded before DE/AR content existed: a German or
+     * Arabic translation with no description, preparation or ingredients gets
+     * the seed text. Anything an admin has already written is left alone.
+     */
+    private void fillMissingMealContent() {
+        Map<String, MealSeed> seedsByEnglishName =
+                mealSeeds().stream().collect(Collectors.toMap(MealSeed::nameEn, Function.identity()));
+
+        int filled = 0;
+        for (Meal meal : mealRepository.findAll()) {
+            MealSeed seed = meal.getTranslations().stream()
+                    .filter(translation -> translation.getLanguage() == Language.EN)
+                    .findFirst()
+                    .map(translation -> seedsByEnglishName.get(translation.getName()))
+                    .orElse(null);
+            if (seed == null) {
+                continue;
+            }
+            for (MealTranslation translation : meal.getTranslations()) {
+                MealText text = switch (translation.getLanguage()) {
+                    case DE -> seed.de();
+                    case AR -> seed.ar();
+                    default -> null;
+                };
+                if (text != null && isEmpty(translation)) {
+                    applyText(translation, text);
+                    filled++;
+                }
+            }
+            mealRepository.saveAndFlush(meal);
+        }
+        log.info("Filled {} empty DE/AR meal translations", filled);
+    }
+
+    private static boolean isEmpty(MealTranslation translation) {
+        return translation.getDescription() == null
+                && translation.getPreparationMethod() == null
+                && (translation.getIngredients() == null || translation.getIngredients().isEmpty());
+    }
+
+    private static void applyText(MealTranslation translation, MealText text) {
+        translation.setDescription(text.description());
+        translation.setPreparationMethod(text.preparationMethod());
+        // A mutable copy: Hibernate clear()s the old collection when it merges a managed entity, which an immutable List.of() rejects.
+        translation.setIngredients(new ArrayList<>(text.ingredients()));
     }
 
     private void seedTables() {
@@ -195,25 +315,16 @@ public class DemoDataSeeder {
         category.getTranslations().add(translation);
     }
 
-    private void meal(
-            Category category,
-            String nameEn,
-            String nameDe,
-            String nameAr,
-            boolean available,
-            String description,
-            String preparationMethod,
-            List<String> ingredients,
-            SizeSeed... sizes) {
+    private void meal(Category category, MealSeed seed) {
         Meal meal = new Meal();
         meal.setCategory(category);
-        meal.setAvailable(available);
+        meal.setAvailable(seed.available());
 
-        addMealTranslation(meal, Language.EN, nameEn, description, preparationMethod, ingredients);
-        addMealTranslation(meal, Language.DE, nameDe, null, null, List.of());
-        addMealTranslation(meal, Language.AR, nameAr, null, null, List.of());
+        addMealTranslation(meal, Language.EN, seed.nameEn(), seed.en());
+        addMealTranslation(meal, Language.DE, seed.nameDe(), seed.de());
+        addMealTranslation(meal, Language.AR, seed.nameAr(), seed.ar());
 
-        for (SizeSeed sizeSeed : sizes) {
+        for (SizeSeed sizeSeed : seed.sizes()) {
             MealSize mealSize = new MealSize();
             mealSize.setMeal(meal);
             mealSize.setPrice(new BigDecimal(sizeSeed.price()));
@@ -226,20 +337,12 @@ public class DemoDataSeeder {
         mealRepository.saveAndFlush(meal);
     }
 
-    private void addMealTranslation(
-            Meal meal,
-            Language language,
-            String name,
-            String description,
-            String preparationMethod,
-            List<String> ingredients) {
+    private void addMealTranslation(Meal meal, Language language, String name, MealText text) {
         MealTranslation translation = new MealTranslation();
         translation.setMeal(meal);
         translation.setLanguage(language);
         translation.setName(name);
-        translation.setDescription(description);
-        translation.setPreparationMethod(preparationMethod);
-        translation.setIngredients(ingredients);
+        applyText(translation, text);
         meal.getTranslations().add(translation);
     }
 
@@ -255,7 +358,39 @@ public class DemoDataSeeder {
         return new SizeSeed(labelEn, labelDe, labelAr, price);
     }
 
+    private static MealText text(String description, String preparationMethod, String... ingredients) {
+        return new MealText(description, preparationMethod, List.of(ingredients));
+    }
+
+    private static MealSeed mealSeed(
+            int categorySortOrder,
+            String nameEn,
+            String nameDe,
+            String nameAr,
+            boolean available,
+            MealText en,
+            MealText de,
+            MealText ar,
+            SizeSeed... sizes) {
+        return new MealSeed(categorySortOrder, nameEn, nameDe, nameAr, available, en, de, ar, List.of(sizes));
+    }
+
     private record SizeSeed(String labelEn, String labelDe, String labelAr, String price) {
+    }
+
+    private record MealText(String description, String preparationMethod, List<String> ingredients) {
+    }
+
+    private record MealSeed(
+            int categorySortOrder,
+            String nameEn,
+            String nameDe,
+            String nameAr,
+            boolean available,
+            MealText en,
+            MealText de,
+            MealText ar,
+            List<SizeSeed> sizes) {
     }
 
 }
