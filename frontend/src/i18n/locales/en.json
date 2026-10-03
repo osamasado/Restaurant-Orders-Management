@@ -155,9 +155,10 @@
     "title": "Restaurant Orders Management",
     "panels": {
       "preparing": "In preparation",
-      "ready": "Ready"
+      "ready": "Ready, please collect"
     },
-    "footer": "Order numbers update automatically"
+    "footer": "Numbers only, no names, no prices, no table numbers on this screen.",
+    "connectionLost": "Connection lost, trying again..."
   },
   "admin": {
     "eyebrow": "Management",

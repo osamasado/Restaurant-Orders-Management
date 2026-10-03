@@ -155,9 +155,10 @@
     "title": "Restaurant Orders Management",
     "panels": {
       "preparing": "In Zubereitung",
-      "ready": "Fertig"
+      "ready": "Fertig, bitte abholen"
     },
-    "footer": "Bestellnummern werden automatisch aktualisiert"
+    "footer": "Nur Nummern, keine Namen, keine Preise, keine Tischnummern auf dieser Anzeige.",
+    "connectionLost": "Verbindung unterbrochen, neuer Versuch..."
   },
   "admin": {
     "eyebrow": "Verwaltung",
