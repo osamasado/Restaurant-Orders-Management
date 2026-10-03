@@ -1,5 +1,6 @@
 import type { CancelledOrderResponse } from '../../api/types'
 import { useT } from '../../i18n/useT'
+import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import './CancelledOrderBanner.css'
 
 type CancelledOrderBannerProps = {
@@ -21,7 +22,7 @@ export function CancelledOrderBanner({ orders, busyOrderId, onAcknowledge }: Can
     <div className="cancelled-banner" role="alert">
       {orders.map((order) => (
         <div key={order.orderId} className="cancelled-banner__row">
-          <span className="cancelled-banner__number">{order.orderNumber}</span>
+          <span className="cancelled-banner__number">{formatOrderNumber(order.orderNumber)}</span>
           <span className="cancelled-banner__text">
             {t('kitchen.cancelled.banner', { table: order.tableNumber })}
           </span>
