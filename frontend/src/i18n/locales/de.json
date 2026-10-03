@@ -157,7 +157,8 @@
       "preparing": "In Zubereitung",
       "ready": "Fertig, bitte abholen"
     },
-    "footer": "Nur Nummern, keine Namen, keine Preise, keine Tischnummern auf dieser Anzeige.",
+    "footer": "Nur Bestell- und Tischnummern, keine Namen, keine Preise auf dieser Anzeige.",
+    "table": "Tisch {{number}}",
     "connectionLost": "Verbindung unterbrochen, neuer Versuch..."
   },
   "admin": {

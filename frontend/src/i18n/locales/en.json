@@ -157,7 +157,8 @@
       "preparing": "In preparation",
       "ready": "Ready, please collect"
     },
-    "footer": "Numbers only, no names, no prices, no table numbers on this screen.",
+    "footer": "Order numbers and table numbers only, no names, no prices on this screen.",
+    "table": "Table {{number}}",
     "connectionLost": "Connection lost, trying again..."
   },
   "admin": {
