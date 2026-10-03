@@ -135,8 +135,8 @@ public class DemoDataSeeder {
                         text("شريحة لحم عجل بغلاف خفيف من فتات الخبز، مقلية في السمن المصفّى. تُقدَّم مع سلطة البطاطا والتوت البري الأحمر.",
                                 "تُطرَّق حتى سماكة 4 ملم، وتُغطّى بالطحين والبيض وفتات الخبز، ثم تُقلى غائصةً في السمن المصفّى.",
                                 "لحم عجل", "طحين القمح", "بيض", "فتات الخبز", "سمن مصفّى", "التوت البري الأحمر"),
-                        size("200 g", "200 g", "200 g", "18.90"),
-                        size("300 g", "300 g", "300 g", "22.50")),
+                        size("200 g", "200 g", "200 غرام", "18.90"),
+                        size("300 g", "300 g", "300 غرام", "22.50")),
 
                 mealSeed(2, "Käsespätzle", "Käsespätzle", "شبيتسله بالجبن", true,
                         text("Hand-scraped spätzle layered with mountain cheese and crowned with dark roasted onions.",
@@ -199,8 +199,8 @@ public class DemoDataSeeder {
                         text("بيرة هيلس ممزوجة بليموناضة غائمة، تُقدَّم باردة.",
                                 "تُسكب عند الطلب على حرارة 4 درجات مئوية.",
                                 "بيرة هيلس", "ليموناضة غائمة"),
-                        size("0.3 l", "0,3 l", "0.3 l", "4.20"),
-                        size("0.5 l", "0,5 l", "0.5 l", "5.60")));
+                        size("0.3 l", "0,3 l", "0.3 لتر", "4.20"),
+                        size("0.5 l", "0,5 l", "0.5 لتر", "5.60")));
     }
 
     /**
@@ -233,9 +233,48 @@ public class DemoDataSeeder {
                     filled++;
                 }
             }
+            filled += fillUntranslatedSizeLabels(meal, seed);
             mealRepository.saveAndFlush(meal);
         }
-        log.info("Filled {} empty DE/AR meal translations", filled);
+        log.info("Filled {} empty DE/AR meal translations and size labels", filled);
+    }
+
+    /**
+     * A German or Arabic size label that is still identical to the English one
+     * was never translated (for example "200 g" in Arabic), so it gets the seed
+     * label. A label an admin has already changed no longer matches English and
+     * is left alone.
+     */
+    private int fillUntranslatedSizeLabels(Meal meal, MealSeed seed) {
+        int filled = 0;
+        for (MealSize size : meal.getSizes()) {
+            SizeSeed sizeSeed = seed.sizes().stream()
+                    .filter(candidate -> new BigDecimal(candidate.price()).compareTo(size.getPrice()) == 0)
+                    .findFirst()
+                    .orElse(null);
+            if (sizeSeed == null) {
+                continue;
+            }
+            String englishLabel = size.getTranslations().stream()
+                    .filter(translation -> translation.getLanguage() == Language.EN)
+                    .map(MealSizeTranslation::getLabel)
+                    .findFirst()
+                    .orElse(null);
+            for (MealSizeTranslation translation : size.getTranslations()) {
+                String seedLabel = switch (translation.getLanguage()) {
+                    case DE -> sizeSeed.labelDe();
+                    case AR -> sizeSeed.labelAr();
+                    default -> null;
+                };
+                if (seedLabel != null
+                        && translation.getLabel().equals(englishLabel)
+                        && !seedLabel.equals(englishLabel)) {
+                    translation.setLabel(seedLabel);
+                    filled++;
+                }
+            }
+        }
+        return filled;
     }
 
     private static boolean isEmpty(MealTranslation translation) {
