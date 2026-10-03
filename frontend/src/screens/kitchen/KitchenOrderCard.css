@@ -20,6 +20,14 @@
   font-weight: 600;
 }
 
+.kitchen-order-card__number--preparing {
+  color: var(--accent-amber);
+}
+
+.kitchen-order-card__number--ready {
+  color: var(--accent-forest);
+}
+
 .kitchen-order-card__table {
   font-family: var(--font-mono);
   font-size: 12px;

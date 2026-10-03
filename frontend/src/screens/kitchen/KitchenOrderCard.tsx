@@ -32,7 +32,7 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
   return (
     <article className="kitchen-order-card">
       <header className="kitchen-order-card__header">
-        <span className="kitchen-order-card__number">{formatOrderNumber(order.orderNumber)}</span>
+        <span className={`kitchen-order-card__number kitchen-order-card__number--${order.status.toLowerCase()}`}>{formatOrderNumber(order.orderNumber)}</span>
         <span className="kitchen-order-card__table">{t('kitchen.table', { number: order.tableNumber })}</span>
         <time
           className={`kitchen-order-card__timer kitchen-order-card__timer--${level}`}

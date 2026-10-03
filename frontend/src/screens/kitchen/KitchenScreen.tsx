@@ -124,7 +124,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
         {COLUMNS.map((column) => {
           const columnOrders = orders?.filter((order) => order.status === column.status) ?? []
           return (
-            <section key={column.key} className="kitchen-screen__column">
+            <section key={column.key} className={`kitchen-screen__column kitchen-screen__column--${column.key}`}>
               <header className="kitchen-screen__column-header">
                 <span className={`kitchen-screen__dot kitchen-screen__dot--${column.key}`} />
                 <span>{t(column.labelKey)}</span>
