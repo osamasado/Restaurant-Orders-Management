@@ -64,7 +64,7 @@ function AdminScreenContent() {
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
-          <span>{t('admin.auth.signedInAs', { name: staff.name, role: staff.role })}</span>
+          <span>{t('admin.auth.signedInAs', { name: staff.name, role: t(`admin.staff.roles.${staff.role}`) })}</span>
           <button className="admin-screen__logout" onClick={() => void logout()}>
             {t('admin.auth.logout')}
           </button>
