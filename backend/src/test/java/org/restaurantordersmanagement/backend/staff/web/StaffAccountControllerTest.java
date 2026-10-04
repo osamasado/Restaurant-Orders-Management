@@ -1,5 +1,6 @@
 package org.restaurantordersmanagement.backend.staff.web;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -129,7 +130,7 @@ class StaffAccountControllerTest {
         createdStaffAccountIds.add(id);
 
         mockMvc.perform(put("/api/staff/accounts/" + id)
-                        .with(user("admin").roles("ADMIN"))
+                        .session(adminSession)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "New Waiter (renamed)", "role": "CASHIER"}
@@ -169,6 +170,92 @@ class StaffAccountControllerTest {
                         get("/api/staff/me").session((MockHttpSession) loginResult.getRequest().getSession(false)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Reset Pin Target"));
+    }
+
+    /** A real sign-in, because changing your own role needs a real StaffPrincipal. */
+    private MockHttpSession signIn(String name, String pin) throws Exception {
+        MvcResult result = mockMvc.perform(post("/api/staff/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"" + name + "\", \"pin\": \"" + pin + "\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+        return (MockHttpSession) result.getRequest().getSession(false);
+    }
+
+    private org.springframework.test.web.servlet.ResultActions createWithPin(String name, String pin) throws Exception {
+        return mockMvc.perform(post("/api/staff/accounts")
+                .with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \"" + name + "\", \"role\": \"KITCHEN\", \"pin\": \"" + pin + "\"}"));
+    }
+
+    @Test
+    void createRejectsPinsThatAreNotFourToEightDigits() throws Exception {
+        for (String pin : List.of("", "123", "123456789", "12a4", " 1234", "1234 ", "\u0661\u0662\u0663\u0664")) {
+            createWithPin("Bad Pin " + pin.length() + pin.hashCode(), pin).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Test
+    void createAcceptsFourAndEightDigitPins() throws Exception {
+        for (String pin : List.of("1234", "12345678")) {
+            MvcResult result = createWithPin("Good Pin " + pin, pin).andExpect(status().isOk()).andReturn();
+            createdStaffAccountIds.add(((Number) JsonPath.read(result.getResponse().getContentAsString(), "$.id")).longValue());
+        }
+    }
+
+    @Test
+    void resetPinRejectsAnInvalidPinAndKeepsTheOldOne() throws Exception {
+        StaffAccount target = createStaffAccount("Pin Keeper", Role.KITCHEN, "4321");
+
+        for (String pin : List.of("12", "abcd", "123456789")) {
+            mockMvc.perform(post("/api/staff/accounts/" + target.getId() + "/reset-pin")
+                            .with(user("admin").roles("ADMIN"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"pin\": \"" + pin + "\"}"))
+                    .andExpect(status().isBadRequest());
+        }
+
+        signIn("Pin Keeper", "4321");
+    }
+
+    @Test
+    void anAdminCannotChangeTheirOwnRole() throws Exception {
+        StaffAccount admin = createStaffAccount("Self Demote Admin", Role.ADMIN, "1234");
+        MockHttpSession session = signIn("Self Demote Admin", "1234");
+
+        mockMvc.perform(put("/api/staff/accounts/" + admin.getId())
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Self Demote Admin\", \"role\": \"KITCHEN\"}"))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(Role.ADMIN, staffAccountRepository.findById(admin.getId()).orElseThrow().getRole());
+
+        // Renaming yourself, keeping the role, is fine.
+        mockMvc.perform(put("/api/staff/accounts/" + admin.getId())
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Self Demote Admin\", \"role\": \"ADMIN\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void anAdminCanDemoteOrDeleteAnotherAdminWhileTheyRemain() throws Exception {
+        createStaffAccount("Demoting Admin", Role.ADMIN, "1234");
+        StaffAccount other = createStaffAccount("Demoted Admin", Role.ADMIN, "1234");
+        StaffAccount toDelete = createStaffAccount("Deleted Admin", Role.ADMIN, "1234");
+        MockHttpSession session = signIn("Demoting Admin", "1234");
+
+        mockMvc.perform(put("/api/staff/accounts/" + other.getId())
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Demoted Admin\", \"role\": \"KITCHEN\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("KITCHEN"));
+
+        mockMvc.perform(delete("/api/staff/accounts/" + toDelete.getId()).session(session))
+                .andExpect(status().isNoContent());
     }
 
     @Test
