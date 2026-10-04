@@ -38,6 +38,8 @@ Waiter and cashier accounts can be created and can sign in, but every staff scre
 
 Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous request gets 401, a signed-in user with the wrong role gets 403.
 
+**This table is enforced by the build.** `AccessControlMatrixTest` keeps the same list and fails when an endpoint exists that is not in it, when the table lists one that no longer exists, when a method's `@PreAuthorize` roles differ from the table, or when an anonymous or wrong-role request to a protected endpoint is not refused. To add or change an endpoint, update the table in that test, this document and, for a public endpoint, the public list in `SecurityConfig`.
+
 ### Kitchen board
 
 | Method | Path | Allowed roles |
