@@ -3,6 +3,7 @@ package org.restaurantordersmanagement.backend.staff.web;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -199,6 +200,27 @@ class StaffAuthControllerTest {
 
         signIn("Locked Waiter", "1234").andExpect(status().isTooManyRequests());
         signIn("Free Waiter", "1234").andExpect(status().isOk());
+    }
+
+    @Test
+    void signingInGivesAnExistingSessionANewId() throws Exception {
+        createStaffAccount("Fixation Cook", Role.KITCHEN, "1234");
+        MockHttpSession existing = new MockHttpSession();
+        String idBeforeSignIn = existing.getId();
+
+        signIn("Fixation Cook", "1234")
+                .andExpect(status().isOk());
+        // A session id someone else planted before the sign-in must not survive it.
+        mockMvc.perform(post("/api/staff/login")
+                        .session(existing)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Fixation Cook\", \"pin\": \"1234\"}"))
+                .andExpect(status().isOk());
+
+        assertNotEquals(idBeforeSignIn, existing.getId());
+        mockMvc.perform(get("/api/staff/me").session(existing))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Fixation Cook"));
     }
 
 }
