@@ -2,8 +2,6 @@
 
 Who may do what, per role. This is the checklist for issue #29: every endpoint and screen was reviewed against it, and the tests below keep it true. The backend is the only enforcement: the frontend guards below are a convenience that stops a signed-in user from seeing a screen that would only return errors.
 
-> **Status (work in progress, issue #29):** the endpoint and role tables below match the code today. The fail-closed default and the sign-in and session rules marked *planned* are being implemented on branch `feature/rbac-hardening`; until they land, `SecurityConfig` still ends with `permitAll()`. This note is removed when #29 is done.
-
 ## Principles
 
 - **Fail closed.** An endpoint is private unless it is on the public list below. A new endpoint nobody remembered to annotate must not become public by accident.
@@ -148,13 +146,12 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 
 ## Sign-in and session rules
 
-Enforced (and tested):
+All enforced and tested:
 
 - **PINs** are 4 to 8 digits, checked when an account is created or its PIN is reset (400 otherwise).
 - **Throttle:** after 5 failed sign-ins for one name, that name is locked for 15 minutes. While locked, every attempt gets 429 with a `Retry-After` header, even with the right PIN, and refused attempts do not extend the lock. A successful sign-in clears the count. A name that does not exist locks exactly like one that does, so the lock cannot be used to find accounts. The count is in memory (one backend instance; a restart clears it). The price: anyone who knows a name can lock that account for 15 minutes.
 - **The last admin is protected.** Nobody can change their own role, and the last remaining admin cannot be demoted or deleted (409). Admins are locked while this is checked, so two admins demoting each other at the same moment cannot leave none.
 
-Planned in #29, not yet in place:
-
-- **Changes take effect immediately.** The account is re-checked on every request, so deleting an account, changing its role or resetting its PIN ends or downgrades an open session at once instead of when it expires.
-- **Fresh session on sign-in** (the session id changes), and the session cookie is `SameSite=Lax` and `HttpOnly`. CSRF tokens are not used: the API is same-origin and JSON-only, so `SameSite` is the protection.
+- **Changes take effect immediately.** The account is read again on every request from a signed-in staff member (`StaffSessionRecheckFilter`). If it was deleted or its PIN was reset, the session ends and the request is treated as anonymous; if its role or name changed, the session continues with the new values, so a demotion removes the old access on the very next request. Cost: one lookup by primary key per signed-in request.
+- **Fresh session on sign-in:** the session id changes when someone signs in, so an id planted beforehand does not survive.
+- **Session cookie** is `HttpOnly` and `SameSite=Lax`. CSRF tokens are not used: the API is same-origin and JSON-only, and `SameSite=Lax` keeps the browser from sending the cookie on cross-site POST, PUT, PATCH and DELETE. In production set `SESSION_COOKIE_SECURE=true` when serving over HTTPS (it defaults to off so a plain-HTTP deployment can still sign in).
