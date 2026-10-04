@@ -1,8 +1,10 @@
 package org.restaurantordersmanagement.backend.security;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -50,9 +52,18 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/staff/login").permitAll()
-                        .requestMatchers("/api/staff/**").authenticated()
-                        .anyRequest().permitAll())
+                        // sendError() (a 404 or 409 from a ResponseStatusException) forwards to /error as an
+                        // ERROR dispatch. Left closed, an anonymous guest's 404 would turn into a 401.
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        // The complete public list, see Documentation/access-control.md. Adding a public
+                        // endpoint means editing this list on purpose; everything else needs a signed-in
+                        // account, and @PreAuthorize on the controller then narrows it to the right roles.
+                        .requestMatchers(HttpMethod.POST, "/api/staff/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/guest/menu", "/api/guest/settings", "/api/hall/orders").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/guest/cart/quote", "/api/guest/device/claim", "/api/guest/orders").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/guest/orders/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .anyRequest().authenticated())
                 .logout(logout -> logout
                         .logoutUrl("/api/staff/logout")
                         .logoutSuccessHandler((request, response, authentication) ->
