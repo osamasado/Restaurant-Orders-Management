@@ -66,6 +66,11 @@ public class StaffAuthController {
         }
         loginThrottle.recordSuccess(request.name());
 
+        // A session id the visitor already had (possibly planted by someone else) must not survive signing in.
+        if (httpRequest.getSession(false) != null) {
+            httpRequest.changeSessionId();
+        }
+
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
