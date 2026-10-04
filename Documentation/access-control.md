@@ -146,10 +146,15 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 - **Staff accounts:** only Admin can create, edit or delete. An admin cannot delete their own account (400).
 - **Uploaded images** under `/images/**` are public, because the guest menu shows them.
 
-## Sign-in and session rules (planned in #29)
+## Sign-in and session rules
 
-- **PINs** are 4 to 8 digits, enforced when an account is created or its PIN is reset.
-- **Throttle:** after 5 failed sign-ins for one name, that name is locked for 15 minutes and further attempts get 429, even with the right PIN. The count resets on a successful sign-in.
+Enforced (and tested):
+
+- **PINs** are 4 to 8 digits, checked when an account is created or its PIN is reset (400 otherwise).
+- **Throttle:** after 5 failed sign-ins for one name, that name is locked for 15 minutes. While locked, every attempt gets 429 with a `Retry-After` header, even with the right PIN, and refused attempts do not extend the lock. A successful sign-in clears the count. A name that does not exist locks exactly like one that does, so the lock cannot be used to find accounts. The count is in memory (one backend instance; a restart clears it). The price: anyone who knows a name can lock that account for 15 minutes.
+- **The last admin is protected.** Nobody can change their own role, and the last remaining admin cannot be demoted or deleted (409). Admins are locked while this is checked, so two admins demoting each other at the same moment cannot leave none.
+
+Planned in #29, not yet in place:
+
 - **Changes take effect immediately.** The account is re-checked on every request, so deleting an account, changing its role or resetting its PIN ends or downgrades an open session at once instead of when it expires.
-- **The last admin is protected.** An admin cannot change their own role away from Admin, and the last remaining admin cannot be demoted or deleted.
 - **Fresh session on sign-in** (the session id changes), and the session cookie is `SameSite=Lax` and `HttpOnly`. CSRF tokens are not used: the API is same-origin and JSON-only, so `SameSite` is the protection.
