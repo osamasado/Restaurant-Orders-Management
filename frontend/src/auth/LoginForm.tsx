@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { ApiError } from '../api/http'
 import { useT } from '../i18n/useT'
 import { useAuth } from './auth-context'
 import './LoginForm.css'
@@ -18,8 +19,12 @@ export function LoginForm() {
     setSubmitting(true)
     try {
       await login(name, pin)
-    } catch {
-      setError(t('admin.auth.error'))
+    } catch (caught) {
+      setError(
+        caught instanceof ApiError && caught.status === 429
+          ? t('admin.auth.locked', { minutes: Math.max(1, Math.ceil((caught.retryAfterSeconds ?? 900) / 60)) })
+          : t('admin.auth.error'),
+      )
     } finally {
       setSubmitting(false)
     }

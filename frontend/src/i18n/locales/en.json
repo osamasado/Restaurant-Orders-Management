@@ -178,6 +178,7 @@
       "pin": "PIN",
       "submit": "Sign in",
       "error": "Invalid name or PIN",
+      "locked": "Too many failed attempts. Try again in {{minutes}} min.",
       "accessDenied": "Your account doesn't have access to the management backend",
       "signedInAs": "{{name}} · Role: {{role}}",
       "logout": "Sign out"
@@ -306,6 +307,9 @@
       "name": "Name",
       "role": "Role",
       "pin": "PIN",
+      "pinHint": "4 to 8 digits",
+      "pinInvalid": "The PIN must be 4 to 8 digits.",
+      "ownRoleLocked": "You cannot change your own role.",
       "roles": {
         "ADMIN": "Admin",
         "KITCHEN": "Kitchen",

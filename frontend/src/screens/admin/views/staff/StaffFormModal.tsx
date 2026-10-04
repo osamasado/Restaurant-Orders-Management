@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { createAccount, updateAccount } from '../../../../api/staffApi'
 import type { Role, StaffResponse } from '../../../../api/types'
+import { useAuth } from '../../../../auth/auth-context'
 import { Modal } from '../../../../components/Modal'
 import { useT } from '../../../../i18n/useT'
 import './StaffFormModal.css'
@@ -18,6 +19,9 @@ type StaffFormModalProps = {
 
 export function StaffFormModal({ staff, onClose, onSaved }: StaffFormModalProps) {
   const { t } = useT()
+  const { staff: currentStaff } = useAuth()
+  // The server refuses it too; the form just does not offer what would be refused.
+  const isOwnAccount = staff !== null && currentStaff?.id === staff.id
   const [name, setName] = useState(staff?.name ?? '')
   const [role, setRole] = useState<Role>(staff?.role ?? 'WAITER')
   const [pin, setPin] = useState('')
@@ -51,7 +55,12 @@ export function StaffFormModal({ staff, onClose, onSaved }: StaffFormModalProps)
         </label>
         <label className="staff-form__field">
           <span>{t('admin.staff.role')}</span>
-          <select value={role} onChange={(event) => setRole(event.target.value as Role)} required>
+          <select
+            value={role}
+            onChange={(event) => setRole(event.target.value as Role)}
+            disabled={isOwnAccount}
+            required
+          >
             {ASSIGNABLE_ROLES.map((assignableRole) => (
               <option key={assignableRole} value={assignableRole}>
                 {t(`admin.staff.roles.${assignableRole}`)}
@@ -59,16 +68,22 @@ export function StaffFormModal({ staff, onClose, onSaved }: StaffFormModalProps)
             ))}
           </select>
         </label>
+        {isOwnAccount && <p className="staff-form__hint">{t('admin.staff.ownRoleLocked')}</p>}
         {!staff && (
           <label className="staff-form__field">
             <span>{t('admin.staff.pin')}</span>
             <input
               type="password"
               inputMode="numeric"
+              pattern="[0-9]{4,8}"
+              minLength={4}
+              maxLength={8}
+              title={t('admin.staff.pinHint')}
               value={pin}
               onChange={(event) => setPin(event.target.value)}
               required
             />
+            <span className="staff-form__hint">{t('admin.staff.pinHint')}</span>
           </label>
         )}
 

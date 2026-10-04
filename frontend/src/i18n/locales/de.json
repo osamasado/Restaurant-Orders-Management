@@ -178,6 +178,7 @@
       "pin": "PIN",
       "submit": "Anmelden",
       "error": "Name oder PIN ungültig",
+      "locked": "Zu viele Fehlversuche. Bitte in {{minutes}} Min. erneut versuchen.",
       "accessDenied": "Ihr Konto hat keinen Zugriff auf den Verwaltungsbereich",
       "signedInAs": "{{name}} · Rolle: {{role}}",
       "logout": "Abmelden"
@@ -306,6 +307,9 @@
       "name": "Name",
       "role": "Rolle",
       "pin": "PIN",
+      "pinHint": "4 bis 8 Ziffern",
+      "pinInvalid": "Die PIN muss aus 4 bis 8 Ziffern bestehen.",
+      "ownRoleLocked": "Sie können Ihre eigene Rolle nicht ändern.",
       "roles": {
         "ADMIN": "Admin",
         "KITCHEN": "Küche",
