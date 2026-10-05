@@ -3,16 +3,20 @@ package org.restaurantordersmanagement.backend.staff.web;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
 import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
+import org.restaurantordersmanagement.backend.staff.security.LoginThrottle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -22,6 +26,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,6 +41,21 @@ class StaffAuthControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private LoginThrottle loginThrottle;
+
+    /** The throttle lives in the shared Spring context, so one test's failed sign-ins must not lock the next test's names. */
+    @BeforeEach
+    void forgetEarlierFailedSignIns() {
+        loginThrottle.reset();
+    }
+
+    private ResultActions signIn(String name, String pin) throws Exception {
+        return mockMvc.perform(post("/api/staff/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \"" + name + "\", \"pin\": \"" + pin + "\"}"));
+    }
 
     private StaffAccount createStaffAccount(String name, Role role, String pin) {
         StaffAccount staffAccount = new StaffAccount();
@@ -126,6 +146,81 @@ class StaffAuthControllerTest {
         mockMvc.perform(get("/api/staff/me").session((MockHttpSession) loginResult.getRequest().getSession(false)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Cashier One"));
+    }
+
+    @Test
+    void fiveWrongPinsLockTheNameEvenAgainstTheRightPin() throws Exception {
+        createStaffAccount("Throttled Kitchen", Role.KITCHEN, "1234");
+
+        for (int i = 0; i < 5; i++) {
+            signIn("Throttled Kitchen", "0000").andExpect(status().isUnauthorized());
+        }
+
+        MvcResult locked = signIn("Throttled Kitchen", "1234")
+                .andExpect(status().isTooManyRequests())
+                .andReturn();
+        String retryAfter = locked.getResponse().getHeader("Retry-After");
+        assertNotNull(retryAfter);
+        long seconds = Long.parseLong(retryAfter);
+        assertTrue(seconds > 0 && seconds <= 15 * 60 + 1, "Retry-After was " + seconds);
+    }
+
+    @Test
+    void anUnknownNameIsLockedExactlyLikeARealOne() throws Exception {
+        for (int i = 0; i < 5; i++) {
+            signIn("Nobody Here", "0000").andExpect(status().isUnauthorized());
+        }
+
+        signIn("Nobody Here", "0000").andExpect(status().isTooManyRequests());
+    }
+
+    @Test
+    void aSuccessfulSignInStartsTheCountOver() throws Exception {
+        createStaffAccount("Forgetful Cashier", Role.CASHIER, "1234");
+
+        for (int i = 0; i < 4; i++) {
+            signIn("Forgetful Cashier", "0000").andExpect(status().isUnauthorized());
+        }
+        signIn("Forgetful Cashier", "1234").andExpect(status().isOk());
+        for (int i = 0; i < 4; i++) {
+            signIn("Forgetful Cashier", "0000").andExpect(status().isUnauthorized());
+        }
+
+        signIn("Forgetful Cashier", "1234").andExpect(status().isOk());
+    }
+
+    @Test
+    void lockingOneNameLeavesOtherNamesAlone() throws Exception {
+        createStaffAccount("Locked Waiter", Role.WAITER, "1234");
+        createStaffAccount("Free Waiter", Role.WAITER, "1234");
+
+        for (int i = 0; i < 5; i++) {
+            signIn("Locked Waiter", "0000").andExpect(status().isUnauthorized());
+        }
+
+        signIn("Locked Waiter", "1234").andExpect(status().isTooManyRequests());
+        signIn("Free Waiter", "1234").andExpect(status().isOk());
+    }
+
+    @Test
+    void signingInGivesAnExistingSessionANewId() throws Exception {
+        createStaffAccount("Fixation Cook", Role.KITCHEN, "1234");
+        MockHttpSession existing = new MockHttpSession();
+        String idBeforeSignIn = existing.getId();
+
+        signIn("Fixation Cook", "1234")
+                .andExpect(status().isOk());
+        // A session id someone else planted before the sign-in must not survive it.
+        mockMvc.perform(post("/api/staff/login")
+                        .session(existing)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Fixation Cook\", \"pin\": \"1234\"}"))
+                .andExpect(status().isOk());
+
+        assertNotEquals(idBeforeSignIn, existing.getId());
+        mockMvc.perform(get("/api/staff/me").session(existing))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Fixation Cook"));
     }
 
 }

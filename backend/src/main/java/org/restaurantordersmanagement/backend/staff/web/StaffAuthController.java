@@ -2,11 +2,15 @@ package org.restaurantordersmanagement.backend.staff.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.time.Instant;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
+import org.restaurantordersmanagement.backend.staff.security.LoginThrottle;
 import org.restaurantordersmanagement.backend.staff.security.StaffPrincipal;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,24 +33,42 @@ public class StaffAuthController {
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
     private final StaffAccountRepository staffAccountRepository;
+    private final LoginThrottle loginThrottle;
 
     public StaffAuthController(
             AuthenticationManager authenticationManager,
             SecurityContextRepository securityContextRepository,
-            StaffAccountRepository staffAccountRepository) {
+            StaffAccountRepository staffAccountRepository,
+            LoginThrottle loginThrottle) {
         this.authenticationManager = authenticationManager;
         this.securityContextRepository = securityContextRepository;
         this.staffAccountRepository = staffAccountRepository;
+        this.loginThrottle = loginThrottle;
     }
 
     @PostMapping("/login")
-    public StaffResponse login(@RequestBody LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public ResponseEntity<StaffResponse> login(
+            @RequestBody LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        Duration locked = loginThrottle.lockedFor(request.name());
+        if (!locked.isZero()) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .header(HttpHeaders.RETRY_AFTER, String.valueOf(locked.toSeconds() + 1))
+                    .build();
+        }
+
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.name(), request.pin()));
         } catch (AuthenticationException e) {
+            loginThrottle.recordFailure(request.name());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
+        loginThrottle.recordSuccess(request.name());
+
+        // A session id the visitor already had (possibly planted by someone else) must not survive signing in.
+        if (httpRequest.getSession(false) != null) {
+            httpRequest.changeSessionId();
         }
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -58,7 +80,7 @@ public class StaffAuthController {
         staffAccount.setLastSeenAt(Instant.now());
         staffAccountRepository.save(staffAccount);
 
-        return StaffResponse.from(staffAccount);
+        return ResponseEntity.ok(StaffResponse.from(staffAccount));
     }
 
     @GetMapping("/me")

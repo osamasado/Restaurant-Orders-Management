@@ -1,6 +1,7 @@
 package org.restaurantordersmanagement.backend.security;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,6 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The security rules themselves, with throwaway endpoints: the default is
+ * "closed", only the explicit public list is open, and @PreAuthorize narrows
+ * a signed-in request to roles. The real endpoints are checked against the
+ * access-control checklist in AccessControlMatrixTest.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import({TestcontainersConfiguration.class, SecurityConfigTest.SecuredTestController.class})
@@ -24,9 +31,36 @@ class SecurityConfigTest {
     private MockMvc mockMvc;
 
     @Test
-    void openEndpointIsReachableWithoutAuthentication() throws Exception {
-        mockMvc.perform(get("/test/open"))
+    void anEndpointWithoutAnyAnnotationIsNotPublic() throws Exception {
+        // The point of failing closed: a new endpoint nobody remembered to protect still needs a sign-in.
+        mockMvc.perform(get("/api/test/unannotated"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void anEndpointWithoutRoleRulesIsOpenToAnySignedInAccount() throws Exception {
+        mockMvc.perform(get("/api/test/unannotated").with(user("waiter").roles("WAITER")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void publicListIsNotAWholePrefix() throws Exception {
+        // /api/guest/menu is public, but that does not make everything under /api/guest public.
+        mockMvc.perform(get("/api/guest/unlisted"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void publicEndpointsStayOpenToAnonymousRequests() throws Exception {
+        mockMvc.perform(get("/api/hall/orders")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/guest/menu").param("language", "EN")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/guest/settings")).andExpect(status().isOk());
+    }
+
+    @Test
+    void aPublicPathIsOnlyPublicForItsListedMethod() throws Exception {
+        mockMvc.perform(delete("/api/hall/orders"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -36,31 +70,36 @@ class SecurityConfigTest {
         // yet" and delegates to the AuthenticationEntryPoint. 403 is reserved for a request
         // that IS authenticated but lacks the required role - see
         // adminOnlyEndpointRejectsNonAdminRole below.
-        mockMvc.perform(get("/test/admin-only"))
+        mockMvc.perform(get("/api/test/admin-only"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void adminOnlyEndpointRejectsNonAdminRole() throws Exception {
-        mockMvc.perform(get("/test/admin-only").with(user("waiter").roles("WAITER")))
+        mockMvc.perform(get("/api/test/admin-only").with(user("waiter").roles("WAITER")))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void adminOnlyEndpointAllowsAdminRole() throws Exception {
-        mockMvc.perform(get("/test/admin-only").with(user("admin").roles("ADMIN")))
+        mockMvc.perform(get("/api/test/admin-only").with(user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
     @RestController
     static class SecuredTestController {
 
-        @GetMapping("/test/open")
-        String open() {
-            return "open";
+        @GetMapping("/api/test/unannotated")
+        String unannotated() {
+            return "unannotated";
         }
 
-        @GetMapping("/test/admin-only")
+        @GetMapping("/api/guest/unlisted")
+        String unlistedUnderPublicPrefix() {
+            return "unlisted";
+        }
+
+        @GetMapping("/api/test/admin-only")
         @PreAuthorize("hasRole('ADMIN')")
         String adminOnly() {
             return "admin-only";

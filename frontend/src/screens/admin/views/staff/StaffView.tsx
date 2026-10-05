@@ -71,8 +71,13 @@ export function StaffView() {
   }
 
   const handleResetPin = async (account: StaffResponse) => {
-    const pin = window.prompt(t('admin.staff.resetPinPrompt'))
-    if (!pin) return
+    const entered = window.prompt(t('admin.staff.resetPinPrompt'))
+    if (!entered) return
+    const pin = entered.trim()
+    if (!/^[0-9]{4,8}$/.test(pin)) {
+      window.alert(t('admin.staff.pinInvalid'))
+      return
+    }
     try {
       await resetPin(account.id, pin)
       window.alert(t('admin.staff.resetPinSuccess'))

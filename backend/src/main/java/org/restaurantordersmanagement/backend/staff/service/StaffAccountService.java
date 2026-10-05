@@ -1,6 +1,7 @@
 package org.restaurantordersmanagement.backend.staff.service;
 
 import java.util.List;
+import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
 import org.restaurantordersmanagement.backend.staff.web.StaffAccountCreateRequest;
@@ -8,9 +9,14 @@ import org.restaurantordersmanagement.backend.staff.web.StaffAccountUpdateReques
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-/** No @Transactional needed anywhere - StaffAccount has only scalar fields, same as RawMaterialService/TableService. */
+/**
+ * Keeps at least one administrator: the last one cannot be demoted or deleted,
+ * and nobody can change their own role. Only update and delete are
+ * @Transactional, so the admin rows they lock stay locked until the change is saved.
+ */
 @Service
 public class StaffAccountService {
 
@@ -39,17 +45,40 @@ public class StaffAccountService {
         return staffAccountRepository.saveAndFlush(staffAccount);
     }
 
-    public StaffAccount update(Long id, StaffAccountUpdateRequest request) {
+    /** @param actorId the signed-in admin making the change, who may not change their own role */
+    @Transactional
+    public StaffAccount update(Long id, StaffAccountUpdateRequest request, Long actorId) {
+        List<StaffAccount> admins = staffAccountRepository.findByRole(Role.ADMIN);
         StaffAccount staffAccount = findById(id);
+        if (staffAccount.getRole() != request.role()) {
+            if (id.equals(actorId)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot change your own role");
+            }
+            if (staffAccount.getRole() == Role.ADMIN) {
+                requireAnotherAdmin(admins, id, "demoted");
+            }
+        }
         staffAccount.setName(request.name());
         staffAccount.setRole(request.role());
         return staffAccountRepository.saveAndFlush(staffAccount);
     }
 
     /** Flushes so an account still referenced elsewhere (e.g. order audit history) throws here, caught by the controller as 409. */
+    @Transactional
     public void delete(Long id) {
+        List<StaffAccount> admins = staffAccountRepository.findByRole(Role.ADMIN);
+        if (admins.stream().anyMatch(admin -> admin.getId().equals(id))) {
+            requireAnotherAdmin(admins, id, "deleted");
+        }
         staffAccountRepository.deleteById(id);
         staffAccountRepository.flush();
+    }
+
+    private static void requireAnotherAdmin(List<StaffAccount> admins, Long id, String what) {
+        boolean anotherAdmin = admins.stream().anyMatch(admin -> !admin.getId().equals(id));
+        if (!anotherAdmin) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The last administrator cannot be " + what);
+        }
     }
 
     public StaffAccount resetPin(Long id, String newPin) {

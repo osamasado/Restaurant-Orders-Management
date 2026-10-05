@@ -1,6 +1,7 @@
 package org.restaurantordersmanagement.backend.staff.web;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.security.StaffPrincipal;
 import org.restaurantordersmanagement.backend.staff.service.StaffAccountService;
@@ -22,6 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/staff/accounts")
 public class StaffAccountController {
+
+    private static final Pattern PIN_FORMAT = Pattern.compile("^[0-9]{4,8}$");
 
     private final StaffAccountService staffAccountService;
 
@@ -48,10 +51,13 @@ public class StaffAccountController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public StaffResponse update(@PathVariable Long id, @RequestBody StaffAccountUpdateRequest request) {
+    public StaffResponse update(
+            @PathVariable Long id,
+            @RequestBody StaffAccountUpdateRequest request,
+            @AuthenticationPrincipal StaffPrincipal principal) {
         validateUpdate(request);
         try {
-            return StaffResponse.from(staffAccountService.update(id, request));
+            return StaffResponse.from(staffAccountService.update(id, request, principal.getStaffAccount().getId()));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A staff account with this name already exists");
         }
@@ -74,9 +80,7 @@ public class StaffAccountController {
     @PostMapping("/{id}/reset-pin")
     @PreAuthorize("hasRole('ADMIN')")
     public StaffResponse resetPin(@PathVariable Long id, @RequestBody ResetPinRequest request) {
-        if (request.pin() == null || request.pin().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pin is required");
-        }
+        validatePin(request.pin());
         return StaffResponse.from(staffAccountService.resetPin(id, request.pin()));
     }
 
@@ -85,8 +89,13 @@ public class StaffAccountController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "name is required");
         }
         validateRole(request.role());
-        if (request.pin() == null || request.pin().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pin is required");
+        validatePin(request.pin());
+    }
+
+    /** 4 to 8 digits: short enough to type on a tablet, long enough that the sign-in throttle means something. */
+    private void validatePin(String pin) {
+        if (pin == null || !PIN_FORMAT.matcher(pin).matches()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pin must be 4 to 8 digits");
         }
     }
 

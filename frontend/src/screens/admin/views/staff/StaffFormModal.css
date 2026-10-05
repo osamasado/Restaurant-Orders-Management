@@ -24,6 +24,13 @@
   padding: var(--space-3) var(--space-4);
 }
 
+.staff-form__hint {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 .staff-form__error {
   font-family: var(--font-body);
   font-size: 13px;
