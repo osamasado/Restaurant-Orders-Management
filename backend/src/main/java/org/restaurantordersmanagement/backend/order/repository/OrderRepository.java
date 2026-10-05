@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +28,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      */
     @EntityGraph(attributePaths = {"table"})
     List<Order> findByStatusAndPlacedAtIsNotNullAndCancellationAcknowledgedAtIsNullOrderByPlacedAtAsc(OrderStatus status);
+
+    /**
+     * A page of orders for the admin audit view. The table and whoever
+     * acknowledged a cancellation are fetched in the same query. The history is
+     * deliberately not fetched here: joining a collection into a paged query
+     * makes Hibernate page in memory, so it is loaded separately for the whole
+     * page (see OrderStatusHistoryRepository).
+     */
+    @EntityGraph(attributePaths = {"table", "cancellationAcknowledgedBy"})
+    Page<Order> findAllBy(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"table", "cancellationAcknowledgedBy"})
+    Page<Order> findByOrderNumber(Integer orderNumber, Pageable pageable);
 
     /**
      * Only the order number and table number of one status, lowest number
