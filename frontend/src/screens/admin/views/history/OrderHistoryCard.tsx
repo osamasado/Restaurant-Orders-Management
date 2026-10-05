@@ -33,8 +33,10 @@ export function OrderHistoryCard({ order, formatTime }: OrderHistoryCardProps) {
         {order.entries.map((entry, index) => (
           <li key={index} className="history-card__entry">
             <span className={`history-card__dot history-card__dot--${entry.stage.toLowerCase()}`} aria-hidden="true" />
-            <time className="history-card__time" dateTime={entry.changedAt} dir="ltr">
-              {formatTime(entry.changedAt)}
+            {/* No forced direction: the Arabic date format carries its own right-to-left marks, and a forced
+                left-to-right box scrambles them. <bdi> just keeps the value apart from its neighbours. */}
+            <time className="history-card__time" dateTime={entry.changedAt}>
+              <bdi>{formatTime(entry.changedAt)}</bdi>
             </time>
             <span className="history-card__entry-stage">{t(`admin.history.stages.${entry.stage}`)}</span>
             <span className="history-card__actor">
