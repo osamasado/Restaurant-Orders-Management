@@ -293,6 +293,26 @@
       "cancel": "Abbrechen",
       "save": "Speichern"
     },
+    "history": {
+      "subtitle": "Alle Statuswechsel jeder Bestellung, mit Zeit und Verantwortlichem",
+      "searchLabel": "Bestellnummer",
+      "empty": "Noch keine Bestellungen",
+      "noResults": "Keine Bestellung mit dieser Nummer",
+      "loadError": "Der Verlauf konnte nicht geladen werden",
+      "loadMore": "Mehr laden",
+      "loading": "Wird geladen...",
+      "table": "Tisch {{number}}",
+      "guest": "Gast",
+      "acknowledged": "Stornierung bestätigt von {{name}}, {{time}}",
+      "stages": {
+        "DRAFT": "Entwurf",
+        "SUBMITTED": "Aufgegeben",
+        "PREPARING": "In Zubereitung",
+        "READY": "Fertig",
+        "SERVED": "Serviert",
+        "CANCELLED": "Storniert"
+      }
+    },
     "staff": {
       "subtitle": "Name, Rolle, PIN gesetzt, zuletzt gesehen",
       "loadError": "Personalkonten konnten nicht geladen werden",
