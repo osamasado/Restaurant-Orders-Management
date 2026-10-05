@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Public, no @PreAuthorize - SecurityConfig's anyRequest().permitAll() already allows this. */
+/** Public, no @PreAuthorize - it is on SecurityConfig's public list. */
 @RestController
 @RequestMapping("/api/guest/menu")
 public class GuestMenuController {

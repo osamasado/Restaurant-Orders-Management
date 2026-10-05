@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Public, no @PreAuthorize - the board is a wall screen in the dining area
- * with no login, and SecurityConfig's anyRequest().permitAll() already allows
- * it. That is only safe because the response is order and table numbers and nothing else.
+ * with no login, so it is on SecurityConfig's public list. That is only safe because the response is order and table numbers and nothing else.
  */
 @RestController
 @RequestMapping("/api/hall/orders")

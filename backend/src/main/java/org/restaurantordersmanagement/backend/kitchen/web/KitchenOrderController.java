@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Kitchen board API. Not covered by SecurityConfig's URL rules
- * (anyRequest().permitAll()), so every method carries its own
- * @PreAuthorize - the same approach as the admin controllers.
+ * Kitchen board API. SecurityConfig makes everything outside its public list
+ * need a sign-in; every method carries its own @PreAuthorize to narrow that to
+ * the right roles - the same approach as the admin controllers.
  */
 @RestController
 @RequestMapping("/api/kitchen/orders")
