@@ -16,7 +16,7 @@ It checks, for every page: no console error and no unexpected failed request; no
 
 ### Result
 
-**114 of 114 pages pass** on the production build, on the first attempt, with retries turned off: 3 languages x 2 themes x 19 pages (guest 6, kitchen 3, hall 1, admin 9: seven views plus the meal form and the staff form). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time.
+**120 of 120 pages pass** on the production build, on the first attempt, with retries turned off: 3 languages x 2 themes x 20 pages (guest 6, kitchen 3, hall 1, admin 10: seven views, the Orders cancel confirmation, the meal form and the staff form). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time.
 
 What the pass found and fixed:
 
@@ -80,9 +80,14 @@ Observations that are not defects, for a decision:
 | Sign-in screen | Walk | ✅ | ✅ | ✅ |
 | A non-admin account is told it has no access | Test (`AccessControlMatrixTest`) | ✅ | ✅ | ✅ |
 | Audit history: each order's stages with time and actor | Walk + browser check in #30 | ✅ | ✅ | ✅ |
+| Orders: every order newest first with items, table, time, payment, total and status; one button per legal step plus Cancel; finished orders say "no further steps" | Walk + browser check in #71 | ✅ | ✅ | ✅ |
+| Orders: Cancel asks for confirmation first, and "Keep it" leaves the order alone | Walk (confirmation page) + browser check in #71 | ✅ | ✅ | ✅ |
+| Orders: Start, Ready and Served move the order and the audit history names the admin; a clash with another screen shows the notice and refreshes; a failed refresh keeps the rows | Test (`AdminOrderControllerTest`) + browser check in #71 (English; the logic is the same in every language) | ⬜ | ✅ | ⬜ |
+| Orders: cancelling shows the kitchen banner and removes the number from the hall board | Browser check in #71 (English) | ⬜ | ✅ | ⬜ |
 | Meals and categories: list and the edit form with all three translations | Walk | ✅ | ✅ | ✅ |
 | Raw materials, tables and devices, staff accounts with their form, settings | Walk | ✅ | ✅ | ✅ |
 | Pair and unpair a device, the staff PIN rules, own role locked | Test + browser check in #29 | ✅ | ✅ | ✅ |
+| Who sees payment details: Admin only (kitchen, hall and the waiter and cashier roles do not; a guest sees only their own table's orders) | Test (`AccessControlMatrixTest`, `AdminOrderListControllerTest`) and `Documentation/access-control.md` | ✅ | ✅ | ✅ |
 | Long labels fit the sidebar, buttons and forms | Walk (the German sidebar bug was found and fixed here) | ✅ | ✅ | ✅ |
 | Wording reads naturally | **Human** | ⬜ | ⬜ | ⬜ |
 
@@ -93,7 +98,7 @@ The same journey is verified automatically in `OrderLifecycleEndToEndTest`. Doin
 - [ ] **DE**: place an order on the guest tablet; it appears in the kitchen's New column within about 5 seconds; Start puts it on the hall board under In preparation with its table; Ready moves it to Ready; Picked up removes it; the guest's timeline followed every step; the admin history shows each step with its actor.
 - [ ] **EN**: the same.
 - [ ] **AR**: the same.
-- [ ] **Cancel path** (any language): an admin cancels a preparing order (API for now); the kitchen shows the banner until acknowledged, the hall board drops it, the guest sees "cancelled".
+- [ ] **Cancel path** (any language): an admin cancels a preparing order from the admin Orders screen (Cancel, then confirm); the kitchen shows the banner until acknowledged, the hall board drops it, the guest sees "cancelled".
 
 ## The non-negotiable rules
 
