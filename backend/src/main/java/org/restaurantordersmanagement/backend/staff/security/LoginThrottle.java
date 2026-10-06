@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,7 +35,7 @@ public class LoginThrottle {
     private final int maxTrackedNames;
     private final Map<String, Attempts> attemptsByName = new HashMap<>();
 
-    @Autowired
+    /** The one Spring uses: with several constructors and none annotated it takes the no-arg one. */
     public LoginThrottle() {
         this(Clock.systemUTC(), DEFAULT_MAX_TRACKED_NAMES);
     }
@@ -46,7 +46,7 @@ public class LoginThrottle {
     }
 
     /** How much longer this name stays locked, or zero when it may try. */
-    public synchronized Duration lockedFor(String name) {
+    public synchronized Duration lockedFor(@Nullable String name) {
         Attempts attempts = attemptsByName.get(key(name));
         if (attempts == null) {
             return Duration.ZERO;
@@ -60,7 +60,7 @@ public class LoginThrottle {
     }
 
     /** Counts a failed sign-in; failures older than the lock duration no longer count. */
-    public synchronized void recordFailure(String name) {
+    public synchronized void recordFailure(@Nullable String name) {
         Instant now = clock.instant();
         Attempts previous = attemptsByName.get(key(name));
         boolean stale = previous == null || Duration.between(previous.lastFailure(), now).compareTo(LOCK_DURATION) >= 0;
@@ -70,7 +70,7 @@ public class LoginThrottle {
         attemptsByName.put(key(name), new Attempts(stale ? 1 : previous.failures() + 1, now));
     }
 
-    public synchronized void recordSuccess(String name) {
+    public synchronized void recordSuccess(@Nullable String name) {
         attemptsByName.remove(key(name));
     }
 
@@ -90,7 +90,8 @@ public class LoginThrottle {
         }
     }
 
-    private static String key(String name) {
+    /** A sign-in body with no "name" at all gives null here; it is counted under one shared, empty key. */
+    private static String key(@Nullable String name) {
         return name == null ? "" : name.strip().toLowerCase(Locale.ROOT);
     }
 

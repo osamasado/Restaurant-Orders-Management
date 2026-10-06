@@ -166,6 +166,23 @@ class StaffAuthControllerTest {
     }
 
     @Test
+    void aSignInWithNoNameAtAllIsRefusedAndThrottledLikeAnyOtherName() throws Exception {
+        // {"pin": ...} with no "name" is a body a client can really send: it must be a plain 401, never a 500,
+        // and the attempts count (under one shared, nameless key) so it cannot be used to guess PINs.
+        for (int i = 0; i < 5; i++) {
+            mockMvc.perform(post("/api/staff/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"pin\": \"0000\"}"))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        mockMvc.perform(post("/api/staff/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"pin\": \"0000\"}"))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    @Test
     void anUnknownNameIsLockedExactlyLikeARealOne() throws Exception {
         for (int i = 0; i < 5; i++) {
             signIn("Nobody Here", "0000").andExpect(status().isUnauthorized());

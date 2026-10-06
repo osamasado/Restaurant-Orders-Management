@@ -34,4 +34,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: backend
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Restaurant-Orders-Management-Backend
+        run: |
+          mvn -B verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=Restaurant-Orders-Management-Backend \
+            -Dsonar.qualitygate.wait=true
