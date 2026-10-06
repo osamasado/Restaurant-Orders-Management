@@ -30,6 +30,38 @@ public class AdminOrderService {
         this.staffAccountRepository = staffAccountRepository;
     }
 
+    /**
+     * Moves an order forward (Start, Ready, Served) with the admin recorded as
+     * the actor. Only the three forward targets are accepted here: CANCELLED has
+     * its own endpoint, and submitting is the guest's own step (it prices the
+     * order and takes its number), so neither is reachable from this one.
+     * Whether the step is legal from the order's current status is the state
+     * machine's call (409 when it is not).
+     */
+    @Transactional
+    public Order advance(Long orderId, OrderStatus target, Long staffAccountId) {
+        if (target == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status is required");
+        }
+        if (target == OrderStatus.CANCELLED) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Use the cancel endpoint to cancel an order");
+        }
+        if (target == OrderStatus.DRAFT || target == OrderStatus.SUBMITTED) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Staff cannot submit an order");
+        }
+
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order with id " + orderId + " not found"));
+
+        StaffAccount actor = staffAccountRepository.getReferenceById(staffAccountId);
+
+        try {
+            return orderStateMachineService.transition(order, target, actor);
+        } catch (IllegalOrderTransitionException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
     @Transactional
     public Order cancel(Long orderId, Long staffAccountId) {
         Order order = orderRepository.findById(orderId).orElseThrow(
