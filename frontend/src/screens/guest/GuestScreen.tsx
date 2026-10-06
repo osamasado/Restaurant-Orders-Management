@@ -41,6 +41,9 @@ type DeviceStatus = 'checking' | 'paired' | 'unpaired'
  */
 const SESSION_STEP_KEY = 'rom-guest-step'
 
+/** How long to wait before asking the server for the settings again after a failed attempt. */
+const SETTINGS_RETRY_MS = 5000
+
 function readInitialStep(): GuestStep {
   if (readStoredOrderId() !== null) return 'confirmation'
   try {
@@ -97,13 +100,27 @@ function GuestScreenContent() {
     }
   }, [])
 
+  // The settings carry the currency and the enabled payment methods: without them the menu shows no prices and
+  // payment has nothing to offer. If the server is unreachable for a moment (a restart, a Wi-Fi blip) keep
+  // trying until they arrive, so the guest is not left on a screen without prices until they reload.
   useEffect(() => {
     let cancelled = false
-    getGuestSettings().then((response) => {
-      if (!cancelled) setSettings(response)
-    })
+    let retryTimer: number | undefined
+
+    const load = () => {
+      getGuestSettings()
+        .then((response) => {
+          if (!cancelled) setSettings(response)
+        })
+        .catch(() => {
+          if (!cancelled) retryTimer = window.setTimeout(load, SETTINGS_RETRY_MS)
+        })
+    }
+    load()
+
     return () => {
       cancelled = true
+      window.clearTimeout(retryTimer)
     }
   }, [])
 
