@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,7 +35,7 @@ public class LoginThrottle {
     private final int maxTrackedNames;
     private final Map<String, Attempts> attemptsByName = new HashMap<>();
 
-    @Autowired
+    /** The one Spring uses: with several constructors and none annotated it takes the no-arg one. */
     public LoginThrottle() {
         this(Clock.systemUTC(), DEFAULT_MAX_TRACKED_NAMES);
     }
