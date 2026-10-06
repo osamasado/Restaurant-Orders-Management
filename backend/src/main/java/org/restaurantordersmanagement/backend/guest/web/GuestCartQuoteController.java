@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Public, no @PreAuthorize - SecurityConfig's anyRequest().permitAll() already
- * allows this. A preview only: nothing is persisted, and #21's submission
+ * Public, no @PreAuthorize - it is on SecurityConfig's public list. A preview only: nothing is persisted, and #21's submission
  * recomputes pricing itself rather than trusting this response.
  */
 @RestController

@@ -1,0 +1,119 @@
+.history-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 14px 16px;
+  border-radius: 13px;
+  background: var(--bg-card-alt);
+  box-shadow: var(--shadow-card);
+}
+
+.history-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.history-card__number {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.history-card__table {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.history-card__stage {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  color: var(--text-secondary);
+}
+
+.history-card__stage--preparing {
+  color: var(--accent-amber);
+  box-shadow: inset 0 0 0 1px var(--accent-amber);
+}
+
+.history-card__stage--ready {
+  color: var(--accent-forest);
+  box-shadow: inset 0 0 0 1px var(--accent-forest);
+}
+
+.history-card__stage--cancelled {
+  color: var(--accent-clay);
+  box-shadow: inset 0 0 0 1px var(--accent-clay);
+}
+
+.history-card__entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-card__entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.history-card__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  align-self: center;
+}
+
+.history-card__dot--preparing {
+  background: var(--accent-amber);
+}
+
+.history-card__dot--ready {
+  background: var(--accent-forest);
+}
+
+.history-card__dot--cancelled {
+  background: var(--accent-clay);
+}
+
+.history-card__time {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  min-width: 150px;
+}
+
+.history-card__entry-stage {
+  font-weight: 600;
+  min-width: 110px;
+}
+
+.history-card__actor {
+  color: var(--text-secondary);
+}
+
+.history-card__acknowledged {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--accent-clay);
+}

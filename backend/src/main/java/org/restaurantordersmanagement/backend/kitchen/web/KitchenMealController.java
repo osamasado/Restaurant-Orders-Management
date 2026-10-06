@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The kitchen's "ran out?" API. Not covered by SecurityConfig's URL rules
- * (anyRequest().permitAll()), so every method carries its own @PreAuthorize.
+ * The kitchen's "ran out?" API. Needs a sign-in (SecurityConfig's default), and
+ * every method carries its own @PreAuthorize for the roles.
  */
 @RestController
 @RequestMapping("/api/kitchen/meals")

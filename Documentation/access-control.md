@@ -94,6 +94,7 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 
 | Method | Path | Allowed roles |
 |---|---|---|
+| GET | `/api/admin/orders/history` | Admin |
 | POST | `/api/admin/orders/{orderId}/cancel` | Admin |
 
 ### Tables and devices

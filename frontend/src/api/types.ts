@@ -255,3 +255,29 @@ export type HallBoardResponse = {
   preparing: HallBoardEntry[]
   ready: HallBoardEntry[]
 }
+
+/** One status an order reached. actor is the staff member's name, or null for a guest submitting their own order. */
+export type OrderHistoryEntry = {
+  stage: OrderStatus
+  changedAt: string
+  actor: string | null
+}
+
+/** One order and its full audit trail, for the admin history screen. */
+export type OrderHistory = {
+  orderId: number
+  orderNumber: number | null
+  tableNumber: string
+  status: OrderStatus
+  placedAt: string | null
+  entries: OrderHistoryEntry[]
+  /** The kitchen's read-receipt for a cancelled order - not a status change; null until acknowledged. */
+  cancellationAcknowledgement: { by: string | null; at: string } | null
+}
+
+export type OrderHistoryPage = {
+  orders: OrderHistory[]
+  page: number
+  totalPages: number
+  totalOrders: number
+}

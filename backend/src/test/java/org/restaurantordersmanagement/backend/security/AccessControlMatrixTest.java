@@ -110,6 +110,7 @@ class AccessControlMatrixTest {
             admin("PUT", "/api/meal-sizes/{mealSizeId}/recipe"),
             // Orders, tables, staff, settings
             admin("POST", "/api/admin/orders/{orderId}/cancel"),
+            admin("GET", "/api/admin/orders/history"),
             admin("GET", "/api/tables"),
             admin("POST", "/api/tables"),
             admin("PUT", "/api/tables/{id}"),
