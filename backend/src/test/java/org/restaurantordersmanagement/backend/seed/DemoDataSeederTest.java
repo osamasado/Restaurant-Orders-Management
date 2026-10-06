@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.restaurantordersmanagement.backend.TestcontainersConfiguration;
+import org.restaurantordersmanagement.backend.guest.service.GuestDeviceService;
 import org.restaurantordersmanagement.backend.i18n.Language;
 import org.restaurantordersmanagement.backend.menu.model.Meal;
 import org.restaurantordersmanagement.backend.menu.model.MealSize;
@@ -16,6 +17,7 @@ import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
 import org.restaurantordersmanagement.backend.menu.repository.CategoryRepository;
 import org.restaurantordersmanagement.backend.menu.repository.MealRepository;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
+import org.restaurantordersmanagement.backend.table.model.Table;
 import org.restaurantordersmanagement.backend.table.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +48,9 @@ class DemoDataSeederTest {
 
     @Autowired
     private StaffAccountRepository staffAccountRepository;
+
+    @Autowired
+    private GuestDeviceService guestDeviceService;
 
     @Test
     void seedAllProducesExpectedCountsAndIsIdempotent() {
@@ -122,6 +127,37 @@ class DemoDataSeederTest {
         }
         assertEquals("حجم من المدير", sizeLabel(editedSize, Language.AR));
         assertTrue(mealRepository.count() == 8);
+    }
+
+    @Test
+    void everySeededPairingCodeCanBeTypedAndClaimedOnAGuestDevice() {
+        demoDataSeeder.seedAll();
+
+        List<Table> paired = tableRepository.findAll().stream()
+                .filter(table -> table.getPairedDeviceId() != null)
+                .toList();
+        assertFalse(paired.isEmpty());
+        for (Table table : paired) {
+            String code = table.getPairedDeviceId();
+            // What the device screen accepts: six characters, upper case.
+            assertTrue(code.matches("[A-Z0-9]{6}"), "table " + table.getTableNumber() + " has an untypeable code: " + code);
+            assertEquals(table.getTableNumber(), guestDeviceService.claim(code).getTableNumber());
+        }
+    }
+
+    @Test
+    void legacyDeviceIdsAreReplacedButACodeAnAdminGeneratedIsNot() {
+        demoDataSeeder.seedAll();
+        Table first = tableRepository.findByTableNumber("1").orElseThrow();
+        Table second = tableRepository.findByTableNumber("2").orElseThrow();
+        first.setPairedDeviceId("tablet-a1");
+        second.setPairedDeviceId("ADMN42");
+        tableRepository.saveAllAndFlush(List.of(first, second));
+
+        demoDataSeeder.seedAll();
+
+        assertEquals("ALPHA2", tableRepository.findByTableNumber("1").orElseThrow().getPairedDeviceId());
+        assertEquals("ADMN42", tableRepository.findByTableNumber("2").orElseThrow().getPairedDeviceId());
     }
 
     private static String sizeLabel(MealSize size, Language language) {
