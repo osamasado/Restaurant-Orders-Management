@@ -1,5 +1,6 @@
 package org.restaurantordersmanagement.backend.order.web;
 
+import org.restaurantordersmanagement.backend.order.service.AdminOrderListService;
 import org.restaurantordersmanagement.backend.order.service.AdminOrderService;
 import org.restaurantordersmanagement.backend.order.service.OrderHistoryService;
 import org.restaurantordersmanagement.backend.staff.security.StaffPrincipal;
@@ -22,10 +23,27 @@ public class AdminOrderController {
 
     private final AdminOrderService adminOrderService;
     private final OrderHistoryService orderHistoryService;
+    private final AdminOrderListService adminOrderListService;
 
-    public AdminOrderController(AdminOrderService adminOrderService, OrderHistoryService orderHistoryService) {
+    public AdminOrderController(
+            AdminOrderService adminOrderService,
+            OrderHistoryService orderHistoryService,
+            AdminOrderListService adminOrderListService) {
         this.adminOrderService = adminOrderService;
         this.orderHistoryService = orderHistoryService;
+        this.adminOrderListService = adminOrderListService;
+    }
+
+    /**
+     * The live Orders list: placed orders, newest first, with items, payment,
+     * total and the legal next statuses (computed by the server).
+     */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public AdminOrderPageResponse list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return adminOrderListService.page(page, size);
     }
 
     /** The audit trail: every order, newest first, with every status change, its time and who made it. */

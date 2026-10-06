@@ -43,6 +43,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByOrderNumber(Integer orderNumber, Pageable pageable);
 
     /**
+     * A page of orders the guests actually placed, for the admin Orders list.
+     * placedAt IS NOT NULL leaves out drafts (and drafts cancelled before they
+     * were ever submitted). Only the table is fetched here; the items are
+     * loaded for the whole page in one query (see OrderItemRepository), since
+     * joining a collection into a paged query would page in memory.
+     */
+    @EntityGraph(attributePaths = {"table"})
+    Page<Order> findByPlacedAtIsNotNull(Pageable pageable);
+
+    /**
      * Only the order number and table number of one status, lowest number
      * first - the hall board's source. A closed projection, so just those two
      * columns are selected: items, prices and everything else on the order
