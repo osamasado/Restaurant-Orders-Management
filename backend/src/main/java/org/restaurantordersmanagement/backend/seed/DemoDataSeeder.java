@@ -46,6 +46,14 @@ public class DemoDataSeeder {
     /** Demo login PIN for every seeded staff account - see the task-summary doc. */
     private static final String DEMO_PIN = "1234";
 
+    /** Device ids the first seed used (not typeable on a guest device) and the codes that replace them. */
+    private static final Map<String, String> LEGACY_DEVICE_IDS = Map.of(
+            "tablet-a1", "ALPHA2",
+            "tablet-a2", "BRAVE3",
+            "tablet-b3", "GULF77",
+            "tablet-b5", "NAVY99",
+            "tablet-c1", "KAYAK2");
+
     private final CategoryRepository categoryRepository;
     private final MealRepository mealRepository;
     private final TableRepository tableRepository;
@@ -294,12 +302,35 @@ public class DemoDataSeeder {
         Instant online = Instant.now();
         Instant offline = Instant.now().minus(Duration.ofHours(3));
 
-        table("1", "Front room", 2, "tablet-a1", online);
-        table("2", "Front room", 4, "tablet-a2", online);
-        table("7", "Garden room", 4, "tablet-b3", online);
-        table("9", "Garden room", 6, "tablet-b5", online);
-        table("11", "Terrace", 4, "tablet-c1", offline);
+        table("1", "Front room", 2, "ALPHA2", online);
+        table("2", "Front room", 4, "BRAVE3", online);
+        table("7", "Garden room", 4, "GULF77", online);
+        table("9", "Garden room", 6, "NAVY99", online);
+        table("11", "Terrace", 4, "KAYAK2", offline);
         table("14", "Terrace", 2, null, null);
+
+        replaceLegacyDeviceIds();
+    }
+
+    /**
+     * Pairing codes are what a guest device types in: six characters, upper
+     * case (the device uppercases what it is given and the server looks codes up
+     * in upper case). The first seed used ids like "tablet-a1", which can never
+     * be entered, so a database seeded then is moved to the new codes. Only an id
+     * that is exactly an old seed value is replaced; a code an admin generated is
+     * never touched.
+     */
+    private void replaceLegacyDeviceIds() {
+        for (Map.Entry<String, String> legacy : LEGACY_DEVICE_IDS.entrySet()) {
+            if (tableRepository.findByPairedDeviceId(legacy.getValue()).isPresent()) {
+                continue;
+            }
+            tableRepository.findByPairedDeviceId(legacy.getKey()).ifPresent(table -> {
+                table.setPairedDeviceId(legacy.getValue());
+                tableRepository.saveAndFlush(table);
+                log.info("Demo table {}: replaced the legacy device id with {}", table.getTableNumber(), legacy.getValue());
+            });
+        }
     }
 
     private void table(String tableNumber, String room, int seats, String pairedDeviceId, Instant lastSeenAt) {
