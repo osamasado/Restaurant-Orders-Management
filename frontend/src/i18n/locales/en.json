@@ -171,7 +171,6 @@
       "staff": "Staff accounts",
       "settings": "Settings"
     },
-    "comingSoon": "Coming soon",
     "auth": {
       "title": "Sign in",
       "name": "Name",
@@ -292,6 +291,28 @@
       "error": "Could not save this table",
       "cancel": "Cancel",
       "save": "Save"
+    },
+    "orders": {
+      "subtitle": "Every placed order, newest first. Move it along or cancel it.",
+      "empty": "No orders yet",
+      "loading": "Loading orders...",
+      "loadError": "Could not load the orders",
+      "connectionLost": "Connection lost, trying again...",
+      "loadMore": "Load more",
+      "capped": "Showing the newest {{count}} orders. Older ones are in the audit history.",
+      "table": "Table {{number}}",
+      "noTransitions": "No further steps",
+      "actions": {
+        "PREPARING": "Start",
+        "READY": "Ready",
+        "SERVED": "Served"
+      },
+      "cancel": "Cancel",
+      "cancelConfirm": "Cancel order {{number}}?",
+      "cancelYes": "Yes, cancel it",
+      "cancelKeep": "Keep it",
+      "actionConflict": "This order was already changed on another screen. The list has been refreshed.",
+      "actionError": "That didn't work, please try again."
     },
     "history": {
       "subtitle": "Every order's status changes, with the time and who made them",
