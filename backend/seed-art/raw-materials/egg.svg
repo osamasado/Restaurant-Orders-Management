@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<defs>
+<clipPath id="ec"><path d="M0 -60 C38 -60 52 -5 50 20 C48 50 26 66 0 66 C-26 66 -50 50 -50 20 C-52 -5 -38 -60 0 -60 Z"/></clipPath>
+<g id="e">
+<path d="M0 -60 C38 -60 52 -5 50 20 C48 50 26 66 0 66 C-26 66 -50 50 -50 20 C-52 -5 -38 -60 0 -60 Z" fill="#C98F57"/>
+<g clip-path="url(#ec)"><ellipse cx="34" cy="14" rx="46" ry="70" fill="#A8703F" opacity="0.7"/></g>
+<ellipse cx="-22" cy="-20" rx="9" ry="20" fill="#EBC79B" transform="rotate(14 -22 -20)"/>
+</g>
+</defs>
+<rect width="400" height="400" fill="#F4EBDC"/>
+<ellipse cx="130" cy="214" rx="48" ry="8" fill="#1B1A17" opacity="0.12"/>
+<ellipse cx="248" cy="198" rx="48" ry="8" fill="#1B1A17" opacity="0.12"/>
+<ellipse cx="210" cy="318" rx="120" ry="12" fill="#1B1A17" opacity="0.1"/>
+<use href="#e" transform="translate(130 146) rotate(-10) scale(0.88)"/>
+<use href="#e" transform="translate(250 132) rotate(12) scale(0.88)"/>
+<!-- cracked egg -->
+<path d="M120 288 C116 262 150 248 190 250 C214 240 262 244 290 262 C316 280 296 308 262 312 C230 322 170 322 144 312 C128 306 122 298 120 288 Z" fill="#E4DFD2"/>
+<path d="M120 284 C116 258 150 244 190 246 C214 236 262 240 290 258 C316 276 296 304 262 308 C230 318 170 318 144 308 C128 302 122 294 120 284 Z" fill="#FFFFFF"/>
+<circle cx="214" cy="278" r="30" fill="#D98F00"/>
+<circle cx="214" cy="274" r="28" fill="#F0B93A"/>
+<ellipse cx="204" cy="264" rx="9" ry="6" fill="#F7D98B" transform="rotate(-30 204 264)"/>
+<!-- shell half -->
+<g transform="translate(98 282) rotate(-14)">
+<path d="M-40 -8 L-28 -22 L-16 -6 L-4 -22 L8 -6 L20 -22 L32 -8 C34 24 14 44 -4 44 C-24 44 -42 24 -40 -8 Z" fill="#C98F57"/>
+<path d="M-4 44 C14 44 34 24 32 -8 L20 -22 C24 10 18 30 -4 44 Z" fill="#A8703F"/>
+<path d="M-30 -8 L-24 -14 L-14 0 L-4 -14 L8 0 L18 -14 L26 -8 C22 4 8 10 -4 10 C-18 10 -28 4 -30 -8 Z" fill="#FFF8EC"/>
+</g>
+</svg>

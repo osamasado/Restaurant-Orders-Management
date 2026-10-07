@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F8EDC8"/>
+<ellipse cx="200" cy="334" rx="145" ry="14" fill="#1B1A17" opacity="0.12"/>
+<!-- bottle -->
+<path d="M133 84 L163 84 L163 170 C163 190 188 200 188 240 L188 322 Q188 332 178 332 L118 332 Q108 332 108 322 L108 240 C108 200 133 190 133 170 Z" fill="#E0A524"/>
+<path d="M163 170 C163 190 188 200 188 240 L188 322 Q188 332 178 332 L172 332 L172 240 C172 200 163 190 163 170 Z" fill="#B87400" opacity="0.6"/>
+<rect x="116" y="225" width="10" height="95" rx="5" fill="#FFF8EC" opacity="0.5"/>
+<path d="M140 100 L150 100 L150 175 L140 175 Z" fill="#F7D98B" opacity="0.6"/>
+<!-- cap -->
+<rect x="128" y="76" width="40" height="16" rx="4" fill="#D98F00"/>
+<path d="M128 90 l4 8 l4 -8 l4 8 l4 -8 l4 8 l4 -8 l4 8 l4 -8 l4 8 l4 -8 z" fill="#B87400"/>
+<rect x="134" y="79" width="14" height="4" rx="2" fill="#F0B93A"/>
+<!-- label -->
+<rect x="112" y="248" width="72" height="56" rx="5" fill="#FFF8EC"/>
+<circle cx="148" cy="272" r="13" fill="#1F4D3A"/>
+<circle cx="148" cy="272" r="6" fill="#F0B93A"/>
+<rect x="128" y="290" width="40" height="5" rx="2.5" fill="#B98350"/>
+<!-- glass -->
+<path d="M232 156 L318 156 L312 306 Q311 322 296 322 L254 322 Q239 322 238 306 Z" fill="#FFF8EC" opacity="0.9"/>
+<path d="M236 190 L314 190 L309 304 Q308 316 296 316 L254 316 Q242 316 241 304 Z" fill="#F0B93A"/>
+<path d="M275 190 L314 190 L309 304 Q308 316 296 316 L282 316 Z" fill="#D98F00" opacity="0.55"/>
+<rect x="247" y="205" width="9" height="95" rx="4.5" fill="#F7D98B" opacity="0.8"/>
+<g fill="#F7D98B"><circle cx="270" cy="270" r="3"/><circle cx="283" cy="245" r="2.5"/><circle cx="265" cy="225" r="2.5"/><circle cx="290" cy="285" r="2.5"/><circle cx="276" cy="210" r="2"/></g>
+<!-- foam -->
+<path d="M228 192 C222 168 232 150 252 150 C256 136 282 134 288 148 C306 140 322 156 318 176 C324 190 318 200 308 198 C296 206 280 200 272 198 C258 206 240 202 228 192 Z" fill="#FFFFFF"/>
+<path d="M240 196 C250 202 262 200 270 197 C262 190 250 188 240 196 Z" fill="#EFE9DF"/>
+<path d="M300 170 C312 176 314 186 308 196 C300 192 296 182 300 170 Z" fill="#EFE9DF"/>
+<circle cx="258" cy="168" r="6" fill="#EFE9DF"/>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F4EFDF"/>
+<ellipse cx="200" cy="330" rx="140" ry="14" fill="#1B1A17" opacity="0.12"/>
+<!-- pod 1 -->
+<path d="M64 292 C120 262 200 180 322 78 C326 76 332 80 330 86 C230 200 150 288 72 312 C64 313 60 296 64 292 Z" fill="#3A2517"/>
+<path d="M70 288 C130 262 205 188 322 82 C255 168 150 262 72 296 Z" fill="#5A3A26"/>
+<path d="M90 292 C150 264 215 200 300 112" fill="none" stroke="#8A6040" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+<!-- pod 2 -->
+<path d="M62 232 C130 218 220 160 336 130 C342 130 344 138 338 142 C230 196 150 268 70 258 C60 256 56 238 62 232 Z" fill="#2E1D12"/>
+<path d="M68 234 C135 220 225 166 336 134 C230 190 150 258 70 248 Z" fill="#4A3020"/>
+<path d="M95 245 C160 240 240 190 320 148" fill="none" stroke="#7A5638" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+<!-- tied ends detail -->
+<rect x="62" y="238" width="10" height="64" rx="4" fill="#3A2517" transform="rotate(8 67 270)" opacity="0"/>
+<!-- flower -->
+<g transform="translate(262 292)">
+<g fill="#FFF8EC">
+<ellipse cx="0" cy="-34" rx="17" ry="30"/>
+<ellipse cx="0" cy="-34" rx="17" ry="30" transform="rotate(72)"/>
+<ellipse cx="0" cy="-34" rx="17" ry="30" transform="rotate(144)"/>
+<ellipse cx="0" cy="-34" rx="17" ry="30" transform="rotate(216)"/>
+<ellipse cx="0" cy="-34" rx="17" ry="30" transform="rotate(288)"/>
+</g>
+<g fill="#E8DFC6" opacity="0.8">
+<ellipse cx="4" cy="-30" rx="5" ry="24" transform="rotate(36)"/>
+<ellipse cx="4" cy="-30" rx="5" ry="24" transform="rotate(108)"/>
+<ellipse cx="4" cy="-30" rx="5" ry="24" transform="rotate(180)"/>
+<ellipse cx="4" cy="-30" rx="5" ry="24" transform="rotate(252)"/>
+<ellipse cx="4" cy="-30" rx="5" ry="24" transform="rotate(324)"/>
+</g>
+<circle r="11" fill="#F0B93A"/><circle r="5" fill="#D98F00"/>
+</g>
+</svg>

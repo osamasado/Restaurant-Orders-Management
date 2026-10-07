@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#EFE9DE"/>
+<ellipse cx="205" cy="330" rx="145" ry="15" fill="#1B1A17" opacity="0.12"/>
+<!-- sieve -->
+<g>
+<rect x="268" y="120" width="72" height="14" rx="7" fill="#6B7178" transform="rotate(-12 268 127)"/>
+<path d="M105 140 L285 140 C285 190 250 215 195 215 C140 215 105 190 105 140 Z" fill="#B8BCC0"/>
+<path d="M195 215 C250 215 285 190 285 140 L262 140 C260 180 235 200 195 205 Z" fill="#8F959B"/>
+<g stroke="#E4E6EA" stroke-width="2.5" opacity="0.9"><path d="M125 160 L265 160 M140 178 L250 178 M165 196 L225 196 M140 142 L160 208 M175 142 L185 214 M210 142 L205 214 M245 142 L230 208"/></g>
+<ellipse cx="195" cy="140" rx="90" ry="14" fill="#6B7178"/>
+<ellipse cx="195" cy="140" rx="82" ry="10" fill="#F4F6F8"/>
+<ellipse cx="195" cy="142" rx="70" ry="6" fill="#FFFFFF"/>
+</g>
+<!-- falling dust -->
+<g fill="#FFFFFF"><circle cx="190" cy="232" r="3.5"/><circle cx="205" cy="245" r="3"/><circle cx="198" cy="222" r="2.5"/><circle cx="182" cy="250" r="2.5"/><circle cx="212" cy="228" r="2.5"/></g>
+<!-- mound -->
+<path d="M70 318 C85 285 130 262 175 262 C195 252 215 252 235 262 C285 262 325 285 340 318 Z" fill="#FFFFFF"/>
+<path d="M235 262 C285 262 325 285 340 318 L270 318 C265 290 255 272 235 262 Z" fill="#DDD6CA"/>
+<path d="M70 318 C85 285 130 262 175 262 C140 280 120 298 115 318 Z" fill="#F7F5F0"/>
+<!-- spoon -->
+<g transform="translate(72 308)">
+<path d="M10 4 L110 -2 Q116 -1 116 3 Q116 8 110 9 L10 16 Z" fill="#B8BCC0"/>
+<ellipse cx="0" cy="10" rx="32" ry="20" fill="#8F959B"/>
+<ellipse cx="0" cy="7" rx="28" ry="15" fill="#B8BCC0"/>
+<path d="M-26 8 C-20 -10 20 -10 26 8 Z" fill="#FFFFFF"/>
+</g>
+</svg>

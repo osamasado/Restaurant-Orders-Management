@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F7F0DC"/>
+<path d="M60 300 L300 214 L352 252 L346 296 L210 328 L66 316 Z" fill="#1B1A17" opacity="0.12"/>
+<!-- front cut face -->
+<path d="M70 250 L340 230 L340 285 L70 305 Z" fill="#F4D06F"/>
+<path d="M70 250 L340 230 L340 238 L70 258 Z" fill="#F7DC8C"/>
+<path d="M70 294 L340 274 L340 285 L70 305 Z" fill="#E3B84E"/>
+<!-- top face -->
+<path d="M70 250 L300 150 Q330 185 340 230 Z" fill="#FBE9A8"/>
+<path d="M70 250 L300 150 L304 156 L78 252 Z" fill="#FFF3C4"/>
+<!-- rind -->
+<path d="M300 150 Q330 185 340 230 L340 285 Q330 240 300 205 Z" fill="#8A5A2B"/>
+<path d="M300 150 Q322 178 332 208 Q326 186 300 160 Z" fill="#B98350"/>
+<path d="M340 262 Q330 234 300 205 L300 214 Q326 240 340 285 Z" fill="#5A3A1E"/>
+<!-- holes -->
+<ellipse cx="130" cy="268" rx="15" ry="11" fill="#C9983A"/>
+<ellipse cx="130" cy="272" rx="12" ry="8" fill="#E0B04A"/>
+<ellipse cx="205" cy="252" rx="11" ry="8" fill="#C9983A"/>
+<ellipse cx="205" cy="255" rx="8" ry="5.5" fill="#E0B04A"/>
+<ellipse cx="262" cy="270" rx="17" ry="12" fill="#C9983A"/>
+<ellipse cx="262" cy="274" rx="13" ry="8.5" fill="#E0B04A"/>
+<ellipse cx="170" cy="286" rx="7" ry="5" fill="#C9983A"/>
+<ellipse cx="305" cy="252" rx="7" ry="5.5" fill="#C9983A"/>
+<ellipse cx="96" cy="278" rx="5" ry="4" fill="#C9983A"/>
+<ellipse cx="240" cy="246" rx="4.5" ry="3.5" fill="#C9983A"/>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F7EFD0"/>
+<ellipse cx="190" cy="328" rx="140" ry="15" fill="#1B1A17" opacity="0.12"/>
+<!-- jar glass -->
+<rect x="95" y="135" width="150" height="190" rx="28" fill="#E4EDE8"/>
+<!-- mustard -->
+<rect x="103" y="148" width="134" height="170" rx="22" fill="#D9A21B"/>
+<rect x="103" y="148" width="134" height="40" rx="18" fill="#E8B92E"/>
+<path d="M103 250 L237 250 L237 296 Q237 318 215 318 L125 318 Q103 318 103 296 Z" fill="#C48C0E"/>
+<rect x="116" y="160" width="14" height="140" rx="7" fill="#FFFFFF" opacity="0.45"/>
+<!-- label -->
+<rect x="130" y="205" width="80" height="62" rx="8" fill="#FFF8EC"/>
+<circle cx="170" cy="236" r="16" fill="#D98F00"/>
+<circle cx="170" cy="236" r="8" fill="#F0B93A"/>
+<!-- lid -->
+<rect x="90" y="108" width="160" height="38" rx="10" fill="#B5432C"/>
+<rect x="90" y="132" width="160" height="14" rx="7" fill="#7A2A1B"/>
+<rect x="102" y="115" width="60" height="6" rx="3" fill="#D8664A"/>
+<!-- spoon -->
+<g transform="translate(300 250) rotate(18)">
+<rect x="-7" y="-130" width="14" height="150" rx="7" fill="#B98350"/>
+<rect x="-3" y="-125" width="4" height="135" rx="2" fill="#D9AE7C" opacity="0.8"/>
+<ellipse cx="0" cy="45" rx="25" ry="36" fill="#8A5A2B"/>
+<ellipse cx="0" cy="42" rx="19" ry="29" fill="#D9A21B"/>
+<ellipse cx="-5" cy="34" rx="6" ry="12" fill="#F0C94A"/>
+</g>
+</svg>

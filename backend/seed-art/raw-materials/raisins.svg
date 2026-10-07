@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#EFE5E1"/>
+<ellipse cx="200" cy="330" rx="140" ry="15" fill="#1B1A17" opacity="0.12"/>
+<!-- bowl back -->
+<path d="M80 215 L320 215 C320 285 275 322 200 322 C125 322 80 285 80 215 Z" fill="#FFF8EC"/>
+<path d="M200 322 C275 322 320 285 320 215 L292 215 C290 270 255 300 200 304 Z" fill="#E4DCCD"/>
+<!-- heap -->
+<g id="h">
+<path d="M95 222 C110 165 150 120 200 118 C250 120 290 165 305 222 Z" fill="#4A2A2E"/>
+</g>
+<g fill="#74444A">
+<ellipse cx="150" cy="190" rx="22" ry="13" transform="rotate(-25 150 190)"/>
+<ellipse cx="200" cy="140" rx="22" ry="13" transform="rotate(15 200 140)"/>
+<ellipse cx="250" cy="185" rx="22" ry="13" transform="rotate(30 250 185)"/>
+<ellipse cx="200" cy="185" rx="23" ry="14" transform="rotate(-8 200 185)"/>
+<ellipse cx="125" cy="215" rx="22" ry="13" transform="rotate(10 125 215)"/>
+<ellipse cx="170" cy="215" rx="22" ry="13" transform="rotate(-20 170 215)"/>
+<ellipse cx="230" cy="218" rx="22" ry="13" transform="rotate(20 230 218)"/>
+<ellipse cx="275" cy="215" rx="22" ry="13" transform="rotate(-12 275 215)"/>
+<ellipse cx="165" cy="155" rx="20" ry="12" transform="rotate(35 165 155)"/>
+<ellipse cx="240" cy="150" rx="20" ry="12" transform="rotate(-30 240 150)"/>
+</g>
+<g fill="none" stroke="#3A1F23" stroke-width="3" stroke-linecap="round">
+<path d="M135 190 Q150 184 165 192"/><path d="M185 140 Q200 134 214 142"/><path d="M236 186 Q250 180 264 190"/>
+<path d="M185 186 Q200 180 215 188"/><path d="M110 216 Q125 210 140 218"/><path d="M155 216 Q170 210 185 218"/>
+<path d="M215 218 Q230 212 245 220"/><path d="M260 216 Q275 210 290 218"/><path d="M152 154 Q165 150 177 158"/><path d="M228 152 Q240 146 253 154"/>
+</g>
+<g fill="none" stroke="#4A2A2E" stroke-width="2.5" stroke-linecap="round"><path d="M140 183 L146 195 M155 180 L160 192 M190 134 L195 146 M206 133 L210 146 M240 178 L245 190 M255 177 L258 190 M190 178 L194 191 M207 180 L210 192 M118 210 L122 222 M133 208 L137 221 M162 210 L166 222 M178 211 L182 222 M222 212 L227 224 M238 214 L242 226 M268 210 L273 222 M283 209 L287 221"/></g>
+<g fill="#B27C80" opacity="0.8">
+<ellipse cx="144" cy="184" rx="9" ry="3" transform="rotate(-25 144 184)"/>
+<ellipse cx="195" cy="134" rx="9" ry="3" transform="rotate(15 195 134)"/>
+<ellipse cx="244" cy="179" rx="9" ry="3" transform="rotate(30 244 179)"/>
+<ellipse cx="194" cy="179" rx="9" ry="3"/>
+</g>
+<!-- bowl front rim -->
+<path d="M80 215 L320 215 C320 232 316 246 310 258 L90 258 C84 246 80 232 80 215 Z" fill="#FFF8EC"/>
+<rect x="76" y="208" width="248" height="14" rx="7" fill="#FFFFFF"/>
+<path d="M90 258 C100 290 140 322 200 322 C260 322 300 290 310 258 Z" fill="#F0E8DA"/>
+<path d="M200 322 C260 322 300 290 310 258 L285 258 C275 290 245 308 200 312 Z" fill="#E4DCCD"/>
+<!-- scattered -->
+<g fill="#5B3236">
+<ellipse cx="85" cy="318" rx="16" ry="9" transform="rotate(-15 85 318)"/>
+<ellipse cx="320" cy="322" rx="16" ry="9" transform="rotate(20 320 322)"/>
+</g>
+<path d="M75 318 Q85 313 97 319 M311 323 Q322 317 332 324" fill="none" stroke="#3A1F23" stroke-width="3" stroke-linecap="round"/>
+</svg>
