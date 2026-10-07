@@ -53,7 +53,7 @@ npm run preview                 # http://localhost:4173
 
 ### 3. Set up the desk
 
-- **Phone** (or a 390 px wide browser window): `/guest`. Enter the pairing code **GULF77** (table 7, Garden room). For a real phone on the same network use `npm run preview -- --host` and open the address it prints.
+- **Phone** (or a 390 px wide browser window): `/guest`. Enter the pairing code **GULF77** (table 7, Garden room). For a real phone on the same network use `npm run preview -- --host` and open the address it prints. That works for ordering, but **plain HTTP on a network address cannot be installed**: browsers only run the service worker and offer the install on `localhost` or HTTPS. Step 9 below says how to get there.
 - **Kitchen** monitor: `/kitchen`, sign in as M. Behr / 1234.
 - **Hall board**: `/hall`, no sign-in.
 - **Admin** (a fourth window, off to the side): `/admin`, sign in as O. Sado / 1234.
@@ -78,7 +78,13 @@ Two other codes are good for a second device: ALPHA2 (table 1), BRAVE3 (table 2)
    - **Audit history**: the order from step 2 with each stage, its time and who made it (Guest, M. Behr).
    - **Meals**: the three languages per meal, sizes, prices, the recipe linking each size to raw materials, the picture. **Raw materials**: pictures, stock, supplier. **Tables & devices**: pairing codes. **Staff accounts** and their roles. **Settings**: currency, tax, payment methods, default language.
 8. **Arabic (1 min).** Switch the phone to Arabic: right-to-left layout (not mirrored English), Arabic menu content, Latin digits for numbers and prices. Then the hall board.
-9. **Installable (30 s).** On the phone or tablet, with the production build: browser menu, **Add to Home Screen** (or Install). It opens full screen, starting at the guest screen. Turn on airplane mode and reopen it: the app shell still loads.
+9. **Installable (30 s).** The install needs a secure context (`localhost` or HTTPS), so the phone must not use the plain `--host` address for this step. Pick one:
+   - **Laptop, simplest:** open `http://localhost:4173` (the production build) in Chrome and click the install icon in the address bar. It opens in its own window starting at the guest screen.
+   - **Android phone over USB:** turn on USB debugging, run `adb reverse tcp:4173 tcp:4173`, then open `http://localhost:4173` on the phone: it counts as `localhost`. Browser menu, **Install app** (or Add to Home Screen).
+   - **Any phone or tablet:** an HTTPS tunnel to port 4173 (for example `cloudflared tunnel --url http://localhost:4173`). Vite may refuse the tunnel's host name; if it does, allow it with `preview.allowedHosts` in `frontend/vite.config.ts`.
+   - **iPhone or iPad:** Safari's Share, **Add to Home Screen** adds the icon even over plain HTTP, but the offline shell (the service worker) needs HTTPS as well.
+
+   Then switch on airplane mode and reopen the installed app: the app shell still loads (the live data, of course, does not). None of these three routes was tried on a real phone yet, see the rehearsal record.
 
 ## What to say about the build (proposal section 6)
 
@@ -98,11 +104,11 @@ Two other codes are good for a second device: ALPHA2 (table 1), BRAVE3 (table 2)
 - **The guest phone asks for a code:** enter GULF77. An unknown code is refused with a message.
 - **Kitchen sign-in says locked:** five wrong PINs lock a name for 15 minutes. Restart the backend (the lock is in memory) or use another account.
 - **Boards already full of old orders:** do step 2 of "Before the demo" again.
-- **No "Install" offer:** it needs the production build (`npm run build`, `npm run preview`) on `localhost` or HTTPS, and not an already installed copy.
+- **No "Install" offer:** it needs the production build (`npm run build`, `npm run preview`) on `localhost` or HTTPS, and not an already installed copy. A phone on `http://<laptop address>:4173` never gets it; use one of the routes in step 9.
 - **Fonts look different offline:** the three fonts come from Google Fonts; without a connection the browser falls back to its own.
 
 ## Rehearsal record
 
 - [x] Automated rehearsal of steps 2 to 6 (and the audit check) on a throwaway stack: 22 of 22, results above.
 - [ ] **Human rehearsal, once end to end on the real devices** (phone, kitchen monitor, hall screen, with the talking points): to be ticked by the presenter.
-- [ ] Install on a real phone or tablet from the production build, and reopen offline.
+- [ ] Install on a real phone or tablet from the production build **over `localhost` (adb reverse) or HTTPS**, and reopen offline. Not tried yet on any real device.

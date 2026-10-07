@@ -16,7 +16,7 @@ Evidence: **Test** is an automated test that runs on every build; **Walk** is `f
 | Order lifecycle with audit history | Built | `OrderStateMachineServiceTest`, `OrderTransitionsTest`, `NonNegotiableRulesGuardTest`, `AdminOrderHistoryControllerTest`, the Audit history screen |
 | Configurable currency, tax and payment methods | Built | `SettingsControllerTest`, the Settings screen; the guest payment step only offers the enabled methods |
 | Role-based staff accounts | Built, with one deviation | Admin, kitchen, waiter, cashier accounts and an access table for every endpoint (`AccessControlMatrixTest`, `access-control.md`). Waiter and cashier have no screen, see Gaps |
-| Installable on phones and tablets as an app | **Built in this iteration (#28)** | Web app manifest, icons (192, 512, maskable), service worker that keeps the app shell available offline and never caches `/api`. A browser check of the production build: the worker takes control, the manifest passes, and `/guest`, `/kitchen` and `/hall` still open with no connection. The real "Add to Home Screen" on a phone or tablet is **Human** |
+| Installable on phones and tablets as an app | **Built in this iteration (#28)** | Web app manifest, icons (192, 512, maskable), service worker that keeps the app shell available offline and never caches `/api`. A browser check of the production build: the worker takes control, the manifest passes, and `/guest`, `/kitchen` and `/hall` still open with no connection. The real "Add to Home Screen" on a phone or tablet is **Human**, and needs `localhost` or HTTPS (a phone on plain `http://<laptop address>` cannot install it) |
 
 ### Deliberately left for a later version
 
@@ -85,6 +85,6 @@ These are where the build differs from the proposal's wording. None is a hidden 
 ## 6. Still to be done by a person
 
 - The human rehearsal of `demo-script.md` on the real devices.
-- "Add to Home Screen" on a real phone or tablet, and a reopen offline.
+- "Add to Home Screen" on a real phone or tablet over `localhost` (adb reverse) or HTTPS, and a reopen offline.
 - A native-speaker pass over the German and Arabic wording, including the Arabic meal content written for this project.
 - The manual rows still open in `qa-checklist.md`.

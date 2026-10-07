@@ -101,7 +101,7 @@ Observations that are not defects, for a decision:
 | The manifest names the app, starts at `/guest`, is standalone, and has 192, 512 and maskable icons; the icons are served | Browser check of the production build | ✅ |
 | The service worker takes control, caches the app shell and the build's scripts, and **never caches `/api`** | Browser check | ✅ |
 | Offline: `/guest`, `/kitchen` and `/hall` still open (the app shell, not the browser's error page), and load normally again when back online | Browser check (headless Chromium, connection switched off) | ✅ |
-| **"Add to Home Screen" on a real phone or tablet, and reopen it offline** | **Human**: needs the production build (`npm run build`, `npm run preview -- --host`) on `localhost` or HTTPS | ⬜ |
+| **"Add to Home Screen" on a real phone or tablet, and reopen it offline** | **Human**: needs the production build (`npm run build`, `npm run preview`) in a secure context: `http://localhost:4173` on the laptop, an Android phone over `adb reverse tcp:4173 tcp:4173`, or an HTTPS tunnel. A plain `http://<laptop address>:4173` (`--host`) is not a secure context: no service worker, no install offer | ⬜ |
 
 The browser check also asks Chrome for its installability errors and got none, but in headless mode that report did not flag a manifest without icons either, so it is not relied on alone; the explicit manifest checks above are.
 

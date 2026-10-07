@@ -57,7 +57,7 @@ Issues found along the way:
 - **Chrome's installability report is weak in headless mode:** it did not flag a manifest without icons, so the explicit manifest checks carry that proof.
 
 Not done, for a decision:
-- **A real device test of "Add to Home Screen" and of the human demo rehearsal** are left to the presenter (unticked in `demo-script.md` and `qa-checklist.md`).
+- **A real device test of "Add to Home Screen" and of the human demo rehearsal** are left to the presenter. The install needs a secure context (`localhost` or HTTPS): a phone on the plain `--host` network address cannot install it (the first version of the demo script said it could; it now lists the routes that work). Both boxes are unticked in `demo-script.md` and `qa-checklist.md`.
 - **Waiter and cashier have no screen,** no way to move an order backwards, and a served order cannot be cancelled. All three are listed with their reasons in `scope-check.md` section 5 instead of being built.
 - **The pictures are drawings.** A visual polish pass (and real photos) belongs to #62.
 - **`CLAUDE.md` still says "Green-field: no source code exists yet"** under "Current state", which is long out of date. I left the project instructions alone; it is worth a one-line fix by you.
