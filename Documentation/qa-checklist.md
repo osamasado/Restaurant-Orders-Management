@@ -79,7 +79,7 @@ Observations that are not defects, for a decision:
 | Only numbers and tables: no names, prices or items | Walk + Test (`HallBoardControllerTest`) | ✅ | ✅ | ✅ |
 | Visual pass (#62): In preparation tint panel, Ready forest panel with its ring (both themes), numbers 74 px and 86 px on a quiet board | Boards check + screenshots looked at | ✅ | ✅ | ✅ |
 | Visual pass (#62): the In preparation dot blinks (2 s) and is the only continuous motion; a number that arrives, or moves to Ready, fades and rises in (0.4 s) and the others do not move; with "reduce motion" there is no animation at all | Boards check (live, with a new order) | ✅ | ✅ | ✅ |
-| A busy evening fits the screen: 25 preparing and 9 ready orders at 1920 x 1080 and at 1366 x 768 (and a database with over 80 preparing), nothing cut off, numbers never below 28 px | Boards check | ✅ | ✅ | ✅ |
+| A busy evening fits the screen: 24 preparing and 7 ready orders at 1920 x 1080 and at 1366 x 768 (and a database with over 80 preparing), nothing cut off, numbers never below 28 px | Boards check | ✅ | ✅ | ✅ |
 | Arabic: mirrored (In preparation on the right, numbers start at the right edge, table label to their left) | Boards check + screenshots | ✅ | ✅ | ✅ |
 | Legible from the back of the dining room on the real screen | **Human** | ⬜ | ⬜ | ⬜ |
 
