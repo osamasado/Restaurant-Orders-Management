@@ -1,5 +1,7 @@
 package org.restaurantordersmanagement.backend.order.web;
 
+import java.time.Instant;
+import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.restaurantordersmanagement.backend.order.service.AdminOrderListService;
 import org.restaurantordersmanagement.backend.order.service.AdminOrderService;
 import org.restaurantordersmanagement.backend.order.service.OrderHistoryService;
@@ -37,14 +39,19 @@ public class AdminOrderController {
 
     /**
      * The live Orders list: placed orders, newest first, with items, payment,
-     * total and the legal next statuses (computed by the server).
+     * total and the legal next statuses (computed by the server). Optionally
+     * only one status, and only orders placed from (inclusive) up to (exclusive)
+     * the given instants, so the client picks the day in its own time zone.
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public AdminOrderPageResponse list(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return adminOrderListService.page(page, size);
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) Instant from,
+            @RequestParam(required = false) Instant to) {
+        return adminOrderListService.page(page, size, status, from, to);
     }
 
     /** The audit trail: every order, newest first, with every status change, its time and who made it. */

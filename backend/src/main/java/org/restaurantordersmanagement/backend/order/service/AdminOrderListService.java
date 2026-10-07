@@ -1,5 +1,6 @@
 package org.restaurantordersmanagement.backend.order.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -11,6 +12,7 @@ import org.restaurantordersmanagement.backend.order.model.OrderItem;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.restaurantordersmanagement.backend.order.repository.OrderItemRepository;
 import org.restaurantordersmanagement.backend.order.repository.OrderRepository;
+import org.restaurantordersmanagement.backend.order.repository.OrderSpecifications;
 import org.restaurantordersmanagement.backend.order.web.AdminOrderPageResponse;
 import org.restaurantordersmanagement.backend.order.web.AdminOrderRowResponse;
 import org.springframework.data.domain.Page;
@@ -41,12 +43,13 @@ public class AdminOrderListService {
     }
 
     /**
-     * Newest placed orders first. Two queries for the page plus its count: the
+     * Newest placed orders first, optionally only one status and only orders
+     * placed from (inclusive) up to (exclusive) the given instants. Two queries for the page plus its count: the
      * orders with their table, then the lines of all of them together - never
      * one query per order.
      */
     @Transactional(readOnly = true)
-    public AdminOrderPageResponse page(int page, int size) {
+    public AdminOrderPageResponse page(int page, int size, OrderStatus status, Instant from, Instant to) {
         if (page < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "page must not be negative");
         }
@@ -55,8 +58,12 @@ public class AdminOrderListService {
                     HttpStatus.BAD_REQUEST, "size must be between 1 and " + MAX_PAGE_SIZE);
         }
 
+        if (from != null && to != null && !from.isBefore(to)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "from must be before to");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("placedAt"), Sort.Order.desc("id")));
-        Page<Order> orders = orderRepository.findByPlacedAtIsNotNull(pageable);
+        Page<Order> orders = orderRepository.findAll(OrderSpecifications.placed(status, from, to), pageable);
 
         Map<Long, List<AdminOrderRowResponse.Item>> itemsByOrder = itemsOf(orders.getContent());
 
