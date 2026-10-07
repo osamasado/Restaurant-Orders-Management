@@ -10,7 +10,8 @@ const SCALES = [1, 0.85, 0.72, 0.62, 0.53, 0.45, 0.38, 0.32]
  * A wall display cannot be scrolled, so a list that does not fit is a list that is cut off. The list flows in
  * columns (top to bottom, then the next column); when the numbers do not fit the panel, this picks the largest
  * size step at which they do and sets it as --hall-scale on the list. It re-fits when the number of entries
- * changes, when the panel is resized (a window, a rotated screen) and when the language changes.
+ * changes, when the panel is resized (a window, a rotated screen), when the language changes and when the
+ * web fonts have loaded.
  *
  * Quiet boards keep the designed size. At the smallest step the list can still scroll, so nothing is lost
  * even with far more orders than a kitchen can have open.
@@ -34,7 +35,13 @@ export function useFitScale(entryCount: number, language: string) {
 
     const observer = new ResizeObserver(fit)
     observer.observe(list)
-    return () => observer.disconnect()
+    // The web fonts arrive after the first layout and change how wide the numbers are: fit again once they have.
+    void document.fonts.ready.then(fit)
+    document.fonts.addEventListener('loadingdone', fit)
+    return () => {
+      observer.disconnect()
+      document.fonts.removeEventListener('loadingdone', fit)
+    }
   }, [entryCount, language])
 
   return listRef

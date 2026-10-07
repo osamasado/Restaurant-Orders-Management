@@ -118,7 +118,7 @@
 
 .kitchen-order-card__timer--neutral {
   background: var(--hairline);
-  color: var(--text-secondary);
+  color: var(--text);
 }
 
 /* Waiting time: neutral, amber from 6 minutes, clay from 12 (design doc), as solid chips. */
