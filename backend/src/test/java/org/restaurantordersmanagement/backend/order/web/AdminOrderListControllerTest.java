@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.jayway.jsonpath.JsonPath;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -264,6 +265,82 @@ class AdminOrderListControllerTest {
         // The orders with their table, the count, and the lines of every order together.
         long statements = statistics.getPrepareStatementCount();
         assertTrue(statements <= 3, "expected at most 3 statements for the page, got " + statements);
+    }
+
+    @Test
+    void filtersByStatus() throws Exception {
+        Order submitted = submittedOrder(1);
+        Order preparing = orderStateMachineService.transition(submittedOrder(1), OrderStatus.PREPARING, cook);
+        Order cancelled = orderStateMachineService.transition(submittedOrder(1), OrderStatus.CANCELLED, cook);
+        List<Long> mine = List.of(submitted.getId(), preparing.getId(), cancelled.getId());
+
+        String json = list("?size=100&status=PREPARING").andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertEquals(List.of(preparing.getId()), idsInListOrder(json, mine));
+        List<String> statuses = JsonPath.read(json, "$.orders[*].status");
+        assertTrue(statuses.stream().allMatch("PREPARING"::equals), "only PREPARING rows expected, got " + statuses);
+
+        String cancelledOnly = list("?size=100&status=CANCELLED").andReturn().getResponse().getContentAsString();
+        assertEquals(List.of(cancelled.getId()), idsInListOrder(cancelledOnly, mine));
+    }
+
+    @Test
+    void aStatusFilterNoOrderHasGivesAnEmptyList() throws Exception {
+        submittedOrder(1);
+
+        String json = list("?size=100&status=DRAFT").andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertEquals(0, ((List<?>) JsonPath.read(json, "$.orders")).size());
+        assertEquals(0, ((Number) JsonPath.read(json, "$.totalOrders")).intValue());
+    }
+
+    @Test
+    void anUnknownStatusIsABadRequest() throws Exception {
+        list("?status=TELEPORTED").andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void filtersByTimeRangeWithFromIncludedAndToExcluded() throws Exception {
+        Order first = submittedOrder(1);
+        Order second = submittedOrder(1);
+        Order third = submittedOrder(1);
+        List<Long> mine = List.of(first.getId(), second.getId(), third.getId());
+        // The database keeps microseconds, so read the placed times back instead of using the in-memory ones.
+        Instant secondPlaced = orderRepository.findById(second.getId()).orElseThrow().getPlacedAt();
+        Instant thirdPlaced = orderRepository.findById(third.getId()).orElseThrow().getPlacedAt();
+
+        String onlySecond = list("?size=100&from=" + secondPlaced + "&to=" + thirdPlaced)
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertEquals(List.of(second.getId()), idsInListOrder(onlySecond, mine));
+
+        String fromSecond = list("?size=100&from=" + secondPlaced).andReturn().getResponse().getContentAsString();
+        assertEquals(List.of(third.getId(), second.getId()), idsInListOrder(fromSecond, mine));
+
+        String beforeThird = list("?size=100&to=" + thirdPlaced).andReturn().getResponse().getContentAsString();
+        assertEquals(List.of(second.getId(), first.getId()), idsInListOrder(beforeThird, mine));
+    }
+
+    @Test
+    void aRangeThatEndsBeforeItStartsIsABadRequest() throws Exception {
+        Instant now = Instant.now();
+
+        list("?from=" + now + "&to=" + now.minusSeconds(60)).andExpect(status().isBadRequest());
+        list("?from=" + now + "&to=" + now).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void statusAndRangeCombineAndTheCountFollowsTheFilter() throws Exception {
+        Order preparing = orderStateMachineService.transition(submittedOrder(1), OrderStatus.PREPARING, cook);
+        submittedOrder(1);
+        Instant placed = orderRepository.findById(preparing.getId()).orElseThrow().getPlacedAt();
+
+        String json = list("?size=100&status=PREPARING&from=" + placed + "&to=" + placed.plusSeconds(60))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals(List.of(preparing.getId()), idsInListOrder(json, List.of(preparing.getId())));
+        List<String> statuses = JsonPath.read(json, "$.orders[*].status");
+        assertTrue(statuses.stream().allMatch("PREPARING"::equals));
+        assertEquals(statuses.size(), ((Number) JsonPath.read(json, "$.totalOrders")).intValue());
     }
 
 }

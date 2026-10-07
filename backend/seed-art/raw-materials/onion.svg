@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<defs>
+<path id="o" d="M0 -95 C10 -75 65 -55 66 5 C67 55 35 82 0 82 C-35 82 -67 55 -66 5 C-65 -55 -10 -75 0 -95 Z"/>
+</defs>
+<rect width="400" height="400" fill="#F3EBDD"/>
+<ellipse cx="135" cy="302" rx="70" ry="12" fill="#1B1A17" opacity="0.12"/>
+<ellipse cx="268" cy="326" rx="76" ry="12" fill="#1B1A17" opacity="0.12"/>
+<g transform="translate(135 212) scale(0.98)">
+<use href="#o" fill="#B98350"/>
+<path d="M0 -95 C10 -75 65 -55 66 5 C67 55 35 82 0 82 C25 60 38 20 30 -20 C24 -50 10 -75 0 -95 Z" fill="#8A5A2B" opacity="0.55"/>
+<path d="M0 -92 C-22 -40 -30 20 -4 80" fill="none" stroke="#8A5A2B" stroke-width="3" opacity="0.7"/>
+<path d="M0 -92 C-40 -45 -52 20 -28 70" fill="none" stroke="#8A5A2B" stroke-width="3" opacity="0.5"/>
+<path d="M0 -92 C18 -40 22 20 8 80" fill="none" stroke="#D3A06A" stroke-width="3" opacity="0.7"/>
+<path d="M-8 -92 C-4 -108 6 -112 12 -118 C10 -104 8 -98 4 -90 Z" fill="#8A5A2B"/>
+<path d="M-12 82 L-16 98 M0 84 L0 102 M12 82 L16 98" stroke="#E4DCCD" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g transform="translate(268 246)">
+<use href="#o" fill="#B98350"/>
+<use href="#o" fill="#FFF3D6" transform="scale(0.92)"/>
+<use href="#o" fill="none" stroke="#D9BE7E" stroke-width="4" transform="scale(0.76)" vector-effect="non-scaling-stroke"/>
+<use href="#o" fill="none" stroke="#D9BE7E" stroke-width="4" transform="scale(0.58)" vector-effect="non-scaling-stroke"/>
+<use href="#o" fill="none" stroke="#D9BE7E" stroke-width="4" transform="scale(0.40)" vector-effect="non-scaling-stroke"/>
+<use href="#o" fill="none" stroke="#D9BE7E" stroke-width="4" transform="scale(0.22)" vector-effect="non-scaling-stroke"/>
+</g>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F8F3D3"/>
+<ellipse cx="200" cy="334" rx="145" ry="14" fill="#1B1A17" opacity="0.12"/>
+<!-- bottle glass -->
+<path d="M135 92 L175 92 L175 150 C175 170 208 182 208 218 L208 318 Q208 332 194 332 L116 332 Q102 332 102 318 L102 218 C102 182 135 170 135 150 Z" fill="#E8EEDD"/>
+<!-- lemonade -->
+<path d="M136 124 L174 124 L174 150 C174 168 202 182 202 218 L202 318 Q202 326 192 326 L118 326 Q108 326 108 318 L108 218 C108 182 136 168 136 150 Z" fill="#F5DC6A"/>
+<path d="M174 150 C174 168 202 182 202 218 L202 318 Q202 326 192 326 L182 326 L182 218 C182 182 174 168 174 150 Z" fill="#E8CC5A" opacity="0.8"/>
+<path d="M108 270 C130 255 150 285 202 268 L202 318 Q202 326 192 326 L118 326 Q108 326 108 318 Z" fill="#F9E898" opacity="0.75"/>
+<rect x="116" y="210" width="9" height="100" rx="4.5" fill="#FFFFFF" opacity="0.55"/>
+<g fill="#FFFFFF" opacity="0.8"><circle cx="150" cy="200" r="4"/><circle cx="170" cy="240" r="3"/><circle cx="140" cy="248" r="3"/><circle cx="185" cy="215" r="3"/><circle cx="160" cy="145" r="3"/></g>
+<!-- label -->
+<ellipse cx="155" cy="285" rx="30" ry="24" fill="#FFF8EC"/>
+<ellipse cx="155" cy="285" rx="18" ry="13" fill="#F0B93A"/>
+<path d="M155 272 C150 266 158 262 162 266" fill="none" stroke="#2F6B50" stroke-width="3" stroke-linecap="round"/>
+<!-- cap -->
+<rect x="130" y="74" width="50" height="26" rx="7" fill="#2F6B50"/>
+<rect x="130" y="90" width="50" height="10" rx="5" fill="#1F4D3A"/>
+<rect x="138" y="79" width="20" height="5" rx="2.5" fill="#7FB899"/>
+<!-- lemon half -->
+<circle cx="278" cy="262" r="58" fill="#F0B93A"/>
+<circle cx="278" cy="262" r="58" fill="#D98F00" opacity="0.25"/>
+<circle cx="278" cy="264" r="52" fill="#F7D98B" opacity="0"/>
+<circle cx="278" cy="262" r="50" fill="#FFF8EC"/>
+<g fill="#F7E27A">
+<path d="M278 262 L278 218 A44 44 0 0 1 309 231 Z"/>
+<path d="M278 262 L311 233 A44 44 0 0 1 322 262 Z"/>
+<path d="M278 262 L322 266 A44 44 0 0 1 309 293 Z"/>
+<path d="M278 262 L307 295 A44 44 0 0 1 278 306 Z"/>
+<path d="M278 262 L274 306 A44 44 0 0 1 247 293 Z"/>
+<path d="M278 262 L245 291 A44 44 0 0 1 234 266 Z"/>
+<path d="M278 262 L234 258 A44 44 0 0 1 247 231 Z"/>
+<path d="M278 262 L249 229 A44 44 0 0 1 274 218 Z"/>
+</g>
+<circle cx="278" cy="262" r="6" fill="#FFF8EC"/>
+<path d="M250 235 A40 40 0 0 1 270 222" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+</svg>

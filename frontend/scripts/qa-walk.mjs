@@ -21,7 +21,7 @@
 //
 // For every page it checks: no console error, no unexpected failed request, no missing-translation warning, no
 // horizontal overflow, nothing wider than the box it sits in, the right <html lang> and dir, Latin digits only
-// in Arabic, and no text clipped by an ellipsis or hidden overflow. It saves a screenshot per page and exits 1 if any check failed.
+// in Arabic, no text clipped by an ellipsis or hidden overflow, and no picture that failed to load. It saves a screenshot per page and exits 1 if any check failed.
 import { createRequire } from 'node:module'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -94,6 +94,8 @@ async function audit(page, label, lang, consoleProblems) {
   // would pass every check below without proving anything.
   await page.waitForLoadState('networkidle').catch(() => {})
   await page.waitForFunction(() => document.body.innerText.trim().length >= 8, undefined, { timeout: 20000 }).catch(() => {})
+  // Pictures load after the page: wait for them, or a missing one would only be noticed as an empty slot.
+  await page.waitForFunction(() => [...document.images].every((img) => img.complete), undefined, { timeout: 15000 }).catch(() => {})
   const found = await page.evaluate((language) => {
     const root = document.documentElement
     const viewportWidth = window.innerWidth
@@ -125,7 +127,9 @@ async function audit(page, label, lang, consoleProblems) {
         return (cs.overflow !== 'visible' || cs.textOverflow === 'ellipsis') && el.scrollWidth > el.clientWidth + 1
       })
       .slice(0, 4).map(describe)
+    const brokenImages = [...document.images].filter((img) => img.complete && img.naturalWidth === 0).map((img) => img.src.slice(-60))
     return {
+      brokenImages,
       lang: root.lang,
       dir: root.dir,
       textLength: document.body.innerText.trim().length,
@@ -145,6 +149,7 @@ async function audit(page, label, lang, consoleProblems) {
   if (found.outOfContainer.length) problems.push(`wider than its container: ${found.outOfContainer.join(' | ')}`)
   if (found.clipped.length) problems.push(`text is clipped: ${found.clipped.join(' | ')}`)
   if (found.arabicIndicDigits) problems.push('Arabic-Indic digits on an Arabic page')
+  if (found.brokenImages.length) problems.push(`picture did not load: ${found.brokenImages.join(' | ')}`)
   runs += 1
   report.push({ label, problems })
   console.log(`${problems.length ? 'FAIL' : 'ok  '}  ${label}${problems.length ? '\n        ' + problems.join('\n        ') : ''}`)

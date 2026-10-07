@@ -8,7 +8,10 @@ import { useT } from '../../../../i18n/useT'
 import { formatMoney, LOCALE_BY_LANGUAGE } from '../../../../lib/formatMoney'
 import { OrderRow } from './OrderRow'
 import { ORDERS_LIMIT, useAdminOrders } from './useAdminOrders'
+import type { OrdersFilter } from './useAdminOrders'
 import './OrdersView.css'
+
+const FILTER_STATUSES: OrderStatus[] = ['SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'CANCELLED']
 
 /**
  * The live orders: every placed order, newest first, refreshed every 5 s. Each row offers the steps the server
@@ -17,7 +20,9 @@ import './OrdersView.css'
 export function OrdersView() {
   const { t } = useT()
   const { language } = useLanguage()
-  const { orders, connectionLost, refresh, loadMore, canLoadMore, capped } = useAdminOrders()
+  const [filter, setFilter] = useState<OrdersFilter>({ status: null, date: '' })
+  const { orders, connectionLost, refresh, loadMore, canLoadMore, capped } = useAdminOrders(filter)
+  const filterActive = filter.status !== null || filter.date !== ''
 
   const [busyOrderId, setBusyOrderId] = useState<number | null>(null)
   const [confirmingOrderId, setConfirmingOrderId] = useState<number | null>(null)
@@ -96,12 +101,45 @@ export function OrdersView() {
         <p className="orders-view__subtitle">{t('admin.orders.subtitle')}</p>
       </div>
 
+      <div className="orders-view__filters">
+        <label className="orders-view__filter">
+          <span>{t('admin.orders.statusLabel')}</span>
+          <select
+            value={filter.status ?? ''}
+            onChange={(event) => setFilter({ ...filter, status: (event.target.value || null) as OrderStatus | null })}
+          >
+            <option value="">{t('admin.orders.statusAll')}</option>
+            {FILTER_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {t(`admin.history.stages.${status}`)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="orders-view__filter">
+          <span>{t('admin.orders.dateLabel')}</span>
+          <input
+            type="date"
+            dir="ltr"
+            value={filter.date}
+            onChange={(event) => setFilter({ ...filter, date: event.target.value })}
+          />
+        </label>
+        {filterActive && (
+          <button type="button" className="orders-view__clear" onClick={() => setFilter({ status: null, date: '' })}>
+            {t('admin.orders.clearFilters')}
+          </button>
+        )}
+      </div>
+
       {notice && <p className="orders-view__notice">{notice}</p>}
       {connectionLost && orders !== null && <p className="orders-view__notice">{t('admin.orders.connectionLost')}</p>}
       {connectionLost && orders === null && <p className="orders-view__error">{t('admin.orders.loadError')}</p>}
 
       {orders === null && !connectionLost && <p className="orders-view__empty">{t('admin.orders.loading')}</p>}
-      {orders !== null && orders.length === 0 && <p className="orders-view__empty">{t('admin.orders.empty')}</p>}
+      {orders !== null && orders.length === 0 && (
+        <p className="orders-view__empty">{filterActive ? t('admin.orders.noResults') : t('admin.orders.empty')}</p>
+      )}
 
       <div className="orders-view__list">
         {orders?.map((order) => (

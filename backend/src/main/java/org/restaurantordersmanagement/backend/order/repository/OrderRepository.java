@@ -6,12 +6,14 @@ import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
     /**
      * Oldest first - the order the kitchen should cook in. Items and table
@@ -43,14 +45,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByOrderNumber(Integer orderNumber, Pageable pageable);
 
     /**
-     * A page of orders the guests actually placed, for the admin Orders list.
-     * placedAt IS NOT NULL leaves out drafts (and drafts cancelled before they
-     * were ever submitted). Only the table is fetched here; the items are
-     * loaded for the whole page in one query (see OrderItemRepository), since
-     * joining a collection into a paged query would page in memory.
+     * The admin Orders list: see {@link OrderSpecifications#placed}. Only the
+     * table is fetched here; the items are loaded for the whole page in one
+     * query (see OrderItemRepository), since joining a collection into a paged
+     * query would page in memory.
      */
+    @Override
     @EntityGraph(attributePaths = {"table"})
-    Page<Order> findByPlacedAtIsNotNull(Pageable pageable);
+    Page<Order> findAll(Specification<Order> specification, Pageable pageable);
 
     /**
      * Only the order number and table number of one status, lowest number

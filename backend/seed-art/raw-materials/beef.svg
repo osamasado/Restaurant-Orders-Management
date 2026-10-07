@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<rect width="400" height="400" fill="#F5E4DE"/>
+<ellipse cx="200" cy="325" rx="140" ry="16" fill="#1B1A17" opacity="0.12"/>
+<!-- steak outer (fat rim) -->
+<path d="M70 215 C60 150 120 90 205 95 C290 100 345 150 335 225 C325 295 255 322 190 312 C120 305 78 275 70 215 Z" fill="#F5E0D4"/>
+<!-- meat -->
+<path d="M85 213 C78 160 128 108 205 112 C280 117 328 158 320 222 C312 280 252 303 192 295 C130 289 92 262 85 213 Z" fill="#B5432C"/>
+<path d="M85 213 C92 262 130 289 192 295 C252 303 312 280 320 222 C300 268 250 280 195 272 C140 266 100 248 85 213 Z" fill="#7A2A1B" opacity="0.55"/>
+<!-- highlight -->
+<path d="M120 170 C140 130 190 118 230 124 C190 128 150 148 130 185 Z" fill="#D8664A" opacity="0.8"/>
+<!-- marbling -->
+<g fill="none" stroke="#F5D9CF" stroke-linecap="round" stroke-width="7">
+<path d="M130 200 C160 175 190 190 215 165 C235 148 262 160 285 150"/>
+<path d="M120 235 C160 225 180 245 215 225 C245 210 270 228 300 215"/>
+<path d="M175 135 C185 155 175 170 195 190"/>
+<path d="M250 245 C262 258 250 268 262 280"/>
+</g>
+<g fill="none" stroke="#F5D9CF" stroke-linecap="round" stroke-width="4" opacity="0.8">
+<path d="M150 255 C165 262 175 258 190 268"/>
+<path d="M230 190 C245 200 255 195 268 205"/>
+</g>
+<!-- fat blob on rim -->
+<path d="M270 112 C300 120 330 150 335 185 C310 160 285 140 255 128 Z" fill="#FFF8EC"/>
+</svg>

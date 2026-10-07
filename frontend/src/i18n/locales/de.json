@@ -312,7 +312,12 @@
       "cancelYes": "Ja, stornieren",
       "cancelKeep": "Behalten",
       "actionConflict": "Diese Bestellung wurde bereits an einem anderen Bildschirm geändert. Die Liste wurde aktualisiert.",
-      "actionError": "Das hat nicht geklappt, bitte erneut versuchen."
+      "actionError": "Das hat nicht geklappt, bitte erneut versuchen.",
+      "statusLabel": "Status",
+      "statusAll": "Alle Status",
+      "dateLabel": "Datum",
+      "clearFilters": "Filter zurücksetzen",
+      "noResults": "Keine Bestellungen für diese Filter"
     },
     "history": {
       "subtitle": "Alle Statuswechsel jeder Bestellung, mit Zeit und Verantwortlichem",

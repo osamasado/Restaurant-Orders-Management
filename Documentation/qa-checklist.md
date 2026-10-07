@@ -12,7 +12,7 @@ Run the walk against a throwaway stack (own database), never your dev database: 
 
 ## The automated walk
 
-It checks, for every page: no console error and no unexpected failed request; no missing-translation warning; no horizontal overflow; nothing wider than the box it sits in; the right `<html lang>` and `dir`; Latin digits only in Arabic; no text clipped by an ellipsis or hidden overflow; and that the page is not blank. It saves a screenshot per page. Options (languages, themes, retry) are at the top of the script.
+It checks, for every page: no console error and no unexpected failed request; no missing-translation warning; no horizontal overflow; nothing wider than the box it sits in; the right `<html lang>` and `dir`; Latin digits only in Arabic; no text clipped by an ellipsis or hidden overflow; no picture that failed to load; and that the page is not blank. It saves a screenshot per page. Options (languages, themes, retry) are at the top of the script.
 
 ### Result
 
@@ -41,6 +41,7 @@ Observations that are not defects, for a decision:
 | Pairing screen: a valid code connects, an unknown code is refused with a clear message | Human (the API side is tested) | ⬜ | ⬜ | ⬜ |
 | Welcome: the language buttons switch the whole screen, and the choice carries on | Walk | ✅ | ✅ | ✅ |
 | Menu: categories, meals, descriptions and prices in the chosen language | Walk (unavailable meals hidden: Test) | ✅ | ✅ | ✅ |
+| Menu: every meal has its picture, and a meal the kitchen marks sold out vanishes from a menu that is already open (refreshes every 5 s) | Walk (pictures) + Rehearsal (`demo-rehearsal.mjs`, gone within 5.4 s) | ✅ | ✅ | ✅ |
 | Meal detail: description, preparation, ingredients, sizes with prices, quantity, note | Walk | ✅ | ✅ | ✅ |
 | Cart: lines, subtotal, tax and total (the figures are the server's) | Walk + Test (`OrderLifecycleEndToEndTest`) | ✅ | ✅ | ✅ |
 | Cart: a line can be removed | Human | ⬜ | ⬜ | ⬜ |
@@ -81,15 +82,35 @@ Observations that are not defects, for a decision:
 | A non-admin account is told it has no access | Test (`AccessControlMatrixTest`) | ✅ | ✅ | ✅ |
 | Audit history: each order's stages with time and actor | Walk + browser check in #30 | ✅ | ✅ | ✅ |
 | Orders: every order newest first with items, table, time, payment, total and status; one button per legal step plus Cancel; finished orders say "no further steps" | Walk + browser check in #71 | ✅ | ✅ | ✅ |
+| Orders: filter by status and by day (the day is the admin's own, tested in far-apart time zones), "no match" message, "Clear filters", survives the 5 s refresh | Test (`AdminOrderListControllerTest`) + browser check in #74 (English; the Walk renders the filter bar in all three languages) | ⬜ | ✅ | ⬜ |
 | Orders: Cancel asks for confirmation first, and "Keep it" leaves the order alone | Walk (confirmation page) + browser check in #71 | ✅ | ✅ | ✅ |
 | Orders: Start, Ready and Served move the order and the audit history names the admin; a clash with another screen shows the notice and refreshes; a failed refresh keeps the rows | Test (`AdminOrderControllerTest`) + browser check in #71 (English; the logic is the same in every language) | ⬜ | ✅ | ⬜ |
 | Orders: cancelling shows the kitchen banner and removes the number from the hall board | Browser check in #71 (English) | ⬜ | ✅ | ⬜ |
 | Meals and categories: list and the edit form with all three translations | Walk | ✅ | ✅ | ✅ |
 | Raw materials, tables and devices, staff accounts with their form, settings | Walk | ✅ | ✅ | ✅ |
+| Meals and raw materials show their pictures and the demo data fills raw materials, units, stock, suppliers and a recipe for every meal size | Walk (pictures) + Test (`DemoDataSeederTest`) | ✅ | ✅ | ✅ |
 | Pair and unpair a device, the staff PIN rules, own role locked | Test + browser check in #29 | ✅ | ✅ | ✅ |
 | Who sees payment details: Admin only (kitchen, hall and the waiter and cashier roles do not; a guest sees only their own table's orders) | Test (`AccessControlMatrixTest`, `AdminOrderListControllerTest`) and `Documentation/access-control.md` | ✅ | ✅ | ✅ |
 | Long labels fit the sidebar, buttons and forms | Walk (the German sidebar bug was found and fixed here) | ✅ | ✅ | ✅ |
 | Wording reads naturally | **Human** | ⬜ | ⬜ | ⬜ |
+
+### Installable app (#28)
+
+| Check | How | Result |
+|---|---|---|
+| The manifest names the app, starts at `/guest`, is standalone, and has 192, 512 and maskable icons; the icons are served | Browser check of the production build | ✅ |
+| The service worker takes control, caches the app shell and the build's scripts, and **never caches `/api`** | Browser check | ✅ |
+| Offline: `/guest`, `/kitchen` and `/hall` still open (the app shell, not the browser's error page), and load normally again when back online | Browser check (headless Chromium, connection switched off) | ✅ |
+| **"Add to Home Screen" on a real phone or tablet, and reopen it offline** | **Human**: needs the production build (`npm run build`, `npm run preview`) in a secure context: `http://localhost:4173` on the laptop, an Android phone over `adb reverse tcp:4173 tcp:4173`, or an HTTPS tunnel. A plain `http://<laptop address>:4173` (`--host`) is not a secure context: no service worker, no install offer | ⬜ |
+
+The browser check also asks Chrome for its installability errors and got none, but in headless mode that report did not flag a manifest without icons either, so it is not relied on alone; the explicit manifest checks above are.
+
+### The demo
+
+| Check | How | Result |
+|---|---|---|
+| The demo flow of `demo-script.md` (order on the phone, kitchen, hall board, the guest's timeline, an admin cancel with the kitchen banner, a sold-out meal on an open menu, the audit trail), every hand-off within 10 s | Rehearsal (`frontend/scripts/demo-rehearsal.mjs`, throwaway stack, clean data): 22 of 22, hand-offs 3.6 to 6.8 s | ✅ |
+| **A full rehearsal on the real devices, with the talking points** | **Human** | ⬜ |
 
 ## One order across all four screens
 
