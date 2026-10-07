@@ -9,3 +9,11 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+// Installable app: the service worker keeps the app shell available on a flaky connection (see public/sw.js).
+// Only in the production build, so the dev server keeps serving fresh modules.
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => undefined)
+  })
+}
