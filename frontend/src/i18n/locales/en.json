@@ -312,7 +312,12 @@
       "cancelYes": "Yes, cancel it",
       "cancelKeep": "Keep it",
       "actionConflict": "This order was already changed on another screen. The list has been refreshed.",
-      "actionError": "That didn't work, please try again."
+      "actionError": "That didn't work, please try again.",
+      "statusLabel": "Status",
+      "statusAll": "All statuses",
+      "dateLabel": "Date",
+      "clearFilters": "Clear filters",
+      "noResults": "No orders match these filters"
     },
     "history": {
       "subtitle": "Every order's status changes, with the time and who made them",
