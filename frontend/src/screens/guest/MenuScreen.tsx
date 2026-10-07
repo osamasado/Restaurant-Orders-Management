@@ -7,6 +7,9 @@ import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
 import './MenuScreen.css'
 
+/** How often the open menu is refreshed, like the boards. */
+const MENU_REFRESH_MS = 5000
+
 function cheapestPrice(meal: GuestMealResponse): number {
   return Math.min(...meal.sizes.map((size) => size.price))
 }
@@ -29,23 +32,34 @@ export function MenuScreen({ settings, onSelectMeal }: MenuScreenProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Loads the menu, then keeps it fresh: a meal the kitchen marks unavailable must vanish from a device that is
+  // already showing the menu, not only from the next one that opens it. A refresh that fails keeps what is on
+  // screen; only the very first load shows an error (and the refresh cycle then recovers it).
   useEffect(() => {
     let cancelled = false
+    let timer: number | undefined
 
-    getGuestMenu(toGuestLanguage(language))
-      .then((menuResponse) => {
-        if (cancelled) return
-        setCategories(menuResponse)
-      })
-      .catch(() => {
-        if (!cancelled) setError(t('guest.menu.loadError'))
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
+    const load = (first: boolean) => {
+      getGuestMenu(toGuestLanguage(language))
+        .then((menuResponse) => {
+          if (cancelled) return
+          setCategories(menuResponse)
+          setError(null)
+        })
+        .catch(() => {
+          if (!cancelled && first) setError(t('guest.menu.loadError'))
+        })
+        .finally(() => {
+          if (cancelled) return
+          if (first) setLoading(false)
+          timer = window.setTimeout(() => load(false), MENU_REFRESH_MS)
+        })
+    }
+    load(true)
 
     return () => {
       cancelled = true
+      window.clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-fetch is keyed on language only, t() itself shouldn't retrigger it
   }, [language])
