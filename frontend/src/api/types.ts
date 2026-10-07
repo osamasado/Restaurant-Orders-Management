@@ -231,6 +231,36 @@ export type KitchenOrderResponse = {
   nextStatus: OrderStatus | null
 }
 
+/**
+ * One row of the admin Orders list. nextStatuses is computed by the server from the state machine
+ * (every legal step except cancelling), so the screen never decides what is legal: empty once served or cancelled.
+ */
+export type AdminOrderRow = {
+  orderId: number
+  orderNumber: number
+  tableNumber: string
+  status: OrderStatus
+  placedAt: string
+  paymentMethod: PaymentMethod
+  total: number
+  items: { name: string; size: string; quantity: number; note: string | null }[]
+  nextStatuses: OrderStatus[]
+}
+
+export type AdminOrderPage = {
+  orders: AdminOrderRow[]
+  page: number
+  totalPages: number
+  totalOrders: number
+}
+
+/** What an admin action answers with: the order's new status. */
+export type AdminOrderStatusResponse = {
+  orderId: number
+  orderNumber: number
+  status: OrderStatus
+}
+
 /** One line of the kitchen's cancelled-order banner - shown until a kitchen screen acknowledges it. */
 export type CancelledOrderResponse = {
   orderId: number

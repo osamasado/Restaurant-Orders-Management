@@ -278,9 +278,21 @@ for (const lang of LANGUAGES) {
         await step(`admin ${tag} ${view}`, async () => {
           await page.goto(`${BASE}/admin/${view}`)
           await page.locator('.admin-screen__content h2').first().waitFor({ timeout: 20000 })
+          // The orders list loads after its heading: wait for real rows, or the audit would look at an empty page.
+          if (view === 'orders') await page.locator('.order-row').first().waitFor({ timeout: 20000 })
           await audit(page, `admin ${tag} ${view}`, lang, consoleProblems); await shot(page, `admin-${tag}-${view}`)
         })
       }
+      await step(`admin ${tag} orders cancel confirmation`, async () => {
+        await page.goto(`${BASE}/admin/orders`)
+        // Cancel only asks here: the walk presses "Keep" so the seeded orders stay as they are.
+        await page.locator('.order-row__button--cancel').first().waitFor({ timeout: 20000 })
+        await page.locator('.order-row__button--cancel').first().click()
+        await page.waitForSelector('.order-row__confirm'); await page.waitForTimeout(300)
+        await audit(page, `admin ${tag} orders cancel confirmation`, lang, consoleProblems); await shot(page, `admin-${tag}-orders-confirm`)
+        await page.getByRole('button', { name: tr(dict, 'admin.orders.cancelKeep') }).click()
+        await page.waitForSelector('.order-row__confirm', { state: 'detached' })
+      })
       await step(`admin ${tag} meal form`, async () => {
         await page.goto(`${BASE}/admin/meals`)
         await page.locator('.meal-row').first().waitFor({ timeout: 20000 })

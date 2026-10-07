@@ -19,7 +19,7 @@ Who may do what, per role. This is the checklist for issue #29: every endpoint a
 | Cashier | Nothing yet. No screen or endpoint is assigned to this role. |
 | Guest (not a staff role) | Browse the menu, quote a cart, order from a paired table device, follow that table's own orders. |
 
-Waiter and cashier accounts can be created and can sign in, but every staff screen shows "access denied" until a screen for them exists. That is deliberate: access is added together with the screen, not before. When the admin Orders view (which will show payment details) is built, decide there which roles see it.
+Waiter and cashier accounts can be created and can sign in, but every staff screen shows "access denied" until a screen for them exists. That is deliberate: access is added together with the screen, not before. The admin Orders view (#71) shows payment method and totals, and it is **Admin only**: the waiter and cashier roles do not get it. They can be given a screen of their own later, and it would be added together with its endpoints and matrix rows.
 
 `Role.USER` is reserved for a future guest login and cannot be assigned to a staff account.
 
@@ -94,6 +94,8 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 
 | Method | Path | Allowed roles |
 |---|---|---|
+| GET | `/api/admin/orders` | Admin |
+| POST | `/api/admin/orders/{orderId}/transition` | Admin |
 | GET | `/api/admin/orders/history` | Admin |
 | POST | `/api/admin/orders/{orderId}/cancel` | Admin |
 
@@ -141,6 +143,8 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 
 ## Other rules
 
+- **Payment details** (payment method and totals): among staff, only Admin sees them, through the admin Orders list. The kitchen and hall boards never carry them. A guest device sees them only for its own table's orders (`/api/guest/orders/{orderId}`).
+- **The admin transition endpoint** accepts only Start, Ready and Served. `CANCELLED` is refused with 403 (use the cancel endpoint) and so is submitting (the guest's own step, which prices the order and takes its number); an illegal step from the order's current status is a 409.
 - **Cancelling** an order is Admin-only (`/api/admin/orders/{id}/cancel`), and the kitchen transition endpoint refuses `CANCELLED` with 403 even for the kitchen's own account.
 - **Staff accounts:** only Admin can create, edit or delete. An admin cannot delete their own account (400).
 - **Uploaded images** under `/images/**` are public, because the guest menu shows them.

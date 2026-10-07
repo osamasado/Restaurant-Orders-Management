@@ -171,7 +171,6 @@
       "staff": "Personalkonten",
       "settings": "Einstellungen"
     },
-    "comingSoon": "Demnächst verfügbar",
     "auth": {
       "title": "Anmelden",
       "name": "Name",
@@ -292,6 +291,28 @@
       "error": "Tisch konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
       "save": "Speichern"
+    },
+    "orders": {
+      "subtitle": "Jede aufgegebene Bestellung, neueste zuerst. Weiterschalten oder stornieren.",
+      "empty": "Noch keine Bestellungen",
+      "loading": "Bestellungen werden geladen...",
+      "loadError": "Die Bestellungen konnten nicht geladen werden",
+      "connectionLost": "Verbindung unterbrochen, neuer Versuch...",
+      "loadMore": "Mehr laden",
+      "capped": "Es werden die neuesten {{count}} Bestellungen angezeigt. Ältere stehen im Prüfverlauf.",
+      "table": "Tisch {{number}}",
+      "noTransitions": "Keine weiteren Schritte",
+      "actions": {
+        "PREPARING": "Starten",
+        "READY": "Fertig",
+        "SERVED": "Serviert"
+      },
+      "cancel": "Stornieren",
+      "cancelConfirm": "Bestellung {{number}} stornieren?",
+      "cancelYes": "Ja, stornieren",
+      "cancelKeep": "Behalten",
+      "actionConflict": "Diese Bestellung wurde bereits an einem anderen Bildschirm geändert. Die Liste wurde aktualisiert.",
+      "actionError": "Das hat nicht geklappt, bitte erneut versuchen."
     },
     "history": {
       "subtitle": "Alle Statuswechsel jeder Bestellung, mit Zeit und Verantwortlichem",
