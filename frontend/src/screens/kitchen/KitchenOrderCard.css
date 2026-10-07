@@ -90,13 +90,14 @@
   cursor: not-allowed;
 }
 
+/* The design's solid colours, in both themes: forest to start, amber for ready. */
 .kitchen-order-card__action--start {
-  background: var(--accent-forest);
-  color: var(--bg);
+  background: #1f4d3a;
+  color: #f5f0e8;
 }
 
 .kitchen-order-card__action--ready {
-  background: var(--accent-amber);
+  background: #d98f00;
   color: #131211;
 }
 
@@ -120,12 +121,19 @@
   color: var(--text-secondary);
 }
 
+/* Waiting time: neutral, amber from 6 minutes, clay from 12 (design doc), as solid chips. */
 .kitchen-order-card__timer--warning {
-  background: color-mix(in srgb, var(--accent-amber) 18%, transparent);
-  color: var(--accent-amber);
+  background: #d98f00;
+  color: #131211;
 }
 
 .kitchen-order-card__timer--late {
-  background: color-mix(in srgb, var(--accent-clay) 18%, transparent);
-  color: var(--accent-clay);
+  background: #b3402c;
+  color: #fff;
+}
+
+/* On a paper ground the on-dark amber is too pale to read: text uses the design's darker amber instead. */
+:root[data-theme='light'] .kitchen-order-card__number--preparing,
+:root[data-theme='light'] .kitchen-order-card__note {
+  color: var(--accent-amber-note);
 }

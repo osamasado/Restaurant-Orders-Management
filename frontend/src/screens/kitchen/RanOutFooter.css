@@ -12,9 +12,9 @@
 }
 
 .ran-out__chip {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-5);
   border: 1px solid var(--hairline);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-card-inner);
   background: none;
   color: var(--text);
   font: inherit;
@@ -23,10 +23,11 @@
   cursor: pointer;
 }
 
+/* Sold out: clay tint and ring with clay text, readable on both grounds (white on pale clay was not). */
 .ran-out__chip--sold-out {
   border-color: var(--accent-clay);
-  background: var(--accent-clay);
-  color: #fff;
+  background: color-mix(in srgb, var(--accent-clay) 16%, transparent);
+  color: var(--accent-clay);
 }
 
 .ran-out__chip:disabled {
