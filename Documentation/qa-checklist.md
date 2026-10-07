@@ -10,6 +10,8 @@ The QA pass for issue #31: all four screens (guest, kitchen, hall, admin) in all
 
 Run the walk against a throwaway stack (own database), never your dev database: it places orders. Prefer a production build (`npm run build`, then `vite preview`) over the dev server: the dev server loads modules on demand and, on a slow machine, sometimes had not rendered a page when the walk looked at it.
 
+A second script, `frontend/scripts/boards-check.mjs` (issue #62), checks the two wall boards only, on a typical and on a busy evening, at 1920 x 1080 and 1366 x 768, in three languages and both themes: nothing off the screen, every number reachable, the designed sizes, contrast, motion (including "reduce motion") and Arabic mirroring. It places orders, so it also needs a throwaway stack, and a fresh one per run (a busy evening gets busier every time).
+
 ## The automated walk
 
 It checks, for every page: no console error and no unexpected failed request; no missing-translation warning; no horizontal overflow; nothing wider than the box it sits in; the right `<html lang>` and `dir`; Latin digits only in Arabic; no text clipped by an ellipsis or hidden overflow; no picture that failed to load; and that the page is not blank. It saves a screenshot per page. Options (languages, themes, retry) are at the top of the script.
@@ -63,6 +65,9 @@ Observations that are not defects, for a decision:
 | The cancelled-order banner shows for an admin cancellation | Walk | ✅ | ✅ | ✅ |
 | Acknowledge clears the banner | Test (`OrderLifecycleEndToEndTest`) | ✅ | ✅ | ✅ |
 | "Ran out?" chips show, and a toggle takes the meal off the guest menu | Walk + Test (`KitchenMealControllerTest`) | ✅ | ✅ | ✅ |
+| Visual pass (#62): the page never scrolls, the header, the cancelled banner and the "Ran out?" chips stay on screen, each column scrolls by itself and its last card and Start button can be reached (busy evening, 1920 x 1080 and 1366 x 768) | Boards check (`frontend/scripts/boards-check.mjs`) | ✅ | ✅ | ✅ |
+| Visual pass (#62): solid Start and Ready, timer chips (neutral, amber from 6 min, clay from 12), clay Acknowledge, tinted sold-out chip, columns with their header inside, as in `shots/kitchen.png`; text contrast 4.5:1 (3:1 for large text) in light and dark | Boards check (contrast) + screenshots looked at | ✅ | ✅ | ✅ |
+| Arabic: columns mirrored (New on the right), quantity stays "2×" | Boards check + screenshots | ✅ | ✅ | ✅ |
 | Readable across a kitchen: sizes, amber and green contrast on the real screen | **Human** | ⬜ | ⬜ | ⬜ |
 
 ### Hall board (dining-area screen, 1920 x 1080)
@@ -72,6 +77,10 @@ Observations that are not defects, for a decision:
 | Two columns, numbers stacked with their table, amber in preparation and green ready | Walk | ✅ | ✅ | ✅ |
 | A number moves from In preparation to Ready and disappears once served | Test (`OrderLifecycleEndToEndTest`) | ✅ | ✅ | ✅ |
 | Only numbers and tables: no names, prices or items | Walk + Test (`HallBoardControllerTest`) | ✅ | ✅ | ✅ |
+| Visual pass (#62): In preparation tint panel, Ready forest panel with its ring (both themes), numbers 74 px and 86 px on a quiet board | Boards check + screenshots looked at | ✅ | ✅ | ✅ |
+| Visual pass (#62): the In preparation dot blinks (2 s) and is the only continuous motion; a number that arrives, or moves to Ready, fades and rises in (0.4 s) and the others do not move; with "reduce motion" there is no animation at all | Boards check (live, with a new order) | ✅ | ✅ | ✅ |
+| A busy evening fits the screen: 25 preparing and 9 ready orders at 1920 x 1080 and at 1366 x 768 (and a database with over 80 preparing), nothing cut off, numbers never below 28 px | Boards check | ✅ | ✅ | ✅ |
+| Arabic: mirrored (In preparation on the right, numbers start at the right edge, table label to their left) | Boards check + screenshots | ✅ | ✅ | ✅ |
 | Legible from the back of the dining room on the real screen | **Human** | ⬜ | ⬜ | ⬜ |
 
 ### Admin (office computer, 1440 x 900)

@@ -131,13 +131,15 @@
  */
 .hall-screen__numbers {
   --hall-number: calc(var(--hall-size) * var(--hall-scale, 1));
+  --hall-table-size: max(13px, calc(var(--hall-number) * 0.2));
 
   flex: 1;
   min-height: 0;
   margin: var(--space-6) 0 0;
   padding: 0;
   list-style: none;
-  column-width: calc(var(--hall-number) * 3.9);
+  /* A column is as wide as one entry: three digits, the gap, and a label like "Table 11" (about 5.4 em). */
+  column-width: calc(var(--hall-number) * 1.85 + var(--space-5) + var(--hall-table-size) * 5.4);
   column-gap: var(--space-7);
   column-fill: auto;
   overflow: auto;
@@ -177,8 +179,9 @@
 /* The table the order is for, beside its number. */
 .hall-screen__table {
   font-family: var(--font-mono);
-  font-size: max(13px, calc(var(--hall-number) * 0.2));
+  font-size: var(--hall-table-size);
   font-weight: 500;
+  white-space: nowrap;
   color: var(--hall-table);
 }
 

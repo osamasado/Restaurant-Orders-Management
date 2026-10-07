@@ -1,5 +1,5 @@
 // Checks the hall board and the kitchen board against issue #62, on a typical evening and a busy one, at a wall
-// monitor (1920 x 1080) and a small one (1366 x 768), in German, English and Arabic, light and dark:
+// monitor (1920 x 1080) and a small one (1366 x 768), and the busy hall in a 1100 x 760 window too, in German, English and Arabic, light and dark:
 //
 //   - nothing runs off the screen and every number, card button and footer chip can be reached
 //   - the designed number sizes (74 and 86 px) hold on a quiet board, and numbers never get smaller than 28 px
@@ -136,6 +136,7 @@ async function pageReport(page, screen) {
       const entries = [...document.querySelectorAll('.hall-screen__entry')]
       report.entries = entries.length
       report.hidden = entries.filter((li) => !inside(box(li))).length
+      report.wrappedLabels = [...document.querySelectorAll('.hall-screen__table')].filter((el) => el.getBoundingClientRect().height > parseFloat(getComputedStyle(el).fontSize) * 1.6).length
       report.outsidePanel = entries.filter((li) => { const p = box(li.closest('.hall-screen__panel')); return !inside(box(li), p.r, p.b) || box(li).l < p.l - 1 || box(li).t < p.t - 1 }).length
       const sizeOf = (panel) => { const n = document.querySelector(`.hall-screen__panel--${panel} .hall-screen__number`); return n ? parseFloat(getComputedStyle(n).fontSize) : null }
       report.preparingSize = sizeOf('preparing')
@@ -205,6 +206,7 @@ async function audit(label, screen, size, lang, theme, state) {
   if (screen === 'hall') {
     const hall = (await api('/hall/orders')).json
     check(`${tag}: every number on the board is on the screen`, r.entries === hall.preparing.length + hall.ready.length && r.hidden === 0 && r.outsidePanel === 0, `${r.entries} entries, ${r.hidden} off screen, ${r.outsidePanel} outside their panel`)
+    check(`${tag}: every table label stays on one line`, r.wrappedLabels === 0, `${r.wrappedLabels} wrapped`)
     check(`${tag}: no number smaller than 28 px`, r.smallestNumber === null || r.smallestNumber >= 28, `${r.smallestNumber}px`)
     if (state === 'typical') check(`${tag}: the designed sizes hold (74 px and 86 px)`, r.preparingSize === 74 && r.readySize === 86, `${r.preparingSize} / ${r.readySize}`)
     check(`${tag}: the only running motion is the blinking dot (2 s)`, r.runningAnimations === 1 && r.dotAnimations.length === 1 && r.dotAnimations[0].duration === 2000 && r.dotAnimations[0].iterations === Infinity, JSON.stringify(r.dotAnimations) + ` / ${r.runningAnimations} running`)
@@ -234,7 +236,7 @@ const SIZES = [[1920, 1080], [1366, 768]]
 const LANGS = ['de', 'en', 'ar']
 const THEMES = ['dark', 'light']
 async function round(state) {
-  for (const screen of ['hall', 'kitchen'].filter((name) => !process.env.ONLY || process.env.ONLY === name)) for (const size of SIZES) for (const lang of LANGS) for (const theme of THEMES) {
+  for (const screen of ['hall', 'kitchen'].filter((name) => !process.env.ONLY || process.env.ONLY === name)) for (const size of screen === 'hall' && state === 'busy' ? [...SIZES, [1100, 760]] : SIZES) for (const lang of LANGS) for (const theme of THEMES) {
     // typical: the full matrix at the big size only keeps the run short; the small size matters when it is busy
     if (state === 'typical' && size[0] !== 1920) continue
     if (state === 'typical' && lang === 'de' && theme === 'light') continue
