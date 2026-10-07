@@ -53,7 +53,7 @@ npm run preview                 # http://localhost:4173
 
 ### 3. Set up the desk
 
-- **Phone** (or a 390 px wide browser window): `/guest`. Enter the pairing code **GULF77** (table 7, Garden room). For a real phone on the same network use `npm run preview -- --host` and open the address it prints. That works for ordering, but **plain HTTP on a network address cannot be installed**: browsers only run the service worker and offer the install on `localhost` or HTTPS. Step 9 below says how to get there.
+- **Phone** (or a 390 px wide browser window): `/guest`. Enter the pairing code **GULF77** (table 7, Garden room). For a real phone on the same network use `npm run preview -- --host` and open the address it prints. If the phone cannot open that address, see "The phone cannot reach the preview" below. It works for ordering, but **plain HTTP on a network address cannot be installed**: browsers only run the service worker and offer the install on `localhost` or HTTPS. Step 9 below says how to get there.
 - **Kitchen** monitor: `/kitchen`, sign in as M. Behr / 1234.
 - **Hall board**: `/hall`, no sign-in.
 - **Admin** (a fourth window, off to the side): `/admin`, sign in as O. Sado / 1234.
@@ -101,11 +101,41 @@ Two other codes are good for a second device: ALPHA2 (table 1), BRAVE3 (table 2)
 
 - **A card or number has not appeared:** the screens refresh every 5 s. Wait one cycle before assuming a fault.
 - **"Connection lost" on a screen:** the backend is not answering; the screen keeps what it has and recovers by itself when it is back.
+- **The phone cannot open the preview address:** a firewall on the laptop, see "The phone cannot reach the preview" below.
 - **The guest phone asks for a code:** enter GULF77. An unknown code is refused with a message.
 - **Kitchen sign-in says locked:** five wrong PINs lock a name for 15 minutes. Restart the backend (the lock is in memory) or use another account.
 - **Boards already full of old orders:** do step 2 of "Before the demo" again.
 - **No "Install" offer:** it needs the production build (`npm run build`, `npm run preview`) on `localhost` or HTTPS, and not an already installed copy. A phone on `http://<laptop address>:4173` never gets it; use one of the routes in step 9.
 - **Fonts look different offline:** the three fonts come from Google Fonts; without a connection the browser falls back to its own.
+
+## The phone cannot reach the preview
+
+`npm run preview -- --host` prints a `Network:` address (for example `http://192.168.2.107:4173/`). If the laptop itself opens it but the phone times out, nothing is wrong with the phone: a firewall on the laptop is dropping the connection. Checked on the development machine, which runs WSL with `networkingMode=mirrored` and `firewall=true` in `C:\Users\<you>\.wslconfig`: the preview listened on all addresses and answered 200 from inside WSL, and the phone could not connect until the two rules below were added. Other setups (WSL in its default mode, a plain Windows or Linux laptop) block differently.
+
+In a PowerShell opened **as administrator**:
+
+```powershell
+# 1. Let other devices reach WSL (the Hyper-V firewall that mirrored mode uses)
+New-NetFirewallHyperVRule -Name "VitePreview4173" -DisplayName "Vite preview 4173" -Direction Inbound -VMCreatorId '{40E0AC32-46A5-438A-A0B2-2B479E8F2E90}' -Protocol TCP -LocalPorts 4173
+
+# 2. Let the Windows firewall pass port 4173 on a private network
+New-NetFirewallRule -DisplayName "Vite preview 4173" -Direction Inbound -Protocol TCP -LocalPort 4173 -Action Allow -Profile Private
+```
+
+Then reload the address on the phone. Also check:
+
+- The phone is on the **same Wi-Fi** (an address starting with the laptop's, such as `192.168.2.`), not mobile data and not a guest network. Some routers isolate Wi-Fi clients from each other.
+- The address starts with `http://`, not `https://`.
+- If Windows calls the Wi-Fi a "Public" network, the second rule does not apply: set the network to Private in Windows settings (preferred), or use `-Profile Any`, which is less safe.
+
+**Remove the rules after the demo**, they leave the port open to the local network:
+
+```powershell
+Remove-NetFirewallHyperVRule -Name "VitePreview4173"
+Remove-NetFirewallRule -DisplayName "Vite preview 4173"
+```
+
+The USB route needs no firewall change at all: `adb reverse tcp:4173 tcp:4173`, then `http://localhost:4173` on the phone (see step 9, which is also the route that can install the app).
 
 ## Rehearsal record
 
