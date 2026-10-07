@@ -1,10 +1,18 @@
 package org.restaurantordersmanagement.backend.seed;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -16,13 +24,19 @@ import org.restaurantordersmanagement.backend.menu.model.Meal;
 import org.restaurantordersmanagement.backend.menu.model.MealSize;
 import org.restaurantordersmanagement.backend.menu.model.MealSizeTranslation;
 import org.restaurantordersmanagement.backend.menu.model.MealTranslation;
+import org.restaurantordersmanagement.backend.menu.model.RawMaterial;
+import org.restaurantordersmanagement.backend.menu.model.Recipe;
 import org.restaurantordersmanagement.backend.menu.repository.CategoryRepository;
 import org.restaurantordersmanagement.backend.menu.repository.MealRepository;
+import org.restaurantordersmanagement.backend.menu.repository.RawMaterialRepository;
+import org.restaurantordersmanagement.backend.menu.repository.RecipeRepository;
 import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
 import org.restaurantordersmanagement.backend.table.model.Table;
 import org.restaurantordersmanagement.backend.table.repository.TableRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,21 +70,30 @@ public class DemoDataSeeder {
 
     private final CategoryRepository categoryRepository;
     private final MealRepository mealRepository;
+    private final RawMaterialRepository rawMaterialRepository;
+    private final RecipeRepository recipeRepository;
     private final TableRepository tableRepository;
     private final StaffAccountRepository staffAccountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Path uploadDir;
 
     public DemoDataSeeder(
             CategoryRepository categoryRepository,
             MealRepository mealRepository,
+            RawMaterialRepository rawMaterialRepository,
+            RecipeRepository recipeRepository,
             TableRepository tableRepository,
             StaffAccountRepository staffAccountRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            @Value("${app.upload.dir}") String uploadDir) {
         this.categoryRepository = categoryRepository;
         this.mealRepository = mealRepository;
+        this.rawMaterialRepository = rawMaterialRepository;
+        this.recipeRepository = recipeRepository;
         this.tableRepository = tableRepository;
         this.staffAccountRepository = staffAccountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.uploadDir = Path.of(uploadDir);
     }
 
     /**
@@ -80,8 +103,127 @@ public class DemoDataSeeder {
     @Transactional
     public void seedAll() {
         seedMenu();
+        SeedCatalog catalog = SeedCatalog.load();
+        seedRawMaterials(catalog);
+        seedRecipes(catalog);
+        seedImages(catalog);
         seedTables();
         seedStaff();
+    }
+
+    /** Every raw material of the catalog that does not exist yet (matched by name), so an admin's own entries stay. */
+    private void seedRawMaterials(SeedCatalog catalog) {
+        List<String> existing = rawMaterialRepository.findAll().stream().map(RawMaterial::getName).toList();
+        int created = 0;
+        for (SeedCatalog.RawMaterialEntry entry : catalog.rawMaterials()) {
+            if (existing.contains(entry.name())) {
+                continue;
+            }
+            RawMaterial rawMaterial = new RawMaterial();
+            rawMaterial.setName(entry.name());
+            rawMaterial.setUnit(entry.unit());
+            rawMaterial.setInStockQuantity(new BigDecimal(entry.stock()));
+            rawMaterial.setSupplier(entry.supplier());
+            rawMaterialRepository.save(rawMaterial);
+            created++;
+        }
+        if (created > 0) {
+            log.info("Seeded {} demo raw materials", created);
+        }
+    }
+
+    /**
+     * The recipe of each meal size, only for sizes that have none yet: a recipe an admin already edited is never
+     * touched, and a second run adds nothing. Sizes are paired with the catalog's factors in price order.
+     */
+    private void seedRecipes(SeedCatalog catalog) {
+        Map<String, RawMaterial> bySlug = rawMaterialsBySlug(catalog);
+        for (SeedCatalog.RecipeEntry recipeEntry : catalog.recipes()) {
+            Meal meal = mealForSlug(catalog, recipeEntry.meal());
+            if (meal == null) {
+                continue;
+            }
+            List<MealSize> sizes = meal.getSizes().stream().sorted(Comparator.comparing(MealSize::getPrice)).toList();
+            for (int i = 0; i < sizes.size() && i < recipeEntry.sizeFactors().size(); i++) {
+                MealSize size = sizes.get(i);
+                if (!recipeRepository.findByMealSizeId(size.getId()).isEmpty()) {
+                    continue;
+                }
+                BigDecimal factor = new BigDecimal(recipeEntry.sizeFactors().get(i));
+                for (SeedCatalog.IngredientEntry ingredient : recipeEntry.ingredients()) {
+                    Recipe recipe = new Recipe();
+                    recipe.setMealSize(size);
+                    recipe.setRawMaterial(bySlug.get(ingredient.rawMaterial()));
+                    recipe.setQuantity(new BigDecimal(ingredient.quantity()).multiply(factor).setScale(2, RoundingMode.HALF_UP));
+                    recipeRepository.save(recipe);
+                }
+            }
+        }
+    }
+
+    /**
+     * Attaches the illustration of each catalog meal and raw material that has no image yet, by copying the PNG
+     * from the classpath into the upload folder (served at /images/...). An image an admin set is never replaced;
+     * one the admin removed comes back on the next start of the dev profile.
+     */
+    private void seedImages(SeedCatalog catalog) {
+        int attached = 0;
+        for (SeedCatalog.MealEntry entry : catalog.meals()) {
+            Meal meal = mealForSlug(catalog, entry.slug());
+            if (meal != null && meal.getImagePath() == null) {
+                meal.setImagePath(copySeedImage("meals", entry.slug()));
+                attached++;
+            }
+        }
+        Map<String, RawMaterial> bySlug = rawMaterialsBySlug(catalog);
+        for (SeedCatalog.RawMaterialEntry entry : catalog.rawMaterials()) {
+            RawMaterial rawMaterial = bySlug.get(entry.slug());
+            if (rawMaterial != null && rawMaterial.getImagePath() == null) {
+                rawMaterial.setImagePath(copySeedImage("raw-materials", entry.slug()));
+                attached++;
+            }
+        }
+        if (attached > 0) {
+            log.info("Attached {} demo images", attached);
+        }
+    }
+
+    /** @return the path to store on the entity, relative to the upload folder, like ImageStorageService does */
+    private String copySeedImage(String folder, String slug) {
+        String relativePath = folder + "/" + slug + ".png";
+        try (InputStream in = new ClassPathResource("seed-images/" + relativePath).getInputStream()) {
+            Path target = uploadDir.resolve(relativePath);
+            Files.createDirectories(target.getParent());
+            Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+            return relativePath;
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not copy the seed image " + relativePath, e);
+        }
+    }
+
+    private Map<String, RawMaterial> rawMaterialsBySlug(SeedCatalog catalog) {
+        Map<String, RawMaterial> byName =
+                rawMaterialRepository.findAll().stream().collect(Collectors.toMap(RawMaterial::getName, Function.identity(), (a, b) -> a));
+        return catalog.rawMaterials().stream()
+                .filter(entry -> byName.containsKey(entry.name()))
+                .collect(Collectors.toMap(SeedCatalog.RawMaterialEntry::slug, entry -> byName.get(entry.name())));
+    }
+
+    /** The meal whose English name is the catalog's name for this slug, or null if the menu has no such meal. */
+    private Meal mealForSlug(SeedCatalog catalog, String slug) {
+        String name = catalog.meals().stream()
+                .filter(entry -> entry.slug().equals(slug))
+                .map(SeedCatalog.MealEntry::name)
+                .findFirst()
+                .orElse(null);
+        if (name == null) {
+            return null;
+        }
+        return mealRepository.findAll().stream()
+                .filter(meal -> meal.getTranslations().stream()
+                        .anyMatch(t -> t.getLanguage() == Language.EN && name.equals(t.getName())))
+                .findFirst()
+                .orElse(null);
     }
 
     private void seedMenu() {

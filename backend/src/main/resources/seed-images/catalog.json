@@ -1,0 +1,539 @@
+{
+  "meals": [
+    {
+      "slug": "pumpkin-soup",
+      "name": "Pumpkin Soup",
+      "look": "bowl of orange creamy soup, swirl of cream and pumpkin-seed oil, a few green seeds, bread on the side"
+    },
+    {
+      "slug": "flammkuchen",
+      "name": "Flammkuchen",
+      "look": "thin rectangular tart on a wooden board, creme fraiche base, bacon strips, onion rings, chives, charred edges"
+    },
+    {
+      "slug": "wiener-schnitzel",
+      "name": "Wiener Schnitzel",
+      "look": "large golden breaded cutlet with a bubbly crumb, lemon wedge, small potato salad and lingonberries on a plate"
+    },
+    {
+      "slug": "kaesespaetzle",
+      "name": "Käsespätzle",
+      "look": "pan or plate of short irregular egg noodles with melted cheese, dark fried onions on top, a little chive"
+    },
+    {
+      "slug": "rinderroulade",
+      "name": "Rinderroulade",
+      "look": "two beef rolls tied with string in dark gravy, with red cabbage and a dumpling on a plate"
+    },
+    {
+      "slug": "apfelstrudel",
+      "name": "Apfelstrudel",
+      "look": "slice of strudel with flaky golden pastry showing apple and raisin filling, dusting of icing sugar, vanilla sauce and a mint leaf"
+    },
+    {
+      "slug": "kaiserschmarrn",
+      "name": "Kaiserschmarrn",
+      "look": "torn golden pancake pieces dusted with icing sugar, raisins, a small bowl of plum compote"
+    },
+    {
+      "slug": "radler",
+      "name": "Radler",
+      "look": "tall glass of pale golden beer-lemonade with foam, a lemon slice on the rim, drops of condensation (side view, glass inside the central circle)"
+    }
+  ],
+  "rawMaterials": [
+    {
+      "slug": "hokkaido-pumpkin",
+      "name": "Hokkaido pumpkin",
+      "unit": "g",
+      "stock": "18000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "one small round orange-red pumpkin with ribs and a short stem"
+    },
+    {
+      "slug": "onion",
+      "name": "Onion",
+      "unit": "g",
+      "stock": "25000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "two brown onions, one halved showing rings"
+    },
+    {
+      "slug": "vegetable-stock",
+      "name": "Vegetable stock",
+      "unit": "ml",
+      "stock": "12000.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "small pot or jar of golden broth with a carrot, celery stalk and leek beside it"
+    },
+    {
+      "slug": "cream",
+      "name": "Cream",
+      "unit": "ml",
+      "stock": "15000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "glass bottle of cream with a white cap, a small splash"
+    },
+    {
+      "slug": "pumpkin-seed-oil",
+      "name": "Pumpkin-seed oil",
+      "unit": "ml",
+      "stock": "4000.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "dark green oil bottle with a few pumpkin seeds beside it"
+    },
+    {
+      "slug": "nutmeg",
+      "name": "Nutmeg",
+      "unit": "g",
+      "stock": "400.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "two whole brown nutmegs and one halved showing the marbled inside"
+    },
+    {
+      "slug": "wheat-flour",
+      "name": "Wheat flour",
+      "unit": "g",
+      "stock": "40000.00",
+      "supplier": "Mühle Schwarz",
+      "look": "paper flour bag with a small pile of flour and an ear of wheat"
+    },
+    {
+      "slug": "creme-fraiche",
+      "name": "Crème fraîche",
+      "unit": "g",
+      "stock": "8000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "white tub with lid off, thick cream with a spoon swirl"
+    },
+    {
+      "slug": "smoked-bacon",
+      "name": "Smoked bacon",
+      "unit": "g",
+      "stock": "6000.00",
+      "supplier": "Metzgerei Kramer",
+      "look": "three strips of streaky bacon, red and cream stripes"
+    },
+    {
+      "slug": "chives",
+      "name": "Chives",
+      "unit": "bunch",
+      "stock": "20.00",
+      "supplier": "Hofgut Reiter",
+      "look": "a tied bunch of thin green chive stalks with a purple flower"
+    },
+    {
+      "slug": "veal",
+      "name": "Veal",
+      "unit": "g",
+      "stock": "14000.00",
+      "supplier": "Metzgerei Kramer",
+      "look": "pale pink raw veal escalope on a small board"
+    },
+    {
+      "slug": "egg",
+      "name": "Egg",
+      "unit": "pcs",
+      "stock": "240.00",
+      "supplier": "Hofgut Reiter",
+      "look": "two brown eggs and one cracked egg showing the yolk"
+    },
+    {
+      "slug": "breadcrumbs",
+      "name": "Breadcrumbs",
+      "unit": "g",
+      "stock": "9000.00",
+      "supplier": "Mühle Schwarz",
+      "look": "small bowl heaped with golden crumbs and a bread crust"
+    },
+    {
+      "slug": "clarified-butter",
+      "name": "Clarified butter",
+      "unit": "g",
+      "stock": "5000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "glass jar of clear golden butter fat"
+    },
+    {
+      "slug": "lingonberry",
+      "name": "Lingonberry",
+      "unit": "g",
+      "stock": "3000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "small cluster of bright red berries on a twig with two green leaves"
+    },
+    {
+      "slug": "bergkaese",
+      "name": "Bergkäse",
+      "unit": "g",
+      "stock": "7000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "wedge of pale yellow mountain cheese with a brown rind and a few small holes"
+    },
+    {
+      "slug": "emmental",
+      "name": "Emmental",
+      "unit": "g",
+      "stock": "7000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "yellow cheese wedge with large round holes"
+    },
+    {
+      "slug": "butter",
+      "name": "Butter",
+      "unit": "g",
+      "stock": "12000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "block of butter partly unwrapped from paper with a cut slice and a knife"
+    },
+    {
+      "slug": "beef",
+      "name": "Beef",
+      "unit": "g",
+      "stock": "16000.00",
+      "supplier": "Metzgerei Kramer",
+      "look": "raw red beef steak with white fat marbling"
+    },
+    {
+      "slug": "mustard",
+      "name": "Mustard",
+      "unit": "g",
+      "stock": "3000.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "small glass jar of yellow-brown mustard with a wooden spoon"
+    },
+    {
+      "slug": "pickled-cucumber",
+      "name": "Pickled cucumber",
+      "unit": "g",
+      "stock": "4000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "two small green gherkins and one sliced, bumpy skin"
+    },
+    {
+      "slug": "red-wine",
+      "name": "Red wine",
+      "unit": "ml",
+      "stock": "10000.00",
+      "supplier": "Weinhandel Lang",
+      "look": "dark red wine bottle and a glass filled with red wine"
+    },
+    {
+      "slug": "elstar-apple",
+      "name": "Elstar apple",
+      "unit": "g",
+      "stock": "20000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "two red-yellow apples with a leaf, one halved"
+    },
+    {
+      "slug": "raisins",
+      "name": "Raisins",
+      "unit": "g",
+      "stock": "3000.00",
+      "supplier": "Mühle Schwarz",
+      "look": "small heap of dark wrinkled raisins in a small bowl"
+    },
+    {
+      "slug": "cinnamon",
+      "name": "Cinnamon",
+      "unit": "g",
+      "stock": "500.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "three cinnamon sticks tied with twine and a little brown powder"
+    },
+    {
+      "slug": "vanilla",
+      "name": "Vanilla",
+      "unit": "g",
+      "stock": "200.00",
+      "supplier": "Gewürzhaus Brandl",
+      "look": "two long dark vanilla pods and one small cream-white vanilla flower"
+    },
+    {
+      "slug": "milk",
+      "name": "Milk",
+      "unit": "ml",
+      "stock": "30000.00",
+      "supplier": "Alpenmolkerei Huber",
+      "look": "glass bottle of milk with a blue cap and a glass beside it"
+    },
+    {
+      "slug": "icing-sugar",
+      "name": "Icing sugar",
+      "unit": "g",
+      "stock": "6000.00",
+      "supplier": "Mühle Schwarz",
+      "look": "white powdery mound with a small sieve and a spoon"
+    },
+    {
+      "slug": "plum",
+      "name": "Plum",
+      "unit": "g",
+      "stock": "8000.00",
+      "supplier": "Hofgut Reiter",
+      "look": "three blue-violet plums with a leaf, one halved showing the stone"
+    },
+    {
+      "slug": "helles-beer",
+      "name": "Helles beer",
+      "unit": "ml",
+      "stock": "60000.00",
+      "supplier": "Brauerei am Markt",
+      "look": "pale golden beer bottle with a cap and a tall glass of beer with foam"
+    },
+    {
+      "slug": "cloudy-lemonade",
+      "name": "Cloudy lemonade",
+      "unit": "ml",
+      "stock": "40000.00",
+      "supplier": "Brauerei am Markt",
+      "look": "bottle of cloudy pale-yellow lemonade with a lemon half beside it"
+    }
+  ],
+  "recipes": [
+    {
+      "meal": "pumpkin-soup",
+      "sizeFactors": [
+        "1.0",
+        "1.4"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "hokkaido-pumpkin",
+          "quantity": "200"
+        },
+        {
+          "rawMaterial": "onion",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "vegetable-stock",
+          "quantity": "150"
+        },
+        {
+          "rawMaterial": "cream",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "pumpkin-seed-oil",
+          "quantity": "5"
+        },
+        {
+          "rawMaterial": "nutmeg",
+          "quantity": "1"
+        }
+      ]
+    },
+    {
+      "meal": "flammkuchen",
+      "sizeFactors": [
+        "1.0",
+        "1.8"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "wheat-flour",
+          "quantity": "150"
+        },
+        {
+          "rawMaterial": "creme-fraiche",
+          "quantity": "120"
+        },
+        {
+          "rawMaterial": "smoked-bacon",
+          "quantity": "60"
+        },
+        {
+          "rawMaterial": "onion",
+          "quantity": "50"
+        },
+        {
+          "rawMaterial": "chives",
+          "quantity": "0.1"
+        }
+      ]
+    },
+    {
+      "meal": "wiener-schnitzel",
+      "sizeFactors": [
+        "1.0",
+        "1.5"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "veal",
+          "quantity": "200"
+        },
+        {
+          "rawMaterial": "wheat-flour",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "egg",
+          "quantity": "1"
+        },
+        {
+          "rawMaterial": "breadcrumbs",
+          "quantity": "50"
+        },
+        {
+          "rawMaterial": "clarified-butter",
+          "quantity": "40"
+        },
+        {
+          "rawMaterial": "lingonberry",
+          "quantity": "30"
+        }
+      ]
+    },
+    {
+      "meal": "kaesespaetzle",
+      "sizeFactors": [
+        "1.0",
+        "1.25"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "wheat-flour",
+          "quantity": "150"
+        },
+        {
+          "rawMaterial": "egg",
+          "quantity": "2"
+        },
+        {
+          "rawMaterial": "bergkaese",
+          "quantity": "80"
+        },
+        {
+          "rawMaterial": "emmental",
+          "quantity": "80"
+        },
+        {
+          "rawMaterial": "onion",
+          "quantity": "60"
+        },
+        {
+          "rawMaterial": "butter",
+          "quantity": "30"
+        }
+      ]
+    },
+    {
+      "meal": "rinderroulade",
+      "sizeFactors": [
+        "1.0",
+        "2.0"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "beef",
+          "quantity": "200"
+        },
+        {
+          "rawMaterial": "mustard",
+          "quantity": "20"
+        },
+        {
+          "rawMaterial": "smoked-bacon",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "pickled-cucumber",
+          "quantity": "40"
+        },
+        {
+          "rawMaterial": "onion",
+          "quantity": "40"
+        },
+        {
+          "rawMaterial": "red-wine",
+          "quantity": "100"
+        }
+      ]
+    },
+    {
+      "meal": "apfelstrudel",
+      "sizeFactors": [
+        "1.0"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "wheat-flour",
+          "quantity": "60"
+        },
+        {
+          "rawMaterial": "elstar-apple",
+          "quantity": "200"
+        },
+        {
+          "rawMaterial": "raisins",
+          "quantity": "20"
+        },
+        {
+          "rawMaterial": "cinnamon",
+          "quantity": "2"
+        },
+        {
+          "rawMaterial": "butter",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "vanilla",
+          "quantity": "2"
+        }
+      ]
+    },
+    {
+      "meal": "kaiserschmarrn",
+      "sizeFactors": [
+        "1.0",
+        "1.8"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "wheat-flour",
+          "quantity": "100"
+        },
+        {
+          "rawMaterial": "milk",
+          "quantity": "150"
+        },
+        {
+          "rawMaterial": "egg",
+          "quantity": "2"
+        },
+        {
+          "rawMaterial": "butter",
+          "quantity": "30"
+        },
+        {
+          "rawMaterial": "icing-sugar",
+          "quantity": "20"
+        },
+        {
+          "rawMaterial": "plum",
+          "quantity": "120"
+        }
+      ]
+    },
+    {
+      "meal": "radler",
+      "sizeFactors": [
+        "1.0",
+        "1.667"
+      ],
+      "ingredients": [
+        {
+          "rawMaterial": "helles-beer",
+          "quantity": "150"
+        },
+        {
+          "rawMaterial": "cloudy-lemonade",
+          "quantity": "150"
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Illustrations for the demo menu and raw materials (issue #32). Drawn as SVG, ren
 
 - `meals/<slug>.svg`: **viewBox `0 0 800 600`** (4:3), one per meal.
 - `raw-materials/<slug>.svg`: **viewBox `0 0 400 400`** (square), one per raw material.
-- The slug list is in `catalog.json`. Use exactly those slugs.
+- The slug list is in `../src/main/resources/seed-images/catalog.json` (the same file the seeder reads). Use exactly those slugs.
 
 ## Rules
 
