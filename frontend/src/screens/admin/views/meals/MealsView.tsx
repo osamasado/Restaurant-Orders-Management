@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { deleteCategory, deleteMeal, listCategories, listMeals, setMealAvailability } from '../../../../api/menuApi'
 import { listRawMaterials } from '../../../../api/rawMaterialApi'
 import type { CategoryResponse, Language, MealResponse, RawMaterialResponse } from '../../../../api/types'
+import { ConfirmDialog } from '../../../../components/ConfirmDialog'
+import { useToast } from '../../../../components/toast-context'
 import { useT } from '../../../../i18n/useT'
+import { isolate } from '../../../../lib/bidi'
 import { CategoryFormModal } from './CategoryFormModal'
 import { MealFormModal } from './MealFormModal'
 import './MealsView.css'
@@ -54,6 +57,7 @@ function mealSizeLabels(meal: MealResponse, language: Language): string {
 export function MealsView() {
   const { t, i18n } = useT()
   const language = toBackendLanguage(i18n.language)
+  const toast = useToast()
 
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [meals, setMeals] = useState<MealResponse[]>([])
@@ -61,6 +65,8 @@ export function MealsView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<ModalState>(null)
+  const [deletingCategory, setDeletingCategory] = useState<CategoryResponse | null>(null)
+  const [deletingMeal, setDeletingMeal] = useState<MealResponse | null>(null)
 
   const refresh = async () => {
     try {
@@ -94,32 +100,12 @@ export function MealsView() {
     void refresh()
   }
 
-  const handleDeleteCategory = async (category: CategoryResponse) => {
-    if (!window.confirm(t('admin.categories.confirmDelete'))) return
-    try {
-      await deleteCategory(category.id)
-      void refresh()
-    } catch {
-      window.alert(t('admin.categories.deleteError'))
-    }
-  }
-
-  const handleDeleteMeal = async (meal: MealResponse) => {
-    if (!window.confirm(t('admin.meals.confirmDelete'))) return
-    try {
-      await deleteMeal(meal.id)
-      void refresh()
-    } catch {
-      window.alert(t('admin.meals.deleteError'))
-    }
-  }
-
   const handleToggleAvailability = async (meal: MealResponse) => {
     try {
       const updated = await setMealAvailability(meal.id, !meal.available)
       setMeals((prev) => prev.map((existing) => (existing.id === updated.id ? updated : existing)))
     } catch {
-      window.alert(t('admin.meals.availabilityError'))
+      toast.show('error', t('admin.meals.availabilityError'))
     }
   }
 
@@ -149,7 +135,7 @@ export function MealsView() {
               <span className="categories-row__sort">{category.sortOrder}</span>
               <div className="categories-row__actions">
                 <button onClick={() => setModal({ type: 'category', category })}>{t('admin.categories.edit')}</button>
-                <button onClick={() => void handleDeleteCategory(category)}>{t('admin.categories.delete')}</button>
+                <button onClick={() => setDeletingCategory(category)}>{t('admin.categories.delete')}</button>
               </div>
             </div>
           ))}
@@ -193,7 +179,7 @@ export function MealsView() {
               </button>
               <div className="meal-row__actions">
                 <button onClick={() => setModal({ type: 'meal', meal })}>{t('admin.meals.editShort')}</button>
-                <button onClick={() => void handleDeleteMeal(meal)}>{t('admin.meals.delete')}</button>
+                <button onClick={() => setDeletingMeal(meal)}>{t('admin.meals.delete')}</button>
               </div>
             </div>
           )
@@ -210,6 +196,34 @@ export function MealsView() {
           rawMaterials={rawMaterials}
           onClose={closeModal}
           onSaved={handleSaved}
+        />
+      )}
+
+      {deletingCategory && (
+        <ConfirmDialog
+          title={t('admin.categories.deleteTitle', { name: isolate(categoryName(deletingCategory, language)) })}
+          message={t('admin.categories.deleteMessage')}
+          confirmLabel={t('admin.categories.deleteConfirm')}
+          errorMessage={t('admin.categories.deleteError')}
+          onConfirm={async () => {
+            await deleteCategory(deletingCategory.id)
+            await refresh()
+          }}
+          onClose={() => setDeletingCategory(null)}
+        />
+      )}
+
+      {deletingMeal && (
+        <ConfirmDialog
+          title={t('admin.meals.deleteTitle', { name: isolate(mealName(deletingMeal, language)) })}
+          message={t('admin.meals.deleteMessage')}
+          confirmLabel={t('admin.meals.deleteConfirm')}
+          errorMessage={t('admin.meals.deleteError')}
+          onConfirm={async () => {
+            await deleteMeal(deletingMeal.id)
+            await refresh()
+          }}
+          onClose={() => setDeletingMeal(null)}
         />
       )}
     </div>
