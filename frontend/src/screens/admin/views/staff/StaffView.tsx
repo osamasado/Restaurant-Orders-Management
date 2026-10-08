@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
-import { deleteAccount, listAccounts, resetPin } from '../../../../api/staffApi'
+import { deleteAccount, listAccounts } from '../../../../api/staffApi'
 import type { StaffResponse } from '../../../../api/types'
 import { useAuth } from '../../../../auth/auth-context'
+import { ConfirmDialog } from '../../../../components/ConfirmDialog'
+import { useToast } from '../../../../components/toast-context'
 import { useLanguage } from '../../../../i18n/language-context'
 import { useT } from '../../../../i18n/useT'
+import { isolate } from '../../../../lib/bidi'
 import { LOCALE_BY_LANGUAGE } from '../../../../lib/formatMoney'
 import type { Language } from '../../../../i18n/i18n'
+import { ResetPinDialog } from './ResetPinDialog'
 import { StaffFormModal } from './StaffFormModal'
 import './StaffView.css'
 
@@ -18,12 +22,15 @@ export function StaffView() {
   const { t } = useT()
   const { language } = useLanguage()
   const { staff: currentStaff } = useAuth()
+  const toast = useToast()
 
   const [accounts, setAccounts] = useState<StaffResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<StaffResponse | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [deleting, setDeleting] = useState<StaffResponse | null>(null)
+  const [resettingPin, setResettingPin] = useState<StaffResponse | null>(null)
 
   const refresh = async () => {
     try {
@@ -60,32 +67,6 @@ export function StaffView() {
     void refresh()
   }
 
-  const handleDelete = async (account: StaffResponse) => {
-    if (!window.confirm(t('admin.staff.confirmDelete'))) return
-    try {
-      await deleteAccount(account.id)
-      void refresh()
-    } catch {
-      window.alert(t('admin.staff.deleteError'))
-    }
-  }
-
-  const handleResetPin = async (account: StaffResponse) => {
-    const entered = window.prompt(t('admin.staff.resetPinPrompt'))
-    if (!entered) return
-    const pin = entered.trim()
-    if (!/^[0-9]{4,8}$/.test(pin)) {
-      window.alert(t('admin.staff.pinInvalid'))
-      return
-    }
-    try {
-      await resetPin(account.id, pin)
-      window.alert(t('admin.staff.resetPinSuccess'))
-    } catch {
-      window.alert(t('admin.staff.resetPinError'))
-    }
-  }
-
   return (
     <div className="staff-view">
       <div>
@@ -116,9 +97,9 @@ export function StaffView() {
             </span>
             <div className="staff-row__actions">
               <button onClick={() => openEditModal(account)}>{t('admin.staff.edit')}</button>
-              <button onClick={() => void handleResetPin(account)}>{t('admin.staff.resetPin')}</button>
+              <button onClick={() => setResettingPin(account)}>{t('admin.staff.resetPin')}</button>
               {currentStaff?.id !== account.id && (
-                <button onClick={() => void handleDelete(account)}>{t('admin.staff.delete')}</button>
+                <button onClick={() => setDeleting(account)}>{t('admin.staff.delete')}</button>
               )}
             </div>
           </div>
@@ -126,6 +107,31 @@ export function StaffView() {
       </div>
 
       {showModal && <StaffFormModal staff={editing} onClose={closeModal} onSaved={handleSaved} />}
+
+      {deleting && (
+        <ConfirmDialog
+          title={t('admin.staff.deleteTitle', { name: isolate(deleting.name) })}
+          message={t('admin.staff.deleteMessage', { name: isolate(deleting.name) })}
+          confirmLabel={t('admin.staff.deleteConfirm')}
+          errorMessage={t('admin.staff.deleteError')}
+          onConfirm={async () => {
+            await deleteAccount(deleting.id)
+            await refresh()
+          }}
+          onClose={() => setDeleting(null)}
+        />
+      )}
+
+      {resettingPin && (
+        <ResetPinDialog
+          account={resettingPin}
+          onClose={() => setResettingPin(null)}
+          onDone={() => {
+            toast.show('success', t('admin.staff.resetPinSuccess', { name: isolate(resettingPin.name) }))
+            setResettingPin(null)
+          }}
+        />
+      )}
     </div>
   )
 }

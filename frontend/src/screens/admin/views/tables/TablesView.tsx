@@ -1,7 +1,11 @@
 import { Fragment, useEffect, useState } from 'react'
 import { deleteTable, listTables, pairTable, unpairTable } from '../../../../api/tableApi'
 import type { DeviceStatus, TableResponse } from '../../../../api/types'
+import { ConfirmDialog } from '../../../../components/ConfirmDialog'
+import { useToast } from '../../../../components/toast-context'
 import { useT } from '../../../../i18n/useT'
+import { isolate } from '../../../../lib/bidi'
+import { PairingCodeDialog } from './PairingCodeDialog'
 import { TableFormModal } from './TableFormModal'
 import './TablesView.css'
 
@@ -18,12 +22,15 @@ function deviceStatusLabel(status: DeviceStatus, t: (key: string) => string): st
 
 export function TablesView() {
   const { t } = useT()
+  const toast = useToast()
 
   const [tables, setTables] = useState<TableResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<TableResponse | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [deleting, setDeleting] = useState<TableResponse | null>(null)
+  const [pairedTable, setPairedTable] = useState<TableResponse | null>(null)
 
   const refresh = async () => {
     try {
@@ -60,23 +67,13 @@ export function TablesView() {
     void refresh()
   }
 
-  const handleDelete = async (table: TableResponse) => {
-    if (!window.confirm(t('admin.tables.confirmDelete'))) return
-    try {
-      await deleteTable(table.id)
-      void refresh()
-    } catch {
-      window.alert(t('admin.tables.deleteError'))
-    }
-  }
-
   const handlePair = async (table: TableResponse) => {
     try {
       const paired = await pairTable(table.id)
       setTables((prev) => prev.map((existing) => (existing.id === paired.id ? paired : existing)))
-      window.alert(t('admin.tables.pairingCode', { code: paired.pairedDeviceId }))
+      setPairedTable(paired)
     } catch {
-      window.alert(t('admin.tables.pairError'))
+      toast.show('error', t('admin.tables.pairError'))
     }
   }
 
@@ -85,7 +82,7 @@ export function TablesView() {
       const unpaired = await unpairTable(table.id)
       setTables((prev) => prev.map((existing) => (existing.id === unpaired.id ? unpaired : existing)))
     } catch {
-      window.alert(t('admin.tables.pairError'))
+      toast.show('error', t('admin.tables.pairError'))
     }
   }
 
@@ -135,13 +132,29 @@ export function TablesView() {
                 <button onClick={() => void handleUnpair(table)}>{t('admin.tables.unpair')}</button>
               )}
               <button onClick={() => openEditModal(table)}>{t('admin.tables.edit')}</button>
-              <button onClick={() => void handleDelete(table)}>{t('admin.tables.delete')}</button>
+              <button onClick={() => setDeleting(table)}>{t('admin.tables.delete')}</button>
             </div>
           </div>
         ))}
       </div>
 
       {showModal && <TableFormModal table={editing} onClose={closeModal} onSaved={handleSaved} />}
+
+      {deleting && (
+        <ConfirmDialog
+          title={t('admin.tables.deleteTitle', { name: isolate(deleting.tableNumber) })}
+          message={t('admin.tables.deleteMessage')}
+          confirmLabel={t('admin.tables.deleteConfirm')}
+          errorMessage={t('admin.tables.deleteError')}
+          onConfirm={async () => {
+            await deleteTable(deleting.id)
+            await refresh()
+          }}
+          onClose={() => setDeleting(null)}
+        />
+      )}
+
+      {pairedTable && <PairingCodeDialog table={pairedTable} onClose={() => setPairedTable(null)} />}
     </div>
   )
 }

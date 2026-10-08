@@ -16,7 +16,7 @@ It checks, for every page: no console error and no unexpected failed request; no
 
 ### Result
 
-**120 of 120 pages pass** on the production build, on the first attempt, with retries turned off: 3 languages x 2 themes x 20 pages (guest 6, kitchen 3, hall 1, admin 10: seven views, the Orders cancel confirmation, the meal form and the staff form). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time.
+**138 of 138 pages pass** on the production build, on the first attempt, with retries turned off: 3 languages x 2 themes x 23 pages (guest 6, kitchen 3, hall 1, admin 13: seven views, the Orders cancel confirmation, the meal form and the staff form, and three dialogs: a delete confirmation, the PIN reset and the pairing code). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time.
 
 What the pass found and fixed:
 
@@ -111,6 +111,18 @@ The browser check also asks Chrome for its installability errors and got none, b
 |---|---|---|
 | The demo flow of `demo-script.md` (order on the phone, kitchen, hall board, the guest's timeline, an admin cancel with the kitchen banner, a sold-out meal on an open menu, the audit trail), every hand-off within 10 s | Rehearsal (`frontend/scripts/demo-rehearsal.mjs`, throwaway stack, clean data): 22 of 22, hand-offs 3.6 to 6.8 s | ✅ |
 | **A full rehearsal on the real devices, with the talking points** | **Human** | ⬜ |
+
+### Dialogs (admin)
+
+| Check | How | DE | EN | AR |
+|---|---|---|---|---|
+| The browser's own alert, confirm and prompt never appear; ESLint `no-alert` is on | Dialogs check (`frontend/scripts/dialogs-check.mjs`) + lint | ✅ | ✅ | ✅ |
+| Each delete asks in a dialog that names the item, starts on Cancel, deletes on confirm; a failed delete (a staff account or table in an order's history, a category with meals, a raw material in a recipe) shows its reason inside the dialog with "Try again" | Dialogs check | ⬜ | ✅ | ⬜ |
+| Reset PIN: label and hint, the error appears on leaving the field and goes when it is fixed, a server error stays in the dialog, the new PIN works and the old one does not | Dialogs check | ⬜ | ✅ | ⬜ |
+| Pairing: the code shown large and left to right, Copy puts it on the clipboard and says "Copied"; a failed pairing is a toast | Dialogs check | ⬜ | ✅ | ⬜ |
+| Every dialog takes focus, keeps Tab inside, closes on Escape and on a click outside, locks the page behind it and gives focus back; a toast is announced, can be dismissed and goes by itself; "reduce motion" means no animation | Dialogs check | ⬜ | ✅ | ⬜ |
+| Dialogs in German and Arabic (right to left): inside the window, nothing cut off, the right direction, text contrast 4.5:1, light and dark | Dialogs check + Walk (three dialog pages per language and theme) | ✅ | ✅ | ✅ |
+| Wording of the new dialog texts reads naturally; a screen reader announces the dialogs, errors and toasts; the PIN field shows the numeric keypad on a real tablet | **Human** | ⬜ | ⬜ | ⬜ |
 
 ## One order across all four screens
 

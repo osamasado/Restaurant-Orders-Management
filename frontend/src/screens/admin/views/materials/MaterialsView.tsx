@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { deleteRawMaterial, listRawMaterials } from '../../../../api/rawMaterialApi'
 import type { RawMaterialResponse } from '../../../../api/types'
+import { ConfirmDialog } from '../../../../components/ConfirmDialog'
 import { useT } from '../../../../i18n/useT'
+import { isolate } from '../../../../lib/bidi'
 import { RawMaterialFormModal } from './RawMaterialFormModal'
 import './MaterialsView.css'
 
@@ -13,6 +15,7 @@ export function MaterialsView() {
   const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<RawMaterialResponse | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [deleting, setDeleting] = useState<RawMaterialResponse | null>(null)
 
   const refresh = async () => {
     try {
@@ -47,16 +50,6 @@ export function MaterialsView() {
   const handleSaved = () => {
     closeModal()
     void refresh()
-  }
-
-  const handleDelete = async (rawMaterial: RawMaterialResponse) => {
-    if (!window.confirm(t('admin.materials.confirmDelete'))) return
-    try {
-      await deleteRawMaterial(rawMaterial.id)
-      void refresh()
-    } catch {
-      window.alert(t('admin.materials.deleteError'))
-    }
   }
 
   return (
@@ -99,13 +92,27 @@ export function MaterialsView() {
             </span>
             <div className="material-row__actions">
               <button onClick={() => openEditModal(rawMaterial)}>{t('admin.materials.edit')}</button>
-              <button onClick={() => void handleDelete(rawMaterial)}>{t('admin.materials.delete')}</button>
+              <button onClick={() => setDeleting(rawMaterial)}>{t('admin.materials.delete')}</button>
             </div>
           </div>
         ))}
       </div>
 
       {showModal && <RawMaterialFormModal rawMaterial={editing} onClose={closeModal} onSaved={handleSaved} />}
+
+      {deleting && (
+        <ConfirmDialog
+          title={t('admin.materials.deleteTitle', { name: isolate(deleting.name) })}
+          message={t('admin.materials.deleteMessage')}
+          confirmLabel={t('admin.materials.deleteConfirm')}
+          errorMessage={t('admin.materials.deleteError')}
+          onConfirm={async () => {
+            await deleteRawMaterial(deleting.id)
+            await refresh()
+          }}
+          onClose={() => setDeleting(null)}
+        />
+      )}
     </div>
   )
 }

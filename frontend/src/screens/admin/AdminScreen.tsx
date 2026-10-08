@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router'
 import { AuthProvider } from '../../auth/AuthProvider'
+import { ToastProvider } from '../../components/Toast'
 import { useAuth } from '../../auth/auth-context'
 import { LoginForm } from '../../auth/LoginForm'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
@@ -70,8 +71,10 @@ function AdminScreenContent() {
           </button>
         </div>
       </aside>
-      <main className="admin-screen__content">
-        <Outlet />
+      <main className="admin-screen__content" tabIndex={-1}>
+        <ToastProvider>
+          <Outlet />
+        </ToastProvider>
       </main>
     </div>
   )

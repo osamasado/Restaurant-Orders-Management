@@ -14,7 +14,14 @@
         "en": "Englisch",
         "ar": "Arabisch"
       }
-    }
+    },
+    "cancel": "Abbrechen",
+    "tryAgain": "Erneut versuchen",
+    "working": "Wird ausgeführt...",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "done": "Fertig",
+    "dismiss": "Hinweis schließen"
   },
   "guest": {
     "tableLabel": "Tisch {{number}}",
@@ -188,7 +195,6 @@
       "empty": "Noch keine Kategorien",
       "edit": "Bearbeiten",
       "delete": "Löschen",
-      "confirmDelete": "Diese Kategorie löschen?",
       "deleteError": "Kategorie konnte nicht gelöscht werden - ihr sind möglicherweise noch Gerichte zugeordnet",
       "editTitle": "Kategorie bearbeiten",
       "addTitle": "Kategorie hinzufügen",
@@ -198,7 +204,10 @@
       "nameAr": "Name (Arabisch)",
       "error": "Kategorie konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "deleteTitle": "Kategorie {{name}} löschen?",
+      "deleteMessage": "Die Kategorie wird entfernt. Das lässt sich nicht rückgängig machen und ist nur möglich, wenn ihr kein Gericht zugeordnet ist.",
+      "deleteConfirm": "Kategorie löschen"
     },
     "meals": {
       "subtitle": "Titel, Größen, Preise und drei Übersetzungen pro Gericht",
@@ -207,7 +216,6 @@
       "empty": "Noch keine Gerichte",
       "editShort": "Bearbeiten · DE EN AR",
       "delete": "Löschen",
-      "confirmDelete": "Dieses Gericht löschen?",
       "deleteError": "Gericht konnte nicht gelöscht werden",
       "availabilityError": "Verfügbarkeit konnte nicht aktualisiert werden",
       "available": "Verfügbar",
@@ -242,7 +250,10 @@
       },
       "error": "Gericht konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "deleteTitle": "{{name}} löschen?",
+      "deleteMessage": "Das Gericht wird mit seinen Größen und Rezepten aus der Speisekarte entfernt. Bereits aufgegebene Bestellungen behalten ihre eigene Kopie. Das lässt sich nicht rückgängig machen.",
+      "deleteConfirm": "Gericht löschen"
     },
     "materials": {
       "subtitle": "Rohstoff, Einheit, Bestand, Lieferant",
@@ -251,7 +262,6 @@
       "empty": "Noch keine Rohstoffe",
       "edit": "Bearbeiten",
       "delete": "Löschen",
-      "confirmDelete": "Diesen Rohstoff löschen?",
       "deleteError": "Rohstoff konnte nicht gelöscht werden - er wird möglicherweise noch in einem Rezept verwendet",
       "editTitle": "Rohstoff bearbeiten",
       "addTitle": "Rohstoff hinzufügen",
@@ -264,7 +274,10 @@
       "removeImage": "Foto entfernen",
       "error": "Rohstoff konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "deleteTitle": "{{name}} löschen?",
+      "deleteMessage": "Der Rohstoff wird entfernt. Das lässt sich nicht rückgängig machen und ist nur möglich, wenn kein Rezept ihn verwendet.",
+      "deleteConfirm": "Rohstoff löschen"
     },
     "tables": {
       "subtitle": "Tisch, Raum, Sitzplätze, gekoppeltes Gerät",
@@ -273,7 +286,6 @@
       "empty": "Noch keine Tische",
       "edit": "Bearbeiten",
       "delete": "Löschen",
-      "confirmDelete": "Diesen Tisch löschen?",
       "deleteError": "Tisch konnte nicht gelöscht werden - es gibt möglicherweise noch Bestellungen",
       "editTitle": "Tisch bearbeiten",
       "addTitle": "Tisch hinzufügen",
@@ -284,13 +296,17 @@
       "pair": "Gerät koppeln",
       "unpair": "Koppelung aufheben",
       "pairError": "Gekoppeltes Gerät konnte nicht aktualisiert werden",
-      "pairingCode": "Koppelungscode: {{code}} - auf dem Gästegerät eingeben",
       "unpaired": "Kein Gerät",
       "offline": "Offline",
       "online": "Online",
       "error": "Tisch konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "deleteTitle": "Tisch {{name}} löschen?",
+      "deleteMessage": "Der Tisch und sein gekoppeltes Gerät werden entfernt. Das lässt sich nicht rückgängig machen.",
+      "deleteConfirm": "Tisch löschen",
+      "pairingTitle": "Koppelungscode für Tisch {{table}}",
+      "pairingIntro": "Diesen Code am Gästegerät eingeben, um es mit dem Tisch zu verbinden."
     },
     "orders": {
       "subtitle": "Jede aufgegebene Bestellung, neueste zuerst. Weiterschalten oder stornieren.",
@@ -346,8 +362,7 @@
       "empty": "Noch keine Personalkonten",
       "edit": "Bearbeiten",
       "delete": "Löschen",
-      "confirmDelete": "Dieses Personalkonto löschen?",
-      "deleteError": "Personalkonto konnte nicht gelöscht werden",
+      "deleteError": "Personalkonto konnte nicht gelöscht werden - es kommt möglicherweise im Verlauf einer Bestellung vor",
       "editTitle": "Personalkonto bearbeiten",
       "addTitle": "Personalkonto hinzufügen",
       "name": "Name",
@@ -364,14 +379,20 @@
         "USER": "Benutzer"
       },
       "resetPin": "PIN zurücksetzen",
-      "resetPinPrompt": "Neue PIN eingeben",
-      "resetPinSuccess": "PIN aktualisiert",
+      "resetPinSuccess": "PIN für {{name}} aktualisiert",
       "resetPinError": "PIN konnte nicht aktualisiert werden",
       "lastSeenAt": "Zuletzt gesehen {{date}}",
       "neverSignedIn": "Noch nie angemeldet",
       "error": "Personalkonto konnte nicht gespeichert werden",
       "cancel": "Abbrechen",
-      "save": "Speichern"
+      "save": "Speichern",
+      "deleteTitle": "{{name}} löschen?",
+      "deleteMessage": "{{name}} kann sich danach nicht mehr anmelden. Das lässt sich nicht rückgängig machen.",
+      "deleteConfirm": "Personalkonto löschen",
+      "resetPinTitle": "PIN für {{name}} zurücksetzen",
+      "newPin": "Neue PIN",
+      "showPin": "PIN anzeigen",
+      "resetPinSubmit": "Neue PIN festlegen"
     },
     "settings": {
       "subtitle": "Währung, Steuer, Sprache und Zahlungsmethoden",

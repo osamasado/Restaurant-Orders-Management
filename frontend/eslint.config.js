@@ -18,5 +18,10 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // The browser's own alert, confirm and prompt are not used: the app has its own dialogs (components/Modal,
+      // ConfirmDialog, Toast) that name what they act on, take focus, and read right to left.
+      'no-alert': 'error',
+    },
   },
 ])

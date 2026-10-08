@@ -137,6 +137,15 @@ Rules from the proposal that the implementation must honor:
 - **Config**: currency code, symbol, symbol position, tax rate, default language, enabled payment methods
 - Also required by the proposal but only represented as static tables in the prototype: raw materials, recipes (meal size → raw materials), tables + paired devices, staff accounts with roles
 
+## Dialogs and notices (admin)
+The browser's own `alert`, `confirm` and `prompt` are not used anywhere (ESLint `no-alert` keeps it so). The management backend has its own, all built on one shared `Modal`:
+
+- **The shared dialog:** focus moves into it when it opens (the first field, or the safe button for a question), Tab and Shift+Tab stay inside, Escape and a click outside close it, the page behind does not scroll, and focus goes back to the button that opened it (to the page content when that button is gone, as after a delete). A short fade (0.15 s) on open; none with "reduce motion". Forms use the 560 px card, questions and notices a 440 px one. Buttons: plain (hairline), forest for the main action, clay for a destructive one.
+- **Delete (staff, tables, meals, categories, raw materials):** a question that names the item ("Delete table 7?"), one sentence on what happens, and verb-first buttons ("Cancel" / "Delete table"). Cancel has focus. The delete runs inside the dialog; if it fails, the reason ("it may still have orders") appears in the dialog and the button reads "Try again".
+- **Reset PIN:** a field with a visible label ("New PIN"), its rule ("4 to 8 digits") and a numeric keypad on a tablet. The problem is shown under the field when you leave it with a bad PIN, and goes the moment it is fixed; "Show PIN" reveals the digits (there is no second field to catch a typing mistake). A server error stays in the dialog. Success closes it and a toast says "PIN updated for M. Behr".
+- **Pairing a device:** the code in 40 px mono, always left to right (also in Arabic), a Copy button that says "Copied", and Done.
+- **Toasts** for small messages (a failed pairing or availability change, a PIN update): bottom corner, a dismiss button, a success goes after about 4 s and an error after about 8 s; errors are announced at once, successes politely.
+
 ## Localisation
 German, English, Arabic. Interface labels and menu content are both translated: every meal has a name, description, preparation method and ingredient list in all three languages. Arabic is fully right-to-left (not mirrored English) — **this is not built in the prototype**; only the language choice exists. Numbers and currency format follow the language (the prototype uses German-style decimals: `25,11 €`).
 
