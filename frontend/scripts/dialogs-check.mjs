@@ -336,18 +336,41 @@ console.log('--- meals, categories, raw materials')
   await context.close()
 }
 
-console.log('--- reduce motion')
+console.log('--- motion')
+const dialogAnimation = (page) => page.evaluate(() => ({
+  overlay: getComputedStyle(document.querySelector('.modal__overlay')).animationName,
+  card: getComputedStyle(document.querySelector('.modal__card')).animationName,
+  toast: document.querySelector('.toast') ? getComputedStyle(document.querySelector('.toast')).animationName : null,
+}))
+{
+  const { context, page } = await open('en', 'light')
+  await go(page, 'tables', '.table-row')
+  await page.locator('.table-row').first().getByRole('button', { name: 'Delete', exact: true }).click()
+  await dialogOf(page).waitFor()
+  const anim = await dialogAnimation(page)
+  check('motion: by default a dialog fades and rises in (a short fade)', anim.overlay !== 'none' && anim.card !== 'none', JSON.stringify(anim))
+  await page.keyboard.press('Escape')
+  await context.close()
+}
 {
   const { context, page } = await open('en', 'light', { reducedMotion: 'reduce' })
   await go(page, 'tables', '.table-row')
   await page.locator('.table-row').first().getByRole('button', { name: 'Delete', exact: true }).click()
   await dialogOf(page).waitFor()
-  await page.waitForTimeout(300)
+  const anim = await dialogAnimation(page)
   const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)
-  check('reduce motion: the dialog opens with no animation', running === 0, `${running} running`)
+  check('reduce motion: the dialog has no animation at all', anim.overlay === 'none' && anim.card === 'none' && running === 0, JSON.stringify(anim) + ` / ${running} running`)
   await page.keyboard.press('Escape')
+  // a toast too
+  const spare = await mk.table(`M${rid}`)
+  await page.route('**/pair', (route) => route.abort())
+  await go(page, 'tables', '.table-row')
+  await rowOf(page, '.table-row', spare.tableNumber).getByRole('button', { name: 'Pair device' }).click()
+  await page.locator('.toast').first().waitFor()
+  check('reduce motion: a toast appears with no animation', (await dialogAnimationToast(page)) === 'none')
   await context.close()
 }
+async function dialogAnimationToast(page) { return page.evaluate(() => getComputedStyle(document.querySelector('.toast')).animationName) }
 
 // ================================================================ German and Arabic, both themes: nothing cut off, readable
 console.log('--- German and Arabic, light and dark')
