@@ -14,7 +14,14 @@
         "en": "English",
         "ar": "Arabic"
       }
-    }
+    },
+    "cancel": "Cancel",
+    "tryAgain": "Try again",
+    "working": "Working...",
+    "copy": "Copy",
+    "copied": "Copied",
+    "done": "Done",
+    "dismiss": "Dismiss"
   },
   "guest": {
     "tableLabel": "Table {{number}}",
@@ -188,7 +195,6 @@
       "empty": "No categories yet",
       "edit": "Edit",
       "delete": "Delete",
-      "confirmDelete": "Delete this category?",
       "deleteError": "Could not delete this category - it may still have meals assigned",
       "editTitle": "Edit category",
       "addTitle": "Add category",
@@ -198,7 +204,10 @@
       "nameAr": "Name (Arabic)",
       "error": "Could not save this category",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "deleteTitle": "Delete category {{name}}?",
+      "deleteMessage": "The category is removed. This cannot be undone, and it is only possible when no meal is assigned to it.",
+      "deleteConfirm": "Delete category"
     },
     "meals": {
       "subtitle": "Title, sizes, prices and three translations per meal",
@@ -207,7 +216,6 @@
       "empty": "No meals yet",
       "editShort": "Edit · DE EN AR",
       "delete": "Delete",
-      "confirmDelete": "Delete this meal?",
       "deleteError": "Could not delete this meal",
       "availabilityError": "Could not update availability",
       "available": "Available",
@@ -242,7 +250,10 @@
       },
       "error": "Could not save this meal",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteMessage": "The meal is removed from the menu, with its sizes and recipes. Orders already placed keep their own copy of it. This cannot be undone.",
+      "deleteConfirm": "Delete meal"
     },
     "materials": {
       "subtitle": "Raw material, unit, in stock, supplier",
@@ -251,7 +262,6 @@
       "empty": "No raw materials yet",
       "edit": "Edit",
       "delete": "Delete",
-      "confirmDelete": "Delete this raw material?",
       "deleteError": "Could not delete this raw material - it may still be used in a recipe",
       "editTitle": "Edit raw material",
       "addTitle": "Add raw material",
@@ -264,7 +274,10 @@
       "removeImage": "Remove photo",
       "error": "Could not save this raw material",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteMessage": "The raw material is removed. This cannot be undone, and it is only possible when no recipe uses it.",
+      "deleteConfirm": "Delete raw material"
     },
     "tables": {
       "subtitle": "Table, room, seats, paired device",
@@ -273,7 +286,6 @@
       "empty": "No tables yet",
       "edit": "Edit",
       "delete": "Delete",
-      "confirmDelete": "Delete this table?",
       "deleteError": "Could not delete this table - it may still have orders",
       "editTitle": "Edit table",
       "addTitle": "Add table",
@@ -284,13 +296,17 @@
       "pair": "Pair device",
       "unpair": "Unpair",
       "pairError": "Could not update the paired device",
-      "pairingCode": "Pairing code: {{code}} - enter this on the guest device",
       "unpaired": "No device",
       "offline": "Offline",
       "online": "Online",
       "error": "Could not save this table",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "deleteTitle": "Delete table {{name}}?",
+      "deleteMessage": "The table and its paired device are removed. This cannot be undone.",
+      "deleteConfirm": "Delete table",
+      "pairingTitle": "Pairing code for table {{table}}",
+      "pairingIntro": "Enter this code on the guest device to connect it to the table."
     },
     "orders": {
       "subtitle": "Every placed order, newest first. Move it along or cancel it.",
@@ -346,8 +362,7 @@
       "empty": "No staff accounts yet",
       "edit": "Edit",
       "delete": "Delete",
-      "confirmDelete": "Delete this staff account?",
-      "deleteError": "Could not delete this staff account",
+      "deleteError": "Could not delete this staff account - it may appear in the history of an order",
       "editTitle": "Edit staff account",
       "addTitle": "Add staff account",
       "name": "Name",
@@ -364,14 +379,20 @@
         "USER": "User"
       },
       "resetPin": "Reset PIN",
-      "resetPinPrompt": "Enter the new PIN",
-      "resetPinSuccess": "PIN updated",
+      "resetPinSuccess": "PIN updated for {{name}}",
       "resetPinError": "Could not update the PIN",
       "lastSeenAt": "Last seen {{date}}",
       "neverSignedIn": "Never signed in",
       "error": "Could not save this staff account",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteMessage": "{{name}} will no longer be able to sign in. This cannot be undone.",
+      "deleteConfirm": "Delete staff account",
+      "resetPinTitle": "Reset PIN for {{name}}",
+      "newPin": "New PIN",
+      "showPin": "Show PIN",
+      "resetPinSubmit": "Set new PIN"
     },
     "settings": {
       "subtitle": "Currency, tax, language and payment methods",
