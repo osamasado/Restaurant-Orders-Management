@@ -298,6 +298,31 @@ for (const lang of LANGUAGES) {
         await page.getByRole('button', { name: tr(dict, 'admin.orders.cancelKeep') }).click()
         await page.waitForSelector('.order-row__confirm', { state: 'detached' })
       })
+      // The three kinds of dialog that replaced the browser's own: a delete confirmation (the walk closes it, nothing is
+      // deleted), the PIN reset, and the pairing code (on a spare table the walk creates).
+      await step(`admin ${tag} dialogs`, async () => {
+        await page.goto(`${BASE}/admin/tables`)
+        await page.waitForSelector('.table-row')
+        await page.locator('.table-row').first().locator('.table-row__actions button').nth(2).click()
+        await page.waitForSelector('.modal__card'); await page.waitForTimeout(300)
+        await audit(page, `admin ${tag} delete confirmation`, lang, consoleProblems); await shot(page, `admin-${tag}-dialog-delete`)
+        await page.keyboard.press('Escape'); await page.waitForSelector('.modal__card', { state: 'detached' })
+
+        await page.goto(`${BASE}/admin/staff`)
+        await page.waitForSelector('.staff-row')
+        await page.locator('.staff-row').first().locator('.staff-row__actions button').nth(1).click()
+        await page.waitForSelector('.pin-dialog'); await page.waitForTimeout(300)
+        await audit(page, `admin ${tag} PIN dialog`, lang, consoleProblems); await shot(page, `admin-${tag}-dialog-pin`)
+        await page.keyboard.press('Escape'); await page.waitForSelector('.modal__card', { state: 'detached' })
+
+        const spare = `QA-${tag}-${runId}`
+        await api('/tables', { method: 'POST', body: { tableNumber: spare, room: 'QA', seats: 2 }, cookie: admin })
+        await page.goto(`${BASE}/admin/tables`)
+        await page.locator('.table-row', { hasText: spare }).locator('.table-row__actions button').first().click()
+        await page.waitForSelector('.pairing-dialog__code'); await page.waitForTimeout(300)
+        await audit(page, `admin ${tag} pairing dialog`, lang, consoleProblems); await shot(page, `admin-${tag}-dialog-pairing`)
+        await page.getByRole('button', { name: tr(dict, 'common.done') }).click()
+      })
       await step(`admin ${tag} meal form`, async () => {
         await page.goto(`${BASE}/admin/meals`)
         await page.locator('.meal-row').first().waitFor({ timeout: 20000 })
