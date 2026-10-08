@@ -46,7 +46,7 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
         {order.items.map((item, index) => (
           <li key={index} className="kitchen-order-card__item">
             <div className="kitchen-order-card__item-line">
-              <span className="kitchen-order-card__quantity">{item.quantity}×</span>
+              <span className="kitchen-order-card__quantity" dir="ltr">{item.quantity}×</span>
               <span className="kitchen-order-card__name"><bdi>{item.name}</bdi></span>
               <span className="kitchen-order-card__size"><bdi>{item.size}</bdi></span>
             </div>

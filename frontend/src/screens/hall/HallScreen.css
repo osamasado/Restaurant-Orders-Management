@@ -1,10 +1,29 @@
+/*
+ * The hall board (design doc, "Hall status board"). A wall display: nobody scrolls it, so the whole board is
+ * exactly one screen tall and the numbers shrink in steps when there are too many (useFitScale).
+ *
+ * The colours are the design doc's own: the on-dark amber and forest tints, the forest panel and its ring.
+ * Nothing here is new.
+ */
 .hall-screen {
-  min-height: 100svh;
+  --hall-ready-ground: #1f4d3a; /* forest */
+  --hall-ready-ink: #a8dcc0; /* "ready" on the forest panel */
+  --hall-ready-ring: rgba(125, 190, 155, 0.35);
+  --hall-amber: var(--accent-amber); /* amber on a dark ground */
+  --hall-amber-on-forest: #f3c77a;
+
+  height: 100svh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 26px 28px 30px;
   background: var(--bg);
   color: var(--text);
+}
+
+/* On a paper ground the on-dark amber is too pale to read from across a room: use the design's darker amber. */
+:root[data-theme='light'] .hall-screen {
+  --hall-amber: var(--accent-amber-note);
 }
 
 .hall-screen__header {
@@ -35,17 +54,40 @@
 
 .hall-screen__board {
   flex: 1;
+  min-height: 0;
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-6);
-  align-items: start;
 }
 
 .hall-screen__panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius-card);
   border: 1px solid var(--hairline);
-  padding: var(--space-6);
+  padding: var(--space-6) var(--space-7);
+}
+
+/* In preparation: a subtle tint of its own colour. */
+.hall-screen__panel--preparing {
+  background: color-mix(in srgb, var(--accent-amber) 8%, transparent);
+  --hall-size: 74px;
+  --hall-ink: var(--hall-amber);
+  --hall-label: var(--hall-amber);
+  --hall-table: var(--hall-amber);
+}
+
+/* Ready: the forest panel with its soft ring, the same in both themes. */
+.hall-screen__panel--ready {
+  background: var(--hall-ready-ground);
+  border-color: transparent;
+  box-shadow: 0 0 0 1px var(--hall-ready-ring);
+  --hall-size: 86px;
+  --hall-ink: var(--hall-ready-ink);
+  --hall-label: var(--hall-ready-ink);
+  --hall-table: var(--hall-amber-on-forest);
 }
 
 .hall-screen__panel-header {
@@ -53,27 +95,94 @@
   align-items: center;
   gap: var(--space-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--hall-label);
 }
 
 .hall-screen__dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: var(--accent-forest);
+  background: var(--hall-label);
 }
 
+/* The one live indicator: the kitchen is working on these. */
+.hall-screen__panel--preparing .hall-screen__dot {
+  animation: hall-live 2s ease-in-out infinite;
+}
+
+@keyframes hall-live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/*
+ * The numbers flow top to bottom, then into the next column, so a busy board fills the width instead of
+ * running off the bottom. --hall-scale is set by useFitScale: 1 (the designed 74 / 86 px) until they no
+ * longer fit.
+ */
 .hall-screen__numbers {
-  min-height: 140px;
-  margin: var(--space-5) 0 0;
+  --hall-number: calc(var(--hall-size) * var(--hall-scale, 1));
+  --hall-table-size: max(13px, calc(var(--hall-number) * 0.2));
+
+  flex: 1;
+  min-height: 0;
+  margin: var(--space-6) 0 0;
   padding: 0;
   list-style: none;
+  /* A column is as wide as one entry: three digits, the gap, and a label like "Table 11" (about 5.4 em). */
+  column-width: calc(var(--hall-number) * 1.85 + var(--space-5) + var(--hall-table-size) * 5.4);
+  column-gap: var(--space-7);
+  column-fill: auto;
+  overflow: auto;
+  scrollbar-width: none; /* only ever scrolls at the very smallest step; nobody can scroll a wall display anyway */
+}
+
+.hall-screen__entry {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
   gap: var(--space-5);
+  margin-bottom: calc(var(--hall-number) * 0.2);
+  break-inside: avoid;
+  /* A number arriving on the board fades and rises in. */
+  animation: hall-arrive 0.4s ease both;
+}
+
+@keyframes hall-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hall-screen__number {
+  font-family: var(--font-mono);
+  font-size: var(--hall-number);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--hall-ink);
+}
+
+/* The table the order is for, beside its number. */
+.hall-screen__table {
+  font-family: var(--font-mono);
+  font-size: var(--hall-table-size);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--hall-table);
 }
 
 .hall-screen__footer {
@@ -84,54 +193,6 @@
   color: var(--text-secondary);
 }
 
-.hall-screen__entry {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-5);
-}
-
-.hall-screen__number {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Sized to be read from the back of the room: 74px in preparation, 86px ready (design doc). */
-.hall-screen__panel--preparing .hall-screen__number {
-  font-size: 74px;
-  color: var(--accent-amber);
-}
-
-.hall-screen__panel--ready .hall-screen__number {
-  font-size: 86px;
-  color: var(--accent-forest);
-}
-
-/* The table the order is for, beside its number. */
-.hall-screen__table {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--accent-amber);
-}
-
-.hall-screen__panel--preparing .hall-screen__panel-header {
-  color: var(--accent-amber);
-}
-
-.hall-screen__panel--ready .hall-screen__panel-header {
-  color: var(--accent-forest);
-}
-
-.hall-screen__panel--preparing .hall-screen__dot {
-  background: var(--accent-amber);
-}
-
-.hall-screen__panel--ready .hall-screen__dot {
-  background: var(--accent-forest);
-}
-
 .hall-screen__notice {
   margin: var(--space-4) 0 0;
   padding: var(--space-3) var(--space-4);
@@ -139,4 +200,28 @@
   background: rgba(179, 64, 44, 0.16);
   color: var(--accent-clay);
   font-size: 14px;
+}
+
+/* No motion for people who ask for none: the dot stays lit, numbers simply appear. */
+@media (prefers-reduced-motion: reduce) {
+  .hall-screen__panel--preparing .hall-screen__dot,
+  .hall-screen__entry {
+    animation: none;
+  }
+}
+
+/* A phone or a narrow window, not a wall display: stack the two panels and let the page scroll. */
+@media (max-width: 700px) {
+  .hall-screen {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .hall-screen__board {
+    grid-template-columns: 1fr;
+  }
+
+  .hall-screen__numbers {
+    min-height: 140px;
+  }
 }

@@ -1,5 +1,11 @@
+/*
+ * The kitchen display (design doc, "Kitchen display"). A wall monitor: the header, the cancelled banner and the
+ * "Ran out?" footer always stay on screen, and each column scrolls on its own, so a busy evening never pushes
+ * the controls off the screen. The colours are the design doc's own.
+ */
 .kitchen-screen {
-  min-height: 100svh;
+  height: 100svh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 20px 22px 26px;
@@ -12,6 +18,14 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-5);
+}
+
+/* The title and the station line on one baseline, as in the design. */
+.kitchen-screen__titles {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
 }
 
 .kitchen-screen__title {
@@ -44,23 +58,29 @@
 
 .kitchen-screen__board {
   flex: 1;
+  min-height: 0;
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-6);
-  align-items: start;
 }
 
+/* One column: a card with its header inside and a list that scrolls by itself. */
 .kitchen-screen__column {
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
 }
 
 .kitchen-screen__column-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  padding: var(--space-5) var(--space-5);
+  border-bottom: 1px solid var(--hairline);
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.1em;
@@ -82,16 +102,18 @@
 
 .kitchen-screen__column-list {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  min-height: 200px;
   padding: var(--space-4);
-  border-radius: var(--radius-card);
-  border: 1px solid var(--hairline);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
 }
 
 .kitchen-screen__footer {
+  flex: none;
   margin-top: var(--space-6);
   padding-top: var(--space-5);
   border-top: 1px solid var(--hairline);
@@ -154,4 +176,24 @@
   background: rgba(179, 64, 44, 0.16);
   color: var(--accent-clay);
   font-size: 14px;
+}
+
+/* A narrow window, not a wall monitor: one column under the other and the page scrolls. */
+@media (max-width: 900px) {
+  .kitchen-screen {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .kitchen-screen__board {
+    grid-template-columns: 1fr;
+  }
+
+  .kitchen-screen__column-list {
+    overflow-y: visible;
+  }
+}
+
+:root[data-theme='light'] .kitchen-screen__column--preparing .kitchen-screen__column-header {
+  color: var(--accent-amber-note);
 }

@@ -93,7 +93,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
   return (
     <div className="kitchen-screen">
       <header className="kitchen-screen__header">
-        <div>
+        <div className="kitchen-screen__titles">
           <h1 className="kitchen-screen__title">{t('kitchen.title')}</h1>
           <p className="kitchen-screen__eyebrow">
             {t('kitchen.station')} · {t('kitchen.onShift', { name: staff.name })}
