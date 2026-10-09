@@ -25,7 +25,7 @@
 
 .pairing-screen__input {
   padding: var(--space-4);
-  border: 1px solid rgba(19, 18, 17, 0.2);
+  border: 1px solid var(--fill-strong);
   border-radius: var(--radius-card-inner);
   background: var(--bg-card);
   color: var(--text);
@@ -37,22 +37,7 @@
 
 .pairing-screen__error {
   margin: 0;
-  color: #b3261e;
+  color: var(--danger-text);
   font-size: 14px;
 }
 
-.pairing-screen__submit {
-  padding: var(--space-5);
-  border: none;
-  border-radius: var(--radius-card-inner);
-  background: var(--accent-forest);
-  color: var(--bg-card);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pairing-screen__submit:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}

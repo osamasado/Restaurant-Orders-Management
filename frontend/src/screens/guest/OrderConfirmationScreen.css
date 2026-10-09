@@ -5,8 +5,8 @@
   gap: var(--space-3);
   padding: var(--space-7) var(--space-6);
   margin-bottom: var(--space-6);
-  background: var(--accent-forest);
-  color: var(--bg-card);
+  background: var(--accent-fill);
+  color: var(--on-accent);
   text-align: center;
   font-family: var(--font-body);
 }

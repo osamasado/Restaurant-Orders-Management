@@ -1,7 +1,7 @@
 .menu-screen {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 .menu-screen__status {
@@ -11,89 +11,65 @@
 }
 
 .menu-screen__status--error {
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }
 
-.menu-category__label {
-  display: block;
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+.menu-screen__section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
 }
 
-.menu-category__meals {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
+/*
+ * The meal card is the admin's meal tile. The whole card opens the meal: the name is the real button and a
+ * transparent layer from it covers the card, so there is one control to tab to and a click anywhere on the card
+ * lands on it. The "Add" pill is only a picture of the action (the card does it).
+ */
 .meal-card {
-  display: flex;
-  gap: var(--space-4);
-  width: 100%;
-  padding: var(--space-4);
+  position: relative;
+  text-align: start;
+  cursor: pointer;
+}
+
+.meal-card__open {
+  padding: 0;
   border: none;
-  border-radius: var(--radius-card-inner);
-  background: var(--bg-card-alt);
-  box-shadow: var(--shadow-card);
+  background: transparent;
+  color: inherit;
   font: inherit;
   text-align: start;
   cursor: pointer;
 }
 
-.meal-card:hover,
-.meal-card:focus-visible {
-  box-shadow: var(--shadow-card-hover);
+.meal-card__open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
 }
 
-.meal-card__photo,
-.meal-card__placeholder {
-  width: 78px;
-  height: 78px;
-  flex: none;
-  border-radius: 11px;
-  object-fit: cover;
+.meal-card__open:focus-visible {
+  outline: none;
 }
 
-.meal-card__placeholder {
-  background: rgba(19, 18, 17, 0.06);
-  display: flex;
+.meal-card:has(.meal-card__open:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.meal-card__footer {
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
+  justify-content: space-between;
 }
 
-.meal-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+.meal-card__add {
+  pointer-events: none;
 }
 
-.meal-card__name {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 15.5px;
-  color: var(--text);
-}
-
-.meal-card__description {
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  line-height: 1.4;
-  color: var(--text-secondary);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.meal-card__price {
-  margin-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent-forest);
+.meal-card:hover .meal-card__add {
+  background: var(--btn-primary-bg-hover);
+  box-shadow: var(--btn-primary-shadow-hover);
+  transform: translateY(-1px);
 }
