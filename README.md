@@ -36,7 +36,7 @@ Every transition is timestamped and records which staff member made it, so the f
 - **Backend:** Java, Spring Boot, Lombok
 - **Database:** PostgreSQL
 - **Frontend/client:** React 19, TypeScript and Vite: a server-authoritative web app, installable as a PWA on phones and tablets
-- **Packaging:** Docker images for the backend and the frontend (nginx), run together with Docker Compose
+- **Packaging:** Docker images for the backend and the frontend (nginx), run together with Docker Compose and published on Docker Hub
 
 ## Run with Docker
 
@@ -58,7 +58,7 @@ The first start has an empty database. To try the app with the demo menu, tables
 | `docker compose down` | Stop; the database and the meal photos are kept (named volumes `pgdata` and `uploads`) |
 | `docker compose down -v` | Stop and **delete** the database and the photos |
 
-Every setting, the volumes, backups and HTTPS are in `Documentation/deployment.md`.
+To run the ready-made images from Docker Hub instead of building (`osamasado2024/restaurant-orders-backend` and `-frontend`, for amd64 and arm64), use `docker compose -f docker-compose.hub.yml up -d`. Every setting, the volumes, backups, HTTPS and how a release is published are in `Documentation/deployment.md`.
 
 ## Project status
 

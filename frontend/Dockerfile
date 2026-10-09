@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # ---- build: install from the lock file and make the production bundle ----
-FROM node:24-alpine AS build
+# The bundle is the same on every CPU: build it once, natively, whatever the image's target architectures are.
+FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 WORKDIR /build
 
 # The manifests first, so installing is a cached layer that a source change does not redo.
