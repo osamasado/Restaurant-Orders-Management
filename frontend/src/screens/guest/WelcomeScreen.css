@@ -1,86 +1,294 @@
 /*
- * Fixed brand panel - intentionally does NOT use the theme-conditional
- * --accent-forest/--bg tokens (those flip for dark mode; this screen is a
- * permanent forest/paper treatment regardless of the light/dark toggle,
- * same rationale as tokens.css's own --device-bezel comment).
+ * The guest welcome screen. A charcoal canvas (or warm paper in the light theme) with slow coral, amber, terracotta
+ * and blush light behind a centred column: brand mark, table badge, title, welcome line, and the language buttons.
+ * The light is four big radial gradients that only move with transform (no blur filters, no images, no video), so it
+ * stays smooth on a phone; a soft veil sits behind the text so the glow never lowers its contrast. Colours are the
+ * --welcome-* tokens, which follow the guest's theme; "reduce motion" freezes the light.
  */
 .welcome-screen {
+  position: relative;
+  isolation: isolate;
   min-height: 100svh;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--space-7);
-  padding: var(--space-7) var(--space-6) var(--space-6);
-  background: #1f4d3a;
-  color: #f5f0e8;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-5);
+  background: var(--welcome-bg);
+  color: var(--welcome-ink);
+  overflow: hidden;
 }
 
-.welcome-screen__eyebrow {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+/* ----- the drifting light ----- */
+.welcome-screen__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.welcome-screen__orb {
+  --size: 80vmax;
+  --strength: 0.5;
+
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  /* Eased stops, so the glow fades without visible rings. */
+  background: radial-gradient(
+    closest-side,
+    var(--colour) 0%,
+    color-mix(in srgb, var(--colour) 78%, transparent) 18%,
+    color-mix(in srgb, var(--colour) 48%, transparent) 38%,
+    color-mix(in srgb, var(--colour) 22%, transparent) 58%,
+    color-mix(in srgb, var(--colour) 7%, transparent) 78%,
+    transparent 100%
+  );
+  opacity: calc(var(--strength) * var(--welcome-orb-strength));
+  will-change: transform;
+  animation: welcome-drift 30s ease-in-out infinite alternate;
+}
+
+.welcome-screen__orb--coral {
+  --colour: var(--welcome-coral);
+  --strength: 0.62;
+  --dx: -9vmax;
+  --dy: 7vmax;
+
+  top: -34vmax;
+  inset-inline-end: -30vmax;
+  animation-duration: 29s;
+}
+
+.welcome-screen__orb--amber {
+  --colour: var(--welcome-amber);
+  --strength: 0.46;
+  --dx: 10vmax;
+  --dy: -8vmax;
+
+  bottom: -38vmax;
+  inset-inline-start: -32vmax;
+  animation-duration: 35s;
+  animation-delay: -11s;
+}
+
+.welcome-screen__orb--terracotta {
+  --colour: var(--welcome-terracotta);
+  --strength: 0.5;
+  --dx: -12vmax;
+  --dy: -6vmax;
+  --size: 66vmax;
+
+  bottom: -40vmax;
+  inset-inline-end: -4vmax;
+  animation-duration: 25s;
+  animation-delay: -6s;
+}
+
+.welcome-screen__orb--blush {
+  --colour: var(--welcome-blush);
+  --strength: 0.26;
+  --dx: 8vmax;
+  --dy: 9vmax;
+  --size: 52vmax;
+
+  top: 6vmax;
+  inset-inline-start: -30vmax;
+  animation-duration: 33s;
+  animation-delay: -17s;
+}
+
+/* A whisper of grain over the light: it dithers the gradients so they do not band, and costs nothing (a still layer). */
+.welcome-screen__ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Drifts out and back (alternate), so the loop never jumps; the size and brightness breathe a little on the way. */
+@keyframes welcome-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(var(--dx), var(--dy), 0) scale(1.14);
+  }
+}
+
+/* ----- the content ----- */
+.welcome-screen__content {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: welcome-rise 560ms var(--ease) both;
+}
+
+/* A veil behind the text: the glow thins out where the words are. */
+.welcome-screen__content::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -56px -40px;
+  background: radial-gradient(ellipse at center, var(--welcome-veil) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+@keyframes welcome-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.welcome-screen__table {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-4);
+  padding: 7px 14px;
+  border: 1px solid var(--welcome-line);
+  border-radius: var(--radius-pill);
+  background: var(--welcome-chip-bg);
+  color: var(--welcome-ink);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(245, 240, 232, 0.55);
+}
+
+[dir='rtl'] .welcome-screen__table {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.welcome-screen__table-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--welcome-coral);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--welcome-coral) 24%, transparent);
 }
 
 .welcome-screen__title {
-  margin: var(--space-4) 0 0;
+  margin: var(--space-5) 0 var(--space-3);
   font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 40px;
-  line-height: 1.05;
+  font-size: clamp(1.75rem, 1.2rem + 2.6vw, 2.625rem);
+  font-weight: var(--weight-display);
+  line-height: 1.12;
   letter-spacing: -0.02em;
+  color: var(--welcome-ink);
+  text-wrap: balance;
 }
 
 .welcome-screen__tagline {
-  margin: var(--space-4) 0 0;
-  max-width: 24ch;
+  margin: 0;
+  max-width: 34em;
   font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.5;
-  color: rgba(245, 240, 232, 0.7);
+  font-size: clamp(0.9375rem, 0.88rem + 0.3vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--welcome-ink-muted);
+  text-wrap: balance;
 }
 
+/* ----- the language buttons ----- */
 .welcome-screen__languages {
+  width: 100%;
+  margin-top: var(--space-8);
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .welcome-screen__languages-label {
-  display: block;
-  margin-bottom: var(--space-1);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(245, 240, 232, 0.5);
-}
-
-.welcome-screen__language-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: 17px var(--space-5);
-  border-radius: 14px;
-  min-height: 44px;
-  background: rgba(245, 240, 232, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(245, 240, 232, 0.2);
-  color: #f5f0e8;
   font-family: var(--font-body);
+  font-size: 11.5px;
   font-weight: 600;
-  font-size: 15px;
-  text-align: start;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--welcome-ink-muted);
 }
 
-.welcome-screen__language-button:hover {
-  background: rgba(245, 240, 232, 0.16);
+.welcome-screen__choices {
+  width: min(100%, 360px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.welcome-screen__language-code {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  opacity: 0.6;
+/* The shared button, dressed as warm-white tactile keys: the same height, radius and states everywhere. */
+.welcome-screen__language-button {
+  --_c: var(--welcome-choice-bg);
+  --_c-hover: var(--welcome-choice-bg-hover);
+  --_c-active: var(--welcome-choice-bg-active);
+  --_g: none;
+  --_g-hover: none;
+  --_g-active: none;
+  --_ink: var(--welcome-choice-ink);
+  --_border: var(--welcome-choice-border);
+  --_shadow: var(--welcome-choice-shadow);
+  --_shadow-hover: var(--welcome-choice-shadow-hover);
+  --_shadow-active: var(--welcome-choice-shadow-active);
+  --_press: 1px;
+
+  width: 100%;
+  height: 54px;
+  padding: 0 24px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+.welcome-screen__language-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.welcome-screen__language-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* The chosen language: the app's coral with white text, clearly different from a hovered button. */
+.welcome-screen__language-button[aria-pressed='true'] {
+  --_c: var(--btn-primary-solid);
+  --_c-hover: var(--btn-primary-solid-hover);
+  --_c-active: var(--btn-primary-solid-active);
+  --_g: var(--btn-primary-bg);
+  --_g-hover: var(--btn-primary-bg-hover);
+  --_g-active: var(--btn-primary-bg-active);
+  --_ink: var(--btn-primary-ink);
+  --_border: var(--btn-primary-border);
+  --_shadow: var(--btn-shadow);
+  --_shadow-hover: var(--btn-shadow-hover);
+  --_shadow-active: var(--btn-shadow-active);
+}
+
+.welcome-screen__language-button:disabled {
+  opacity: 0.5;
+}
+
+/* Wider than a phone: the three sit in one row. */
+@media (min-width: 640px) {
+  .welcome-screen__choices {
+    width: 100%;
+    flex-direction: row;
+  }
+
+  .welcome-screen__language-button {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen__orb,
+  .welcome-screen__content {
+    animation: none;
+  }
 }
