@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: 14px 16px;
-  border-radius: 13px;
+  border-radius: var(--radius-card-inner);
   background: var(--bg-card-alt);
   box-shadow: var(--shadow-card);
 }
@@ -33,7 +33,7 @@
 
 .history-card__stage {
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 11.5px;
@@ -42,18 +42,18 @@
 }
 
 .history-card__stage--preparing {
-  color: var(--accent-amber);
-  box-shadow: inset 0 0 0 1px var(--accent-amber);
+  color: var(--warning-text);
+  box-shadow: inset 0 0 0 1px var(--warning);
 }
 
 .history-card__stage--ready {
-  color: var(--accent-forest);
-  box-shadow: inset 0 0 0 1px var(--accent-forest);
+  color: var(--success-text);
+  box-shadow: inset 0 0 0 1px var(--success);
 }
 
 .history-card__stage--cancelled {
-  color: var(--accent-clay);
-  box-shadow: inset 0 0 0 1px var(--accent-clay);
+  color: var(--danger-text);
+  box-shadow: inset 0 0 0 1px var(--danger);
 }
 
 .history-card__entries {
@@ -84,15 +84,15 @@
 }
 
 .history-card__dot--preparing {
-  background: var(--accent-amber);
+  background: var(--warning);
 }
 
 .history-card__dot--ready {
-  background: var(--accent-forest);
+  background: var(--success);
 }
 
 .history-card__dot--cancelled {
-  background: var(--accent-clay);
+  background: var(--danger);
 }
 
 .history-card__time {
@@ -115,5 +115,5 @@
   margin: 0;
   font-family: var(--font-body);
   font-size: 12px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }

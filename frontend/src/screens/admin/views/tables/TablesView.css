@@ -7,7 +7,7 @@
 .tables-view__title {
   font-family: var(--font-display);
   font-size: 25px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0 0 var(--space-2);
   color: var(--text);
 }
@@ -25,13 +25,6 @@
   justify-content: space-between;
 }
 
-.tables-view__add-button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12.5px;
-  color: var(--accent-forest);
-}
-
 .tables-view__table {
   display: flex;
   flex-direction: column;
@@ -44,7 +37,7 @@
   align-items: center;
   gap: var(--space-4);
   padding: 12px 14px;
-  border-radius: 13px;
+  border-radius: var(--radius-card-inner);
   background: var(--bg-card-alt);
   box-shadow: var(--shadow-card);
 }
@@ -71,38 +64,27 @@
   font-weight: 600;
   font-size: 11.5px;
   padding: var(--space-2) var(--space-3);
-  border-radius: 9px;
+  border-radius: var(--radius-chip);
 }
 
 .table-row__device--unpaired {
-  background: rgba(19, 18, 17, 0.06);
+  background: var(--fill-subtle);
   color: var(--text-secondary);
 }
 
 .table-row__device--offline {
-  background: rgba(179, 64, 44, 0.14);
-  color: var(--accent-clay);
+  background: var(--tint-danger);
+  color: var(--danger-text);
 }
 
 .table-row__device--online {
-  background: rgba(31, 77, 58, 0.1);
-  color: var(--accent-forest);
+  background: var(--tint-success);
+  color: var(--success-text);
 }
 
 .table-row__actions {
   display: flex;
   gap: var(--space-2);
-}
-
-.table-row__actions button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 11.5px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 9px;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text);
 }
 
 .tables-view__empty {
@@ -114,5 +96,5 @@
 .tables-view__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }

@@ -70,10 +70,10 @@ export function TableFormModal({ table, onClose, onSaved }: TableFormModalProps)
         {error && <p className="table-form__error">{error}</p>}
 
         <div className="table-form__actions">
-          <button type="button" onClick={onClose}>
+          <button type="button" className="button" onClick={onClose}>
             {t('admin.tables.cancel')}
           </button>
-          <button type="submit" disabled={saving}>
+          <button type="submit" className="button button--primary" disabled={saving} aria-busy={saving || undefined}>
             {t('admin.tables.save')}
           </button>
         </div>

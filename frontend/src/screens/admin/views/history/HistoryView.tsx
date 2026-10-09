@@ -99,7 +99,7 @@ export function HistoryView() {
       {loading && orders.length === 0 && !loadFailed && <p className="history-view__empty">{t('admin.history.loading')}</p>}
 
       {page + 1 < totalPages && (
-        <button className="history-view__more" disabled={loading} onClick={() => void load(page + 1, search, true)}>
+        <button className="history-view__more button" disabled={loading} onClick={() => void load(page + 1, search, true)}>
           {loading ? t('admin.history.loading') : t('admin.history.loadMore')}
         </button>
       )}

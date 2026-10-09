@@ -1,8 +1,10 @@
 import { Fragment } from 'react'
 import type { AdminOrderRow, OrderStatus } from '../../../../api/types'
+import { StatusBadge } from '../../../../components/admin/StatusBadge'
 import { useT } from '../../../../i18n/useT'
 import { isolate } from '../../../../lib/bidi'
 import { formatOrderNumber } from '../../../../lib/formatOrderNumber'
+import { advanceVariant } from '../../../../lib/orderActionVariant'
 import './OrderRow.css'
 
 type OrderRowProps = {
@@ -47,9 +49,7 @@ export function OrderRow({
           <span className="order-row__number" dir="ltr">
             {formatOrderNumber(order.orderNumber)}
           </span>
-          <span className={`order-row__pill order-row__pill--${order.status.toLowerCase()}`}>
-            {t(`admin.history.stages.${order.status}`)}
-          </span>
+          <StatusBadge status={order.status} />
         </header>
 
         <p className="order-row__items">
@@ -99,13 +99,13 @@ export function OrderRow({
             <div className="order-row__buttons">
               <button
                 type="button"
-                className="order-row__button order-row__button--cancel-yes"
+                className="order-row__button order-row__button--cancel-yes button button--small button--danger"
                 disabled={busy}
                 onClick={() => onConfirmCancel(order)}
               >
                 {t('admin.orders.cancelYes')}
               </button>
-              <button type="button" className="order-row__button" disabled={busy} onClick={onKeep}>
+              <button type="button" className="order-row__button button button--small" disabled={busy} onClick={onKeep}>
                 {t('admin.orders.cancelKeep')}
               </button>
             </div>
@@ -118,7 +118,7 @@ export function OrderRow({
               <button
                 key={status}
                 type="button"
-                className="order-row__button order-row__button--advance"
+                className={`order-row__button order-row__button--advance button button--small ${advanceVariant(status)}`}
                 disabled={busy}
                 onClick={() => onAdvance(order, status)}
               >
@@ -127,7 +127,7 @@ export function OrderRow({
             ))}
             <button
               type="button"
-              className="order-row__button order-row__button--cancel"
+              className="order-row__button order-row__button--cancel button button--small button--danger"
               disabled={busy}
               onClick={() => onAskCancel(order)}
             >

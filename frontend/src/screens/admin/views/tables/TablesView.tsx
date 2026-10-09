@@ -96,7 +96,7 @@ export function TablesView() {
       {error && <p className="tables-view__error">{error}</p>}
 
       <div className="tables-view__header">
-        <button className="tables-view__add-button" onClick={openAddModal}>
+        <button className="tables-view__add-button button button--small button--primary" onClick={openAddModal}>
           {t('admin.tables.add')}
         </button>
       </div>
@@ -127,12 +127,12 @@ export function TablesView() {
             </span>
             <div className="table-row__actions">
               {table.deviceStatus === 'UNPAIRED' ? (
-                <button onClick={() => void handlePair(table)}>{t('admin.tables.pair')}</button>
+                <button className="button button--small button--primary" onClick={() => void handlePair(table)}>{t('admin.tables.pair')}</button>
               ) : (
-                <button onClick={() => void handleUnpair(table)}>{t('admin.tables.unpair')}</button>
+                <button className="button button--small button--warning" onClick={() => void handleUnpair(table)}>{t('admin.tables.unpair')}</button>
               )}
-              <button onClick={() => openEditModal(table)}>{t('admin.tables.edit')}</button>
-              <button onClick={() => setDeleting(table)}>{t('admin.tables.delete')}</button>
+              <button className="button button--small" onClick={() => openEditModal(table)}>{t('admin.tables.edit')}</button>
+              <button className="button button--small button--danger" onClick={() => setDeleting(table)}>{t('admin.tables.delete')}</button>
             </div>
           </div>
         ))}

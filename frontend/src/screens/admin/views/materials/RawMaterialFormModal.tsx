@@ -124,10 +124,10 @@ export function RawMaterialFormModal({ rawMaterial, onClose, onSaved }: RawMater
         {error && <p className="raw-material-form__error">{error}</p>}
 
         <div className="raw-material-form__actions">
-          <button type="button" onClick={onClose}>
+          <button type="button" className="button" onClick={onClose}>
             {t('admin.materials.cancel')}
           </button>
-          <button type="submit" disabled={saving}>
+          <button type="submit" className="button button--primary" disabled={saving} aria-busy={saving || undefined}>
             {t('admin.materials.save')}
           </button>
         </div>

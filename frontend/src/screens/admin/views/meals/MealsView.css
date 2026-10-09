@@ -7,7 +7,7 @@
 .meals-view__title {
   font-family: var(--font-display);
   font-size: 25px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0 0 var(--space-2);
   color: var(--text);
 }
@@ -32,18 +32,10 @@
 }
 
 .meals-view__section-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.meals-view__add-button {
   font-family: var(--font-body);
+  font-size: 16px;
   font-weight: 600;
-  font-size: 12.5px;
-  color: var(--accent-forest);
+  color: var(--text);
 }
 
 .categories-row,
@@ -53,7 +45,7 @@
   align-items: center;
   gap: var(--space-4);
   padding: 12px 14px;
-  border-radius: 13px;
+  border-radius: var(--radius-card-inner);
   background: var(--bg-card-alt);
   box-shadow: var(--shadow-card);
 }
@@ -79,29 +71,17 @@
   gap: var(--space-2);
 }
 
-.categories-row__actions button,
-.meal-row__actions button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 11.5px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 9px;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text);
-}
-
 .meal-row__photo,
 .meal-row__placeholder {
   width: 46px;
   height: 46px;
   flex: none;
-  border-radius: 9px;
+  border-radius: var(--radius-chip);
   object-fit: cover;
 }
 
 .meal-row__placeholder {
-  background: rgba(19, 18, 17, 0.06);
+  background: var(--fill-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,24 +111,6 @@
   color: var(--text-secondary);
 }
 
-.meal-row__availability {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 11.5px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 9px;
-}
-
-.meal-row__availability--available {
-  background: rgba(31, 77, 58, 0.1);
-  color: var(--accent-forest);
-}
-
-.meal-row__availability--unavailable {
-  background: rgba(179, 64, 44, 0.14);
-  color: var(--accent-clay);
-}
-
 .meals-view__empty {
   font-family: var(--font-body);
   font-size: 13px;
@@ -158,5 +120,5 @@
 .meals-view__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }

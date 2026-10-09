@@ -121,7 +121,7 @@ export function MealsView() {
       <section className="meals-view__section">
         <div className="meals-view__section-header">
           <span className="meals-view__section-title">{t('admin.categories.title')}</span>
-          <button className="meals-view__add-button" onClick={() => setModal({ type: 'category', category: null })}>
+          <button className="meals-view__add-button button button--small button--primary" onClick={() => setModal({ type: 'category', category: null })}>
             {t('admin.categories.add')}
           </button>
         </div>
@@ -134,8 +134,8 @@ export function MealsView() {
               <span className="categories-row__name">{categoryName(category, language)}</span>
               <span className="categories-row__sort">{category.sortOrder}</span>
               <div className="categories-row__actions">
-                <button onClick={() => setModal({ type: 'category', category })}>{t('admin.categories.edit')}</button>
-                <button onClick={() => setDeletingCategory(category)}>{t('admin.categories.delete')}</button>
+                <button className="button button--small" onClick={() => setModal({ type: 'category', category })}>{t('admin.categories.edit')}</button>
+                <button className="button button--small button--danger" onClick={() => setDeletingCategory(category)}>{t('admin.categories.delete')}</button>
               </div>
             </div>
           ))}
@@ -144,7 +144,7 @@ export function MealsView() {
       <section className="meals-view__section">
         <div className="meals-view__section-header">
           <span className="meals-view__section-title">{t('admin.nav.meals')}</span>
-          <button className="meals-view__add-button" onClick={() => setModal({ type: 'meal', meal: null })}>
+          <button className="meals-view__add-button button button--small button--primary" onClick={() => setModal({ type: 'meal', meal: null })}>
             {t('admin.meals.add')}
           </button>
         </div>
@@ -168,18 +168,14 @@ export function MealsView() {
                 </span>
               </div>
               <button
-                className={
-                  meal.available
-                    ? 'meal-row__availability meal-row__availability--available'
-                    : 'meal-row__availability meal-row__availability--unavailable'
-                }
+                className={`meal-row__availability button button--small ${meal.available ? 'button--success' : 'button--danger'}`}
                 onClick={() => void handleToggleAvailability(meal)}
               >
                 {meal.available ? t('admin.meals.available') : t('admin.meals.unavailable')}
               </button>
               <div className="meal-row__actions">
-                <button onClick={() => setModal({ type: 'meal', meal })}>{t('admin.meals.editShort')}</button>
-                <button onClick={() => setDeletingMeal(meal)}>{t('admin.meals.delete')}</button>
+                <button className="button button--small" onClick={() => setModal({ type: 'meal', meal })}>{t('admin.meals.editShort')}</button>
+                <button className="button button--small button--danger" onClick={() => setDeletingMeal(meal)}>{t('admin.meals.delete')}</button>
               </div>
             </div>
           )
