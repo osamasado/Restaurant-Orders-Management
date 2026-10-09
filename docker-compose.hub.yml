@@ -1,0 +1,57 @@
+# The same app as docker-compose.yml, but from the images published on Docker Hub: nothing is built, so all you need
+# is this file, a .env and Docker.
+#
+#   cp .env.example .env      (set POSTGRES_PASSWORD, and APP_VERSION to a release such as 0.1.0)
+#   docker compose -f docker-compose.hub.yml up -d
+#
+# The service names matter: the frontend image's nginx reaches the backend as "backend", so do not rename it.
+# It uses the same project name and volumes as docker-compose.yml, so switching between the two keeps your data.
+name: restaurant-orders
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-restaurant_orders}
+      POSTGRES_USER: ${POSTGRES_USER:-restaurant_orders}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example to .env)}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: ${DOCKERHUB_NAMESPACE:-osamasado2024}/restaurant-orders-backend:${APP_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-restaurant_orders}
+      DATABASE_USERNAME: ${POSTGRES_USER:-restaurant_orders}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example to .env)}
+      UPLOAD_DIR: /data/uploads
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      APP_SEED_DEMO: ${APP_SEED_DEMO:-false}
+    volumes:
+      - uploads:/data/uploads
+    expose:
+      - '8080'
+
+  frontend:
+    image: ${DOCKERHUB_NAMESPACE:-osamasado2024}/restaurant-orders-frontend:${APP_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '${APP_PORT:-8088}:80'
+
+volumes:
+  pgdata:
+  uploads:
