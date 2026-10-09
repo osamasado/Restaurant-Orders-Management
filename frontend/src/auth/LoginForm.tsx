@@ -50,7 +50,7 @@ export function LoginForm() {
           />
         </label>
         {error && <p className="login-form__error">{error}</p>}
-        <button type="submit" className="login-form__submit" disabled={submitting}>
+        <button type="submit" className="login-form__submit button button--primary button--large" disabled={submitting} aria-busy={submitting || undefined}>
           {t('admin.auth.submit')}
         </button>
       </form>

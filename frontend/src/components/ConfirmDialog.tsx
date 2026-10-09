@@ -49,10 +49,10 @@ export function ConfirmDialog({ title, message, confirmLabel, errorMessage, onCo
         </p>
       )}
       <div className="dialog__actions">
-        <button ref={cancelRef} type="button" className="dialog__button dialog__button--plain" onClick={onClose} disabled={busy}>
+        <button ref={cancelRef} type="button" className="button" onClick={onClose} disabled={busy}>
           {t('common.cancel')}
         </button>
-        <button type="button" className="dialog__button dialog__button--danger" onClick={() => void handleConfirm()} disabled={busy} aria-busy={busy}>
+        <button type="button" className="button button--danger" onClick={() => void handleConfirm()} disabled={busy} aria-busy={busy}>
           {busy ? t('common.working') : failed ? t('common.tryAgain') : confirmLabel}
         </button>
       </div>

@@ -20,7 +20,7 @@
 .login-form__title {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0;
   color: var(--text);
 }
@@ -47,24 +47,7 @@
 .login-form__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
   margin: 0;
 }
 
-.login-form__submit {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--bg);
-  background: var(--accent-forest);
-  border-radius: var(--radius-card-inner);
-  padding: var(--space-3) var(--space-4);
-}
-
-.login-form__submit:hover:not(:disabled) {
-  background: var(--accent-forest-hover);
-}
-
-.login-form__submit:disabled {
-  opacity: 0.6;
-}

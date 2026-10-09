@@ -18,13 +18,13 @@
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-card-inner);
   background: var(--bg-card-alt);
-  box-shadow: var(--shadow-card), 0 10px 24px -12px rgba(19, 18, 17, 0.45);
-  border-inline-start: 4px solid var(--accent-forest);
+  box-shadow: var(--shadow-card), var(--shadow-popover);
+  border-inline-start: 4px solid var(--success);
   animation: toast-in 0.2s ease both;
 }
 
 .toast--error {
-  border-inline-start-color: var(--accent-clay);
+  border-inline-start-color: var(--danger);
 }
 
 .toast__message {
@@ -34,25 +34,6 @@
   line-height: 1.45;
   color: var(--text);
   overflow-wrap: anywhere;
-}
-
-.toast__dismiss {
-  background: none;
-  border: none;
-  padding: 0 var(--space-1);
-  font-size: 18px;
-  line-height: 1;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.toast__dismiss:hover {
-  color: var(--text);
-}
-
-.toast__dismiss:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
 }
 
 @keyframes toast-in {

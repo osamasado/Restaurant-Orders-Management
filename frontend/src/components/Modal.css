@@ -1,7 +1,7 @@
 .modal__overlay {
   position: fixed;
   inset: 0;
-  background: rgba(19, 18, 17, 0.5);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,29 +43,9 @@
 .modal__title {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0;
   color: var(--text);
-}
-
-.modal__close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1;
-  color: var(--text-secondary);
-  padding: var(--space-2);
-}
-
-.modal__close:hover {
-  color: var(--text);
-}
-
-.modal__close:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 
 .modal__body {
