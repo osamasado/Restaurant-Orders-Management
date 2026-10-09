@@ -8,7 +8,9 @@ WORKDIR /build
 
 # The wrapper and the pom first, so the dependency download is a cached layer that a source change does not redo.
 COPY .mvn .mvn
-COPY mvnw pom.xml ./
+# --chmod: git on Windows does not keep the executable bit of mvnw, and a Linux checkout may not have it either.
+COPY --chmod=755 mvnw ./
+COPY pom.xml ./
 RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q dependency:go-offline
 
 # Tests need Docker (Testcontainers) and run in CI, not here.
