@@ -70,3 +70,66 @@ BASE=http://localhost:8088 API=http://localhost:8088/api node scripts/qa-walk.mj
 ```
 
 Both need `APP_SEED_DEMO=true`.
+
+## Running the published images (nothing to build)
+
+The images are public on Docker Hub: [`osamasado2024/restaurant-orders-backend`](https://hub.docker.com/r/osamasado2024/restaurant-orders-backend) and [`osamasado2024/restaurant-orders-frontend`](https://hub.docker.com/r/osamasado2024/restaurant-orders-frontend), for `linux/amd64` and `linux/arm64`. `docker-compose.hub.yml` runs them, so a server only needs that file, an `.env` and Docker:
+
+```
+curl -O https://raw.githubusercontent.com/osamasado/Restaurant-Orders-Management/master/docker-compose.hub.yml
+curl -o .env https://raw.githubusercontent.com/osamasado/Restaurant-Orders-Management/master/.env.example
+# edit .env: set POSTGRES_PASSWORD, and APP_VERSION to a release such as 0.1.0
+docker compose -f docker-compose.hub.yml up -d
+```
+
+| Tag | Means |
+|---|---|
+| `0.1.0` | exactly that release; **pin one of these** for anything that matters |
+| `0.1` | the newest `0.1.x` |
+| `latest` | the newest release (never a pre-release such as `v1.0.0-rc.1`) |
+| `edge` | the newest build of `master`, not a release; for trying things out |
+
+`APP_VERSION` in `.env` chooses the tag (default `latest`). To update, change it and run `docker compose -f docker-compose.hub.yml up -d` again (it pulls the new images). The file uses the same project name and volumes as `docker-compose.yml`, so switching between building and pulling keeps the database and the photos. Do not rename the services: the frontend image reaches the backend as `backend`.
+
+## Publishing a release
+
+`.github/workflows/docker-publish.yml` builds both images and pushes them. Nobody needs to build on a laptop.
+
+| Event | What happens |
+|---|---|
+| a tag `vX.Y.Z` is pushed | both images are built and pushed as `X.Y.Z`, `X.Y` and `latest` (a tag with a hyphen, such as `v1.0.0-rc.1`, gets no `latest`) |
+| a push to `master` | both images are built and pushed as `edge` |
+| a pull request | both images are only built (for `amd64`), nothing is pushed, no secrets are needed |
+
+**One-time setup**
+
+1. On hub.docker.com make an access token (Account settings, Personal access tokens, permission **Read & Write**). Docker Hub creates the two repositories on the first push; make them public.
+2. In the GitHub repository (Settings, Secrets and variables, Actions) add the secrets `DOCKERHUB_USERNAME` (`osamasado2024`) and `DOCKERHUB_TOKEN` (the token). Without them the workflow still builds the images and says in a warning that it did not push.
+3. On Docker Hub, give each repository a short description and a link to this repository (the workflow does not touch them: changing a description needs a more powerful token than the one above).
+
+**Cutting a release**
+
+```
+git switch master && git pull
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Watch the "Docker images" workflow, then check the tags on Docker Hub and `docker buildx imagetools inspect osamasado2024/restaurant-orders-backend:0.1.0` (it should list `linux/amd64` and `linux/arm64`). The version in the tag names the images only; the jar (`0.0.1-SNAPSHOT`) and the frontend package keep their own numbers.
+
+**The names** are set once, in the `env` block at the top of the workflow (`DOCKERHUB_NAMESPACE`, `IMAGE_PREFIX`); `docker-compose.hub.yml` takes the same namespace from `DOCKERHUB_NAMESPACE` in `.env` (default `osamasado2024`).
+
+**Pushing by hand** (an emergency, or the very first publish before the secrets exist):
+
+```
+docker login -u osamasado2024            # paste the access token as the password
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t osamasado2024/restaurant-orders-backend:0.1.0 -t osamasado2024/restaurant-orders-backend:latest \
+  --push ./backend
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t osamasado2024/restaurant-orders-frontend:0.1.0 -t osamasado2024/restaurant-orders-frontend:latest \
+  --push ./frontend
+```
+
+Add `--provenance=false --sbom=false` to keep the tag list free of extra "unknown/unknown" entries. If your Docker uses the default builder and refuses a multi-platform build, run `docker buildx create --use` once; on a Linux machine without emulation, `docker run --privileged --rm tonistiigi/binfmt --install arm64` adds it.
+
