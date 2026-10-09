@@ -27,5 +27,5 @@ The `prod` profile has no hardcoded database connection — it requires these en
 - `DATABASE_PASSWORD`
 
 ```
-SPRING_PROFILES_ACTIVE=prod DATABASE_URL=... DATABASE_USERNAME=... DATABASE_PASSWORD=... java -jar target/backend-0.0.1-SNAPSHOT.jar
+SPRING_PROFILES_ACTIVE=prod DATABASE_URL=... DATABASE_USERNAME=... DATABASE_PASSWORD=... java -jar target/rom-app.jar
 ```
