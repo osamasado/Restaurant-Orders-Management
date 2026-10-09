@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * invented, since it's already the canonical example data for this
  * project's demos. Always registered as a bean but does nothing on its
  * own - {@link DemoDataStartupRunner} is what actually calls
- * {@link #seedAll()}, and only in the dev profile.
+ * {@link #seedAll()}, and only when {@code app.seed.demo} is on (the dev profile, or APP_SEED_DEMO=true).
  *
  * The German and Arabic meal content (descriptions, preparation, ingredients)
  * was written for this project, since the prototype only has English text;
