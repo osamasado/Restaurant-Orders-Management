@@ -97,7 +97,7 @@ async function open(lang = 'en', theme = 'light', { reducedMotion = 'no-preferen
   await page.locator('.login-form input').nth(0).fill('O. Sado')
   await page.locator('.login-form input').nth(1).fill('1234')
   await page.click('.login-form__submit')
-  await page.waitForSelector('.admin-screen__logout')
+  await page.waitForSelector('.admin-sidebar__logout')
   return { context, page }
 }
 const go = async (page, view, rowSelector) => { await page.goto(`${BASE}/admin/${view}`); await page.waitForSelector(rowSelector) }
@@ -413,7 +413,7 @@ for (const lang of ['de', 'ar']) {
         const card = document.querySelector('[role=dialog]')
         const box = card.getBoundingClientRect()
         const fn = new Function(`return (${contrast})()`)()
-        const checks = ['.modal__title', '.dialog__message', '.dialog__error', '.dialog__button', '.pin-dialog__field span', '.pin-dialog__hint', '.pin-dialog__error', '.pairing-dialog__code', '.pairing-dialog__copied', '.toast__message'].flatMap((sel) => fn(sel))
+        const checks = ['.modal__title', '.dialog__message', '.dialog__error', '.dialog .button, .modal__body .button', '.pin-dialog__field span', '.pin-dialog__hint', '.pin-dialog__error', '.pairing-dialog__code', '.pairing-dialog__copied', '.toast__message'].flatMap((sel) => fn(sel))
         return {
           dir: document.documentElement.dir,
           inside: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight,
@@ -433,7 +433,7 @@ for (const lang of ['de', 'ar']) {
     await page.keyboard.press('Escape')
     await rowOf(page, '.table-row', temp.tableNumber).locator('.table-row__actions button').nth(2).click() // Delete
     await measure('delete')
-    await page.getByRole('dialog').locator('.dialog__button--danger').click() // delete the throwaway table
+    await page.getByRole('dialog').locator('.button--danger').click() // delete the throwaway table
     await dialogOf(page).waitFor({ state: 'detached' })
     await go(page, 'staff', '.staff-row')
     await rowOf(page, '.staff-row', staffAcc.name).locator('.staff-row__actions button').nth(1).click() // Reset PIN

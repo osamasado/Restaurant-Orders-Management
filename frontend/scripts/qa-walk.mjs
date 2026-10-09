@@ -101,8 +101,17 @@ async function audit(page, label, lang, consoleProblems) {
     const viewportWidth = window.innerWidth
     const describe = (el) => `${el.tagName.toLowerCase()}${el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : ''} "${(el.textContent || '').trim().slice(0, 30)}"`
     const all = [...document.querySelectorAll('body *')]
+    // Something that cannot be seen or reached does not stick out: an off-canvas drawer is visibility:hidden and
+    // inert until opened, and a row of chips inside its own sideways scroller is meant to run past the edge.
+    const intentionallyOffscreen = (el) => {
+      if (getComputedStyle(el).visibility === 'hidden') return true
+      for (let parent = el.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
+        if (['auto', 'scroll', 'hidden', 'clip'].includes(getComputedStyle(parent).overflowX) && parent.getBoundingClientRect().right <= viewportWidth + 1) return true
+      }
+      return false
+    }
     const overflowers = all
-      .filter((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.right > viewportWidth + 1 || r.left < -1) })
+      .filter((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.right > viewportWidth + 1 || r.left < -1) && !intentionallyOffscreen(el) })
       .slice(0, 4).map(describe)
     // A child wider than the box it sits in (a row of buttons longer than its sidebar, say): the viewport check
     // cannot see it when the box itself is inside the viewport.
@@ -124,6 +133,7 @@ async function audit(page, label, lang, consoleProblems) {
       .filter((el) => {
         if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return false
         const cs = getComputedStyle(el)
+        if (cs.clipPath !== 'none') return false // text meant to be read only by a screen reader (clip-path: inset(50%))
         return (cs.overflow !== 'visible' || cs.textOverflow === 'ellipsis') && el.scrollWidth > el.clientWidth + 1
       })
       .slice(0, 4).map(describe)
@@ -278,13 +288,18 @@ for (const lang of LANGUAGES) {
     await step(`admin ${tag}`, async () => {
       const { context, page, consoleProblems } = await open({ width: 1440, height: 900 }, lang, theme)
       await staffSignIn(page, '/admin', 'O. Sado', '1234')
-      await page.waitForSelector('.admin-screen__logout')
-      for (const view of ['history', 'orders', 'meals', 'materials', 'tables', 'staff', 'settings']) {
+      await page.waitForSelector('.admin-sidebar__logout')
+      for (const view of ['dashboard', 'history', 'orders', 'meals', 'materials', 'tables', 'staff', 'settings']) {
         await step(`admin ${tag} ${view}`, async () => {
           await page.goto(`${BASE}/admin/${view}`)
           await page.locator('.admin-screen__content h2').first().waitFor({ timeout: 20000 })
           // The orders list loads after its heading: wait for real rows, or the audit would look at an empty page.
           if (view === 'orders') await page.locator('.order-row').first().waitFor({ timeout: 20000 })
+          if (view === 'dashboard') {
+            await page.locator('.order-reports__row').first().waitFor({ timeout: 20000 })
+            await page.locator('.meal-tile').first().waitFor({ timeout: 20000 })
+            await page.waitForTimeout(600) // the photos fade in
+          }
           await audit(page, `admin ${tag} ${view}`, lang, consoleProblems); await shot(page, `admin-${tag}-${view}`)
         })
       }
@@ -336,6 +351,23 @@ for (const lang of LANGUAGES) {
         await page.waitForSelector('.staff-form'); await page.waitForTimeout(300)
         await audit(page, `admin ${tag} staff form`, lang, consoleProblems); await shot(page, `admin-${tag}-staff-form`)
       })
+      await context.close()
+    })
+
+    // The admin on a phone: the navigation is a drawer and an order opens in a dialog.
+    await step(`admin ${tag} phone`, async () => {
+      const { context, page, consoleProblems } = await open({ width: 390, height: 844 }, lang, theme)
+      await staffSignIn(page, '/admin/dashboard', 'O. Sado', '1234')
+      await page.locator('.order-reports__row').first().waitFor({ timeout: 30000 })
+      await page.locator('.meal-tile').first().waitFor({ timeout: 20000 })
+      await page.waitForTimeout(600)
+      await audit(page, `admin ${tag} phone dashboard`, lang, consoleProblems); await shot(page, `admin-${tag}-phone-dashboard`)
+      await page.locator('.admin-topbar__menu').click(); await page.waitForTimeout(400)
+      await audit(page, `admin ${tag} phone drawer`, lang, consoleProblems); await shot(page, `admin-${tag}-phone-drawer`)
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300)
+      await page.locator('.order-reports__select').first().click()
+      await page.waitForSelector('.modal__card .order-panel'); await page.waitForTimeout(300)
+      await audit(page, `admin ${tag} phone order`, lang, consoleProblems); await shot(page, `admin-${tag}-phone-order`)
       await context.close()
     })
   }
