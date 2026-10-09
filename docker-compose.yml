@@ -1,0 +1,56 @@
+# The whole app: PostgreSQL, the Spring Boot backend and the web server for the React app.
+#
+#   cp .env.example .env      (then set POSTGRES_PASSWORD)
+#   docker compose up --build
+#
+# Open http://localhost:8088 (APP_PORT in .env). See Documentation/deployment.md for the details.
+name: restaurant-orders
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-restaurant_orders}
+      POSTGRES_USER: ${POSTGRES_USER:-restaurant_orders}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example to .env)}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-restaurant_orders}
+      DATABASE_USERNAME: ${POSTGRES_USER:-restaurant_orders}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy .env.example to .env)}
+      UPLOAD_DIR: /data/uploads
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      APP_SEED_DEMO: ${APP_SEED_DEMO:-false}
+    volumes:
+      - uploads:/data/uploads
+    # Not published: the browser only talks to the frontend service, which forwards /api and /images here.
+    expose:
+      - '8080'
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '${APP_PORT:-8088}:80'
+
+volumes:
+  pgdata:
+  uploads:
