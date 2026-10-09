@@ -21,11 +21,11 @@
 }
 
 .kitchen-order-card__number--preparing {
-  color: var(--accent-amber);
+  color: var(--warning-text);
 }
 
 .kitchen-order-card__number--ready {
-  color: var(--accent-forest);
+  color: var(--success-text);
 }
 
 .kitchen-order-card__table {
@@ -53,7 +53,7 @@
 
 .kitchen-order-card__quantity {
   font-family: var(--font-mono);
-  color: var(--accent-forest);
+  color: var(--accent-text);
 }
 
 .kitchen-order-card__name {
@@ -70,42 +70,16 @@
   margin: var(--space-2) 0 0;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-chip);
-  background: rgba(217, 143, 0, 0.18);
-  color: var(--accent-amber);
+  background: var(--tint-warning);
+  color: var(--warning-text);
   font-size: 13px;
 }
 
 .kitchen-order-card__action {
   width: 100%;
-  padding: var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card-inner);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
 }
 
-.kitchen-order-card__action:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* The design's solid colours, in both themes: forest to start, amber for ready. */
-.kitchen-order-card__action--start {
-  background: #1f4d3a;
-  color: #f5f0e8;
-}
-
-.kitchen-order-card__action--ready {
-  background: #d98f00;
-  color: #131211;
-}
-
-.kitchen-order-card__action--served {
-  background: none;
-  border-color: var(--hairline);
-  color: var(--text);
-}
+/* Solid action buttons: the red accent to start, amber for ready (the colour of the column they sit in). */
 
 .kitchen-order-card__timer {
   margin-inline-start: auto;
@@ -121,19 +95,14 @@
   color: var(--text);
 }
 
-/* Waiting time: neutral, amber from 6 minutes, clay from 12 (design doc), as solid chips. */
+/* Waiting time: neutral, amber from 6 minutes, red from 12 (design doc), as solid chips. */
 .kitchen-order-card__timer--warning {
-  background: #d98f00;
-  color: #131211;
+  background: var(--warning);
+  color: var(--warning-ink);
 }
 
 .kitchen-order-card__timer--late {
-  background: #b3402c;
-  color: #fff;
+  background: var(--danger);
+  color: var(--danger-ink);
 }
 
-/* On a paper ground the on-dark amber is too pale to read: text uses the design's darker amber instead. */
-:root[data-theme='light'] .kitchen-order-card__number--preparing,
-:root[data-theme='light'] .kitchen-order-card__note {
-  color: var(--accent-amber-note);
-}

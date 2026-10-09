@@ -11,29 +11,7 @@
   gap: var(--space-3);
 }
 
-.ran-out__chip {
-  padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-card-inner);
-  background: none;
-  color: var(--text);
-  font: inherit;
-  letter-spacing: normal;
-  text-transform: none;
-  cursor: pointer;
-}
-
 /* Sold out: clay tint and ring with clay text, readable on both grounds (white on pale clay was not). */
-.ran-out__chip--sold-out {
-  border-color: var(--accent-clay);
-  background: color-mix(in srgb, var(--accent-clay) 16%, transparent);
-  color: var(--accent-clay);
-}
-
-.ran-out__chip:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
 
 .ran-out__note {
   margin: var(--space-3) 0 0;
@@ -41,7 +19,3 @@
   text-transform: none;
 }
 
-/* On paper, clay text on its own tint is only 4:1: the ring and tint say "sold out", the text stays ink. */
-:root[data-theme='light'] .ran-out__chip--sold-out {
-  color: var(--text);
-}

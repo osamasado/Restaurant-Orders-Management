@@ -32,7 +32,7 @@ export function RanOutFooter({ meals, busyMealId, onToggle }: RanOutFooterProps)
             <button
               key={meal.id}
               type="button"
-              className={`ran-out__chip${meal.available ? '' : ' ran-out__chip--sold-out'}`}
+              className={`ran-out__chip${meal.available ? '' : ' ran-out__chip--sold-out'} button${meal.available ? '' : ' button--danger'}`}
               aria-pressed={!meal.available}
               disabled={busyMealId === meal.id}
               onClick={() => onToggle(meal)}

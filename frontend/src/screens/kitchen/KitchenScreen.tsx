@@ -105,7 +105,7 @@ function KitchenBoard({ staff, onSignOut }: KitchenBoardProps) {
           </time>
           <LanguageSwitcher />
           <ThemeToggle />
-          <button type="button" className="kitchen-screen__logout" onClick={() => void onSignOut()}>
+          <button type="button" className="kitchen-screen__logout button button--small" onClick={() => void onSignOut()}>
             {t('kitchen.logout')}
           </button>
         </div>
@@ -173,7 +173,7 @@ function KitchenScreenContent() {
     return (
       <div className="kitchen-screen kitchen-screen--denied">
         <p>{t('kitchen.accessDenied')}</p>
-        <button type="button" className="kitchen-screen__logout" onClick={() => void logout()}>
+        <button type="button" className="kitchen-screen__logout button button--small" onClick={() => void logout()}>
           {t('kitchen.logout')}
         </button>
       </div>
