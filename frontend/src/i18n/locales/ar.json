@@ -21,7 +21,12 @@
     "copy": "نسخ",
     "copied": "تم النسخ",
     "done": "تم",
-    "dismiss": "إغلاق الإشعار"
+    "dismiss": "إغلاق الإشعار",
+    "slider": {
+      "previous": "العناصر السابقة",
+      "viewMore": "عرض المزيد",
+      "range": "عرض {{from}} إلى {{to}} من {{total}}"
+    }
   },
   "guest": {
     "tableLabel": "طاولة {{number}}",
@@ -33,7 +38,17 @@
       "loading": "جارٍ تحميل قائمة الطعام...",
       "loadError": "تعذر تحميل قائمة الطعام",
       "empty": "لا يوجد شيء في القائمة حاليًا",
-      "fromPrice": "من {{price}}"
+      "fromPrice": "من {{price}}",
+      "subtitle": "ماذا تود أن تأكل؟",
+      "searchLabel": "البحث في قائمة الطعام",
+      "searchPlaceholder": "ابحث عن طبق",
+      "categories": "الفئات",
+      "allCategories": "الكل",
+      "mealCount": "الأطباق: {{count}}",
+      "meals": "الأطباق",
+      "add": "إضافة",
+      "noResults": "لا يوجد طبق مطابق",
+      "noResultsHint": "جرّب كلمة أخرى أو اختر الكل."
     },
     "detail": {
       "back": "العودة إلى القائمة",
@@ -64,7 +79,9 @@
       "addMore": "إضافة أصناف أخرى",
       "choosePayment": "اختيار طريقة الدفع",
       "reviewOrder": "مراجعة الطلب",
-      "vatAmount": "ضريبة القيمة المضافة"
+      "vatAmount": "ضريبة القيمة المضافة",
+      "empty": "سلتك فارغة",
+      "emptyHint": "اختر طبقاً من القائمة ليظهر هنا."
     },
     "tableUnknown": "لم يتم تخصيص الطاولة بعد",
     "pairing": {
@@ -170,13 +187,16 @@
   "admin": {
     "eyebrow": "الإدارة",
     "nav": {
+      "dashboard": "لوحة التحكم",
       "orders": "الطلبات",
       "history": "سجل التدقيق",
       "meals": "الأطباق",
       "materials": "المواد الخام",
       "tables": "الطاولات والأجهزة",
       "staff": "حسابات الموظفين",
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "openMenu": "فتح القائمة",
+      "label": "التنقل في الإدارة"
     },
     "auth": {
       "title": "تسجيل الدخول",
@@ -421,6 +441,46 @@
       "save": "حفظ",
       "saved": "تم حفظ الإعدادات",
       "error": "تعذر حفظ الإعدادات"
+    },
+    "dashboard": {
+      "subtitle": "قائمة الطعام وأحدث الطلبات في لمحة",
+      "searchLabel": "البحث في الأطباق والطلبات",
+      "searchPlaceholder": "ابحث عن طبق أو رقم طلب أو طاولة",
+      "allCategories": "الكل",
+      "mealCount": "الأطباق: {{count}}",
+      "manageMeals": "إدارة الأطباق",
+      "menuError": "تعذر تحميل قائمة الطعام",
+      "retry": "حاول مرة أخرى",
+      "noMealResults": "لا توجد أطباق مطابقة",
+      "noOrderResults": "لا توجد طلبات مطابقة",
+      "noResultsHint": "جرّب كلمة أخرى أو امسح البحث.",
+      "orderReports": "تقارير الطلبات",
+      "allOrders": "كل الطلبات",
+      "loading": "جارٍ التحميل...",
+      "fromPrice": "ابتداءً من {{price}}",
+      "markUnavailable": "تعيين كغير متوفر",
+      "markAvailable": "تعيين كمتوفر",
+      "showOrder": "عرض الطلب {{number}}",
+      "quantity": "الكمية {{count}}",
+      "columns": {
+        "number": "الطلب",
+        "table": "الطاولة",
+        "items": "الأصناف",
+        "amount": "المبلغ",
+        "status": "الحالة",
+        "time": "وقت الطلب"
+      },
+      "panel": {
+        "title": "لوحة الطلب",
+        "noneTitle": "لم يتم اختيار طلب",
+        "noneHint": "اختر طلباً من القائمة لترى ما تم طلبه وتنقله إلى الخطوة التالية.",
+        "details": "تفاصيل الطلب",
+        "order": "الطلب",
+        "orderTitle": "الطلب {{number}}",
+        "progress": "التقدم",
+        "items": "الأصناف",
+        "total": "الإجمالي"
+      }
     }
   },
   "notFound": {

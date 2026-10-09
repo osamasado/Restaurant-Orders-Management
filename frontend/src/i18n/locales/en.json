@@ -21,7 +21,12 @@
     "copy": "Copy",
     "copied": "Copied",
     "done": "Done",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "slider": {
+      "previous": "Previous items",
+      "viewMore": "View more",
+      "range": "Showing {{from}} to {{to}} of {{total}}"
+    }
   },
   "guest": {
     "tableLabel": "Table {{number}}",
@@ -33,7 +38,17 @@
       "loading": "Loading menu...",
       "loadError": "Could not load the menu",
       "empty": "Nothing on the menu right now",
-      "fromPrice": "from {{price}}"
+      "fromPrice": "from {{price}}",
+      "subtitle": "What would you like to eat?",
+      "searchLabel": "Search the menu",
+      "searchPlaceholder": "Search a dish",
+      "categories": "Categories",
+      "allCategories": "All",
+      "mealCount": "Meals: {{count}}",
+      "meals": "Meals",
+      "add": "Add",
+      "noResults": "No dish matches",
+      "noResultsHint": "Try another word or choose All."
     },
     "detail": {
       "back": "Back to menu",
@@ -64,7 +79,9 @@
       "addMore": "Add more items",
       "choosePayment": "Choose payment",
       "reviewOrder": "Review order",
-      "vatAmount": "VAT"
+      "vatAmount": "VAT",
+      "empty": "Your cart is empty",
+      "emptyHint": "Pick a dish from the menu and it appears here."
     },
     "tableUnknown": "Table not assigned yet",
     "pairing": {
@@ -170,13 +187,16 @@
   "admin": {
     "eyebrow": "Management",
     "nav": {
+      "dashboard": "Dashboard",
       "orders": "Orders",
       "history": "Audit history",
       "meals": "Meals",
       "materials": "Raw materials",
       "tables": "Tables & devices",
       "staff": "Staff accounts",
-      "settings": "Settings"
+      "settings": "Settings",
+      "openMenu": "Open menu",
+      "label": "Admin navigation"
     },
     "auth": {
       "title": "Sign in",
@@ -421,6 +441,46 @@
       "save": "Save",
       "saved": "Settings saved",
       "error": "Could not save settings"
+    },
+    "dashboard": {
+      "subtitle": "The menu and the newest orders at a glance",
+      "searchLabel": "Search meals and orders",
+      "searchPlaceholder": "Search a meal, an order number or a table",
+      "allCategories": "All",
+      "mealCount": "Meals: {{count}}",
+      "manageMeals": "Manage meals",
+      "menuError": "Could not load the menu",
+      "retry": "Try again",
+      "noMealResults": "No meals match",
+      "noOrderResults": "No orders match",
+      "noResultsHint": "Try another word or clear the search.",
+      "orderReports": "Order reports",
+      "allOrders": "All orders",
+      "loading": "Loading...",
+      "fromPrice": "from {{price}}",
+      "markUnavailable": "Mark unavailable",
+      "markAvailable": "Mark available",
+      "showOrder": "Show order {{number}}",
+      "quantity": "Quantity {{count}}",
+      "columns": {
+        "number": "Order",
+        "table": "Table",
+        "items": "Items",
+        "amount": "Amount",
+        "status": "Status",
+        "time": "Placed"
+      },
+      "panel": {
+        "title": "Order panel",
+        "noneTitle": "No order selected",
+        "noneHint": "Choose an order from the list to see what was ordered and move it along.",
+        "details": "Order details",
+        "order": "Order",
+        "orderTitle": "Order {{number}}",
+        "progress": "Progress",
+        "items": "Items",
+        "total": "Total"
+      }
     }
   },
   "notFound": {
