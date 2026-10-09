@@ -72,10 +72,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Spring 7 and Spring Data reference its annotations at runtime, so it must be in the packaged jar:
+             as an optional dependency it was left out and `java -jar` failed with NoClassDefFoundError. -->
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

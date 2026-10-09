@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+.idea
+*.iml
+*.log
+Dockerfile
+.dockerignore
+README.md
+qa-shots
+boards-shots
+demo-shots

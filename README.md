@@ -35,11 +35,34 @@ Every transition is timestamped and records which staff member made it, so the f
 
 - **Backend:** Java, Spring Boot, Lombok
 - **Database:** PostgreSQL
-- **Frontend/client:** not yet decided — planned as a server-authoritative web app, installable as a PWA on phones/tablets
+- **Frontend/client:** React 19, TypeScript and Vite: a server-authoritative web app, installable as a PWA on phones and tablets
+- **Packaging:** Docker images for the backend and the frontend (nginx), run together with Docker Compose
+
+## Run with Docker
+
+With Docker and Docker Compose installed, nothing else is needed (no Java, Node or PostgreSQL):
+
+```
+cp .env.example .env        # then set POSTGRES_PASSWORD in .env
+docker compose up --build
+```
+
+Open http://localhost:8088. The guest, kitchen, hall and admin screens are all on that one address (`/guest`, `/kitchen`, `/hall`, `/admin`).
+
+The first start has an empty database. To try the app with the demo menu, tables and staff (every account has the PIN `1234`), set `APP_SEED_DEMO=true` in `.env` before the first start; turn it off, or change every PIN, before real use.
+
+| Command | What it does |
+|---|---|
+| `docker compose up --build -d` | Build and start in the background |
+| `docker compose logs -f backend` | Follow the backend's log |
+| `docker compose down` | Stop; the database and the meal photos are kept (named volumes `pgdata` and `uploads`) |
+| `docker compose down -v` | Stop and **delete** the database and the photos |
+
+Every setting, the volumes, backups and HTTPS are in `Documentation/deployment.md`.
 
 ## Project status
 
-Early stage: requirements and UX design are complete; implementation hasn't started yet.
+All four screens (guest ordering, kitchen display, hall board and management backend) are implemented, in German, English and Arabic, light and dark.
 
 - `Documentation/Final Project Proposal - Restaurant Orders System.pdf` — requirements and scope
 - `Documentation/Design/README.md` — visual design, screen-by-screen UX spec, and data model

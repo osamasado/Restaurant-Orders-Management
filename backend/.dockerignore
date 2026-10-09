@@ -1,0 +1,12 @@
+# Keep the build context to what the image build needs.
+target
+uploads
+seed-art
+.idea
+*.iml
+.git
+.gitignore
+Dockerfile
+.dockerignore
+compose.yaml
+README.md
