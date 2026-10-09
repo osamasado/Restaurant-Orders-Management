@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AdminScreen } from './screens/admin/AdminScreen'
+import { DashboardView } from './screens/admin/views/dashboard/DashboardView'
 import { HistoryView } from './screens/admin/views/history/HistoryView'
 import { OrdersView } from './screens/admin/views/orders/OrdersView'
 import { MealsView } from './screens/admin/views/meals/MealsView'
@@ -22,7 +23,8 @@ function App() {
         <Route path="/kitchen" element={<KitchenScreen />} />
         <Route path="/hall" element={<HallScreen />} />
         <Route path="/admin" element={<AdminScreen />}>
-          <Route index element={<Navigate to="orders" replace />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardView />} />
           <Route path="orders" element={<OrdersView />} />
           <Route path="history" element={<HistoryView />} />
           <Route path="meals" element={<MealsView />} />

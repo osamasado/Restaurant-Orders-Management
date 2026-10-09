@@ -1,24 +1,13 @@
-import { NavLink, Outlet } from 'react-router'
+import { Outlet } from 'react-router'
 import { AuthProvider } from '../../auth/AuthProvider'
 import { ToastProvider } from '../../components/Toast'
 import { useAuth } from '../../auth/auth-context'
 import { LoginForm } from '../../auth/LoginForm'
 import { LanguageProvider } from '../../i18n/LanguageProvider'
-import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
+import { AdminSidebar } from '../../components/admin/AdminSidebar'
 import { useT } from '../../i18n/useT'
 import { ThemeProvider } from '../../theme/ThemeProvider'
-import { ThemeToggle } from '../../theme/ThemeToggle'
 import './AdminScreen.css'
-
-const NAV_ITEMS = [
-  { to: 'orders', labelKey: 'admin.nav.orders' },
-  { to: 'history', labelKey: 'admin.nav.history' },
-  { to: 'meals', labelKey: 'admin.nav.meals' },
-  { to: 'materials', labelKey: 'admin.nav.materials' },
-  { to: 'tables', labelKey: 'admin.nav.tables' },
-  { to: 'staff', labelKey: 'admin.nav.staff' },
-  { to: 'settings', labelKey: 'admin.nav.settings' },
-] as const
 
 function AdminScreenContent() {
   const { t } = useT()
@@ -42,36 +31,11 @@ function AdminScreenContent() {
 
   return (
     <div className="admin-screen">
-      <aside className="admin-screen__sidebar">
-        <span className="admin-screen__eyebrow">{t('admin.eyebrow')}</span>
-        <nav className="admin-screen__nav">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                isActive
-                  ? 'admin-screen__nav-link admin-screen__nav-link--active'
-                  : 'admin-screen__nav-link'
-              }
-            >
-              {t(item.labelKey)}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="admin-screen__spacer" />
-        <div className="admin-screen__signed-in">
-          <div className="admin-screen__signed-in-controls">
-            <LanguageSwitcher />
-            <ThemeToggle />
-          </div>
-          <span>{t('admin.auth.signedInAs', { name: staff.name, role: t(`admin.staff.roles.${staff.role}`) })}</span>
-          <button className="admin-screen__logout" onClick={() => void logout()}>
-            {t('admin.auth.logout')}
-          </button>
-        </div>
-      </aside>
-      <main className="admin-screen__content" tabIndex={-1}>
+      <AdminSidebar
+        signedInAs={t('admin.auth.signedInAs', { name: staff.name, role: t(`admin.staff.roles.${staff.role}`) })}
+        onLogout={() => void logout()}
+      />
+      <main id="admin-main" className="admin-screen__content" tabIndex={-1}>
         <ToastProvider>
           <Outlet />
         </ToastProvider>
@@ -82,7 +46,7 @@ function AdminScreenContent() {
 
 export function AdminScreen() {
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider defaultTheme="dark">
       <LanguageProvider defaultLanguage="de">
         <AuthProvider>
           <AdminScreenContent />
