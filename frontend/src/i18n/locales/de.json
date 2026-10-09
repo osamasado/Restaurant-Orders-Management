@@ -21,7 +21,12 @@
     "copy": "Kopieren",
     "copied": "Kopiert",
     "done": "Fertig",
-    "dismiss": "Hinweis schließen"
+    "dismiss": "Hinweis schließen",
+    "slider": {
+      "previous": "Vorherige Einträge",
+      "viewMore": "Mehr anzeigen",
+      "range": "{{from}} bis {{to}} von {{total}} angezeigt"
+    }
   },
   "guest": {
     "tableLabel": "Tisch {{number}}",
@@ -33,7 +38,17 @@
       "loading": "Speisekarte wird geladen...",
       "loadError": "Speisekarte konnte nicht geladen werden",
       "empty": "Derzeit steht nichts auf der Karte",
-      "fromPrice": "ab {{price}}"
+      "fromPrice": "ab {{price}}",
+      "subtitle": "Worauf haben Sie Appetit?",
+      "searchLabel": "Speisekarte durchsuchen",
+      "searchPlaceholder": "Gericht suchen",
+      "categories": "Kategorien",
+      "allCategories": "Alle",
+      "mealCount": "Gerichte: {{count}}",
+      "meals": "Gerichte",
+      "add": "Hinzufügen",
+      "noResults": "Kein Gericht passt",
+      "noResultsHint": "Versuchen Sie ein anderes Wort oder wählen Sie Alle."
     },
     "detail": {
       "back": "Zurück zur Speisekarte",
@@ -64,7 +79,9 @@
       "addMore": "Weitere Artikel hinzufügen",
       "choosePayment": "Zahlungsart wählen",
       "reviewOrder": "Bestellung ansehen",
-      "vatAmount": "MwSt."
+      "vatAmount": "MwSt.",
+      "empty": "Ihr Warenkorb ist leer",
+      "emptyHint": "Wählen Sie ein Gericht aus der Speisekarte, dann erscheint es hier."
     },
     "tableUnknown": "Tisch noch nicht zugewiesen",
     "pairing": {
@@ -170,13 +187,16 @@
   "admin": {
     "eyebrow": "Verwaltung",
     "nav": {
+      "dashboard": "Übersicht",
       "orders": "Bestellungen",
       "history": "Änderungsprotokoll",
       "meals": "Gerichte",
       "materials": "Rohstoffe",
       "tables": "Tische & Geräte",
       "staff": "Personalkonten",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "openMenu": "Menü öffnen",
+      "label": "Navigation der Verwaltung"
     },
     "auth": {
       "title": "Anmelden",
@@ -421,6 +441,46 @@
       "save": "Speichern",
       "saved": "Einstellungen gespeichert",
       "error": "Einstellungen konnten nicht gespeichert werden"
+    },
+    "dashboard": {
+      "subtitle": "Speisekarte und neueste Bestellungen auf einen Blick",
+      "searchLabel": "Gerichte und Bestellungen suchen",
+      "searchPlaceholder": "Gericht, Bestellung oder Tisch suchen",
+      "allCategories": "Alle",
+      "mealCount": "Gerichte: {{count}}",
+      "manageMeals": "Gerichte verwalten",
+      "menuError": "Die Speisekarte konnte nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "noMealResults": "Keine passenden Gerichte",
+      "noOrderResults": "Keine passenden Bestellungen",
+      "noResultsHint": "Versuche ein anderes Wort oder lösche die Suche.",
+      "orderReports": "Bestellübersicht",
+      "allOrders": "Alle Bestellungen",
+      "loading": "Wird geladen...",
+      "fromPrice": "ab {{price}}",
+      "markUnavailable": "Als nicht verfügbar markieren",
+      "markAvailable": "Als verfügbar markieren",
+      "showOrder": "Bestellung {{number}} anzeigen",
+      "quantity": "Menge {{count}}",
+      "columns": {
+        "number": "Bestellung",
+        "table": "Tisch",
+        "items": "Positionen",
+        "amount": "Betrag",
+        "status": "Status",
+        "time": "Aufgegeben"
+      },
+      "panel": {
+        "title": "Bestellbereich",
+        "noneTitle": "Keine Bestellung ausgewählt",
+        "noneHint": "Wähle eine Bestellung aus der Liste, um zu sehen, was bestellt wurde, und sie weiterzuschalten.",
+        "details": "Bestelldetails",
+        "order": "Bestellung",
+        "orderTitle": "Bestellung {{number}}",
+        "progress": "Fortschritt",
+        "items": "Positionen",
+        "total": "Gesamt"
+      }
     }
   },
   "notFound": {

@@ -101,10 +101,10 @@ export function ResetPinDialog({ account, onClose, onDone }: ResetPinDialogProps
         )}
 
         <div className="dialog__actions">
-          <button type="button" className="dialog__button dialog__button--plain" onClick={onClose} disabled={saving}>
+          <button type="button" className="button" onClick={onClose} disabled={saving}>
             {t('common.cancel')}
           </button>
-          <button type="submit" className="dialog__button dialog__button--primary" disabled={saving} aria-busy={saving}>
+          <button type="submit" className="button button--primary" disabled={saving} aria-busy={saving}>
             {saving ? t('common.working') : failed ? t('common.tryAgain') : t('admin.staff.resetPinSubmit')}
           </button>
         </div>

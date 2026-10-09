@@ -1,49 +1,103 @@
 /*
- * Design tokens from Documentation/Design/README.md.
+ * Design tokens for the dark, rounded, coral-accent look
+ * (reference: Documentation/Design/new-style/home.png).
  *
- * Semantic, theme-aware: the bare :root below is the complete LIGHT palette.
- * Dark values are redefined twice - once for system preference, once for an
- * explicit [data-theme="dark"] override - so a manual toggle always wins.
- * Each screen picks its own default theme on mount (kitchen/hall dark,
- * guest/admin light); the toggle can flip any of them either way.
+ * Semantic and theme-aware. The bare :root is the complete DARK palette, the
+ * look the reference shows. The light palette is the same design system: same
+ * accent, radii, type, spacing and component shapes. Only the surfaces, ink,
+ * borders and shadows change. ThemeProvider sets data-theme on <html> for every
+ * screen (its own default, or the saved choice), so one [data-theme='light']
+ * block is the whole light palette.
  *
- * The dark accent values below aren't invented - they're the README's own
- * documented "on-dark" tints (Forest/Amber/Clay), just applied bidirectionally
- * instead of being fixed to specific screens.
+ * Contrast notes (WCAG AA, 4.5:1 for small text):
+ *  - --accent is the brand coral, for indicators, icons, rings and large text.
+ *  - --accent-text is the same hue tuned for small coral text on a surface.
+ *  - --accent-fill is the coral for filled buttons that carry white text.
+ *  - Status colours come in three forms: the fill (--success), the ink that sits
+ *    on that fill (--success-ink) and the text colour for coloured text on a
+ *    surface or a tint (--success-text).
+ *
+ * Tints (--fill-*, --tint-*) are mixed from --text and the status colours, so
+ * they follow the theme and no screen needs a hard-coded rgba().
  */
 
 :root {
-  --bg: #f5f0e8;
-  --bg-card: #fbf8f2;
-  --bg-card-alt: #ffffff;
-  --bg-sidebar: #efe9df;
-  --text: #131211;
-  --text-secondary: rgba(19, 18, 17, 0.6);
-  --hairline: rgba(19, 18, 17, 0.12);
+  /* Surfaces, darkest to lightest */
+  --bg: #1d1d1d;
+  --bg-sidebar: #242424;
+  --bg-secondary: #242424;
+  --bg-card: #303030;
+  --bg-card-alt: #3a3a3a;
+  --bg-panel: #4a4a4a;
+  --bg-overlay: rgba(0, 0, 0, 0.62);
 
-  --accent-forest: #1f4d3a;
-  --accent-forest-hover: #2c6b51;
-  --accent-amber: #d98f00;
-  --accent-amber-note: #7a5200;
-  --accent-clay: #b3402c;
+  --text: #ffffff;
+  --text-secondary: #b5b5b5;
+  --text-muted: #9a9a9a;
+  --hairline: #454545;
 
-  --shadow-card: inset 0 0 0 1px rgba(19, 18, 17, 0.08), 0 1px 2px rgba(19, 18, 17, 0.07);
-  --shadow-card-hover: 0 6px 18px -8px rgba(19, 18, 17, 0.3), inset 0 0 0 1px rgba(31, 77, 58, 0.3);
-  --shadow-primary-bar: 0 16px 30px -14px rgba(31, 77, 58, 0.8);
+  /* The order panel sits on a lighter grey, so its secondary text is lifted to keep 4.5:1 */
+  --panel-text-secondary: #d6d6d6;
+  --panel-text-muted: #c2c2c2;
 
-  /* Fixed - a physical device bezel color, not a themed surface */
-  --device-bezel: #1a1918;
+  /* Coral accent */
+  --accent: #ff5b55;
+  --accent-hover: #ff6b65;
+  --accent-text: #ff7a72;
+  --accent-fill: #d93a2f;
+  --accent-fill-hover: #c42f25;
+  --on-accent: #ffffff;
 
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
+  /* Status colours: fill, ink on that fill, text on a surface */
+  --success: #4ccb62;
+  --success-ink: #0d2b14;
+  --success-text: #4ccb62;
+  --warning: #f2b84b;
+  --warning-ink: #2e1f00;
+  --warning-text: #f2b84b;
+  --danger: #e95b5b;
+  --danger-ink: #2a0a0a;
+  --danger-text: #ff8080;
+  --info: #6fa8ff;
+  --info-text: #8dbbff;
+
+  /* Tints that follow the ink colour */
+  --fill-faint: color-mix(in srgb, var(--text) 4%, transparent);
+  --fill-subtle: color-mix(in srgb, var(--text) 8%, transparent);
+  --fill-strong: color-mix(in srgb, var(--text) 16%, transparent);
+  --tint-accent: color-mix(in srgb, var(--accent) 20%, transparent);
+  --tint-success: color-mix(in srgb, var(--success) 18%, transparent);
+  --tint-warning: color-mix(in srgb, var(--warning) 18%, transparent);
+  --tint-danger: color-mix(in srgb, var(--danger) 20%, transparent);
+  --tint-info: color-mix(in srgb, var(--info) 20%, transparent);
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 20px -14px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 16px 30px -16px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 91, 85, 0.45);
+  --shadow-primary-bar: 0 16px 30px -14px rgba(217, 58, 47, 0.7);
+  --shadow-popover: 0 18px 40px -16px rgba(0, 0, 0, 0.85);
+
+  /* Fixed in both themes: a scrim over a photo and its ink */
+  --scrim: rgba(0, 0, 0, 0.6);
+  --on-scrim: #ffffff;
+
+  /* Fixed: the physical device frame, not a themed surface */
+  --device-bezel: #121212;
+
+  --font-display: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, sans-serif;
+  --weight-display: 600; /* titles in the sans display face */
   --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 
-  --radius-bezel: 40px;
-  --radius-screen: 28px;
-  --radius-card: 18px;
-  --radius-card-inner: 14px;
+  /* Small controls 10, cards 16, large panels 20, images 14, pills round */
+  --radius-bezel: 32px;
+  --radius-screen: 24px;
+  --radius-card: 20px;
+  --radius-card-inner: 16px;
   --radius-chip: 10px;
-  --radius-pill: 20px;
+  --radius-image: 14px;
+  --radius-pill: 9999px;
+  --radius-button: 12px; /* the main buttons: a rounded rectangle, not a pill */
+  --radius-button-small: 9px;
 
   /* 4px base step */
   --space-1: 4px;
@@ -53,46 +107,230 @@
   --space-5: 16px;
   --space-6: 20px;
   --space-7: 26px;
+  --space-8: 32px;
+
+  /* Dashboard layout */
+  --sidebar-width: 120px;
+  --panel-width: 340px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration: 180ms;
+
+
+
+  /*
+   * One button system (styles/buttons.css). Each variant is a background, a hover and a pressed background, the ink on
+   * it, a border and a depth: a thin highlight along the top, a hard edge underneath and a soft shadow. Hover
+   * lightens the surface and lifts 1px, a press sinks it. The fills are chosen so their text keeps 4.5:1 even when
+   * hovered: white on coral, green and red, dark ink on orange (white on orange reads at 2.4:1). The coral and green
+   * are therefore a little deeper than the reference's, and the hover is the lighter step.
+   */
+  --button-radius: 12px;
+  --button-radius-small: 10px;
+  --button-height: 40px;
+  --button-height-small: 34px;
+  --button-height-large: 46px;
+  --button-transition: 180ms ease;
+
+  --btn-primary-bg: linear-gradient(to bottom, #cd4129, #bf3a25);
+  --btn-primary-bg-hover: linear-gradient(to bottom, #d5452d, #c73e29);
+  --btn-primary-bg-active: linear-gradient(to bottom, #b13420, #a52f1c);
+  --btn-primary-solid-hover: #d0432b;
+  --btn-primary-solid-active: #ab311e;
+  --btn-primary-solid: #c43d28;
+  --btn-primary-ink: #ffffff;
+  --btn-primary-border: rgba(255, 255, 255, 0.12);
+
+  --btn-success-bg: linear-gradient(to bottom, #1d7a37, #176a30);
+  --btn-success-bg-hover: linear-gradient(to bottom, #208a3e, #1a7834);
+  --btn-success-bg-active: linear-gradient(to bottom, #14602a, #105424);
+  --btn-success-solid-hover: #1e8139;
+  --btn-success-solid-active: #145f2a;
+  --btn-success-solid: #1a7234;
+  --btn-success-ink: #ffffff;
+  --btn-success-border: rgba(255, 255, 255, 0.12);
+
+  --btn-warning-bg: linear-gradient(to bottom, #dca02a, #d99a22);
+  --btn-warning-bg-hover: linear-gradient(to bottom, #eab13a, #e8ab32);
+  --btn-warning-bg-active: linear-gradient(to bottom, #bd8620, #b9821c);
+  --btn-warning-solid-hover: #e8ab32;
+  --btn-warning-solid-active: #b9821c;
+  --btn-warning-solid: #d99a22;
+  --btn-warning-ink: #2e1f00;
+  --btn-warning-border: rgba(255, 255, 255, 0.16);
+
+  --btn-danger-bg: linear-gradient(to bottom, #b2323e, #a22b36);
+  --btn-danger-bg-hover: linear-gradient(to bottom, #bd3a46, #ac3440);
+  --btn-danger-bg-active: linear-gradient(to bottom, #8f2530, #82212b);
+  --btn-danger-solid-hover: #b53642;
+  --btn-danger-solid-active: #8c242e;
+  --btn-danger-solid: #a82e3a;
+  --btn-danger-ink: #ffffff;
+  --btn-danger-border: rgba(255, 255, 255, 0.12);
+
+  --btn-secondary-bg: #383838;
+  --btn-secondary-bg-hover: #464646;
+  --btn-secondary-bg-active: #303030;
+  --btn-secondary-solid: #383838;
+  --btn-secondary-ink: #f2f2f2;
+  --btn-secondary-border: #4a4a4a;
+
+  --btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 3px 0 rgba(0, 0, 0, 0.16), 0 5px 10px rgba(0, 0, 0, 0.1);
+  --btn-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 0 rgba(0, 0, 0, 0.18), 0 7px 14px rgba(0, 0, 0, 0.14);
+  --btn-shadow-active: inset 0 1px 0 rgba(0, 0, 0, 0.12), 0 1px 0 rgba(0, 0, 0, 0.18), 0 2px 5px rgba(0, 0, 0, 0.1);
+  --btn-shadow-quiet: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 0 rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.06);
+  --btn-shadow-quiet-hover: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 3px 0 rgba(0, 0, 0, 0.14), 0 5px 10px rgba(0, 0, 0, 0.1);
+  --btn-shadow-quiet-active: inset 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* Quantity steppers and small round controls sit one step lighter than the card they are on */
+  --btn-control-bg: #383838;
+  --btn-control-border: #484848;
+
+  /*
+   * The sidebar rail: one tone lighter than the page, a large neutral capsule from its edge behind the icon column,
+   * muted icons and labels, and a coral icon and label for the current page. The capsule is #404040 rather than the
+   * reference's lighter #555 so the muted icons on it keep 3:1 (a #555 capsule gives them 2.7:1).
+   */
+  --nav-capsule: #404040;
+  --nav-icon: #a6a6a6;
+  --nav-ink: #9a9a9a;
+  --nav-hover: rgba(255, 255, 255, 0.04);
+  --nav-hover-ink: #bcbcbc;
+  --nav-active-icon: #ff5b55;
+  --nav-active-ink: var(--accent-text);
+  --nav-dot: #242424;
+  --nav-circle-bg: #62413f;
+  --nav-circle-bg-hover: #7a4b47;
+  --nav-circle-bg-active: #55383a;
+  --nav-circle-ink: #f5eeec;
+
+  /*
+   * The guest welcome screen: a charcoal canvas with slow coral, amber, terracotta and blush light behind warm-white
+   * language buttons. The coral of the selected language is the app's deeper button coral (--btn-primary-*), not the
+   * lighter #F45B55, because white 15px text on #F45B55 reads at 3.2:1.
+   */
+  --welcome-bg: #1d1d1d;
+  --welcome-ink: #faf8f5;
+  --welcome-ink-muted: #b8b5b2;
+  --welcome-line: rgba(255, 255, 255, 0.12);
+  --welcome-chip-bg: rgba(255, 255, 255, 0.08);
+  --welcome-coral: #f45b55;
+  --welcome-amber: #f2b66d;
+  --welcome-terracotta: #c96d53;
+  --welcome-blush: #e9a29b;
+  --welcome-orb-strength: 1;
+  --welcome-veil: rgba(29, 29, 29, 0.62);
+  --welcome-choice-bg: #faf8f5;
+  --welcome-choice-bg-hover: #f0e6df;
+  --welcome-choice-bg-active: #e8dcd3;
+  --welcome-choice-ink: #292725;
+  --welcome-choice-border: rgba(255, 255, 255, 0.35);
+  --welcome-choice-shadow: inset 0 1px 0 #ffffff, 0 3px 0 rgba(0, 0, 0, 0.14), 0 6px 16px rgba(0, 0, 0, 0.1);
+  --welcome-choice-shadow-hover: inset 0 1px 0 #ffffff, 0 5px 0 rgba(0, 0, 0, 0.14), 0 10px 22px rgba(0, 0, 0, 0.16);
+  --welcome-choice-shadow-active: inset 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 0 rgba(0, 0, 0, 0.14), 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #131211;
-    --bg-card: #1a1918;
-    --bg-card-alt: #1a1918;
-    --bg-sidebar: #1a1918;
-    --text: #f5f0e8;
-    --text-secondary: rgba(245, 240, 232, 0.6);
-    --hairline: rgba(245, 240, 232, 0.12);
+:root[data-theme='light'] {
+  --bg: #f6f6f3;
+  --bg-sidebar: #ffffff;
+  --bg-secondary: #f0f0ed;
+  --bg-card: #ffffff;
+  --bg-card-alt: #fafaf8;
+  --bg-panel: #ffffff;
+  --bg-overlay: rgba(29, 29, 29, 0.5);
 
-    --accent-forest: #7dbe9b;
-    --accent-forest-hover: #a8dcc0;
-    --accent-amber: #f3c77a;
-    --accent-amber-note: #8a5c00;
-    --accent-clay: #ff8e75;
+  --text: #1d1d1d;
+  --text-secondary: #606060;
+  --text-muted: #707070;
+  --hairline: #e3e3de;
 
-    --shadow-card: inset 0 0 0 1px rgba(245, 240, 232, 0.1), 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-card-hover: 0 6px 18px -8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(125, 190, 155, 0.3);
-    --shadow-primary-bar: 0 16px 30px -14px rgba(0, 0, 0, 0.8);
-  }
-}
+  --panel-text-secondary: #606060;
+  --panel-text-muted: #707070;
 
-:root[data-theme='dark'] {
-  --bg: #131211;
-  --bg-card: #1a1918;
-  --bg-card-alt: #1a1918;
-  --bg-sidebar: #1a1918;
-  --text: #f5f0e8;
-  --text-secondary: rgba(245, 240, 232, 0.6);
-  --hairline: rgba(245, 240, 232, 0.12);
+  --accent: #f45b55;
+  --accent-hover: #e94e48;
+  --accent-text: #c4281e;
+  --accent-fill: #d93a2f;
+  --accent-fill-hover: #c42f25;
 
-  --accent-forest: #7dbe9b;
-  --accent-forest-hover: #a8dcc0;
-  --accent-amber: #f3c77a;
-  --accent-amber-note: #8a5c00;
-  --accent-clay: #ff8e75;
+  --success: #36b653;
+  --success-ink: #0b2a14;
+  --success-text: #1f7a45;
+  --warning: #d99a22;
+  --warning-ink: #2e1f00;
+  --warning-text: #8a5a00;
+  --danger: #cf3e3e;
+  --danger-ink: #ffffff;
+  --danger-text: #b42b2b;
+  --info: #2f7de1;
+  --info-text: #1a5fb4;
 
-  --shadow-card: inset 0 0 0 1px rgba(245, 240, 232, 0.1), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 6px 18px -8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(125, 190, 155, 0.3);
-  --shadow-primary-bar: 0 16px 30px -14px rgba(0, 0, 0, 0.8);
+  --shadow-card: 0 1px 2px rgba(29, 29, 29, 0.06), 0 8px 24px -14px rgba(29, 29, 29, 0.22);
+  --shadow-card-hover: 0 14px 30px -14px rgba(29, 29, 29, 0.3), 0 0 0 1px rgba(244, 91, 85, 0.5);
+  --shadow-primary-bar: 0 16px 30px -14px rgba(217, 58, 47, 0.55);
+  --shadow-popover: 0 18px 40px -16px rgba(29, 29, 29, 0.4);
+
+
+  --nav-blob: #e8e8e4;
+  --nav-blob-shadow: 0 2px 8px rgba(29, 29, 29, 0.04);
+  --nav-active-icon: #f45b55;
+  --nav-active-ink: #c4281e;
+  --nav-icon: #707070;
+  --nav-ink: var(--text-muted);
+  --nav-hover: rgba(29, 29, 29, 0.04);
+
+  --btn-primary-border: rgba(255, 255, 255, 0.18);
+  --btn-success-border: rgba(255, 255, 255, 0.18);
+  --btn-warning-border: rgba(255, 255, 255, 0.3);
+  --btn-danger-border: rgba(255, 255, 255, 0.18);
+
+  --btn-secondary-bg: #f0f0ed;
+  --btn-secondary-bg-hover: #e5e5e0;
+  --btn-secondary-bg-active: #dcdcd7;
+  --btn-secondary-solid: #f0f0ed;
+  --btn-secondary-ink: #303030;
+  --btn-secondary-border: #d8d8d2;
+
+  --btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 3px 0 rgba(29, 29, 29, 0.2), 0 5px 10px rgba(29, 29, 29, 0.1);
+  --btn-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.34), 0 4px 0 rgba(29, 29, 29, 0.22), 0 7px 14px rgba(29, 29, 29, 0.14);
+  --btn-shadow-active: inset 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(29, 29, 29, 0.22), 0 2px 5px rgba(29, 29, 29, 0.1);
+  --btn-shadow-quiet: inset 0 1px 0 #ffffff, 0 2px 0 rgba(29, 29, 29, 0.1), 0 3px 6px rgba(29, 29, 29, 0.06);
+  --btn-shadow-quiet-hover: inset 0 1px 0 #ffffff, 0 3px 0 rgba(29, 29, 29, 0.12), 0 5px 10px rgba(29, 29, 29, 0.09);
+  --btn-shadow-quiet-active: inset 0 1px 0 rgba(29, 29, 29, 0.06), 0 1px 0 rgba(29, 29, 29, 0.1), 0 1px 3px rgba(29, 29, 29, 0.06);
+
+  --btn-control-bg: #f4f4f1;
+  --btn-control-border: #ddddd7;
+
+  --nav-capsule: #e3e3df;
+  --nav-icon: #707070;
+  --nav-ink: #707070;
+  --nav-hover: rgba(29, 29, 29, 0.04);
+  --nav-hover-ink: #4a4a4a;
+  --nav-active-icon: #f45b55;
+  --nav-active-ink: #c4281e;
+  --nav-dot: #707070;
+  --nav-circle-bg: #efe0dd;
+  --nav-circle-bg-hover: #e6cfcb;
+  --nav-circle-bg-active: #dcc2be;
+  --nav-circle-ink: #6b3733;
+
+  --welcome-bg: #f6f4f0;
+  --welcome-ink: #292725;
+  --welcome-ink-muted: #6b6561;
+  --welcome-line: rgba(41, 39, 37, 0.1);
+  --welcome-chip-bg: rgba(41, 39, 37, 0.05);
+  --welcome-orb-strength: 0.42;
+  --welcome-veil: rgba(246, 244, 240, 0.7);
+  --welcome-choice-bg: #ffffff;
+  --welcome-choice-bg-hover: #f0e6df;
+  --welcome-choice-bg-active: #e8dcd3;
+  --welcome-choice-ink: #292725;
+  --welcome-choice-border: rgba(41, 39, 37, 0.12);
+  --welcome-choice-shadow: inset 0 1px 0 #ffffff, 0 3px 0 rgba(41, 39, 37, 0.1), 0 6px 14px rgba(41, 39, 37, 0.07);
+  --welcome-choice-shadow-hover: inset 0 1px 0 #ffffff, 0 5px 0 rgba(41, 39, 37, 0.11), 0 10px 20px rgba(41, 39, 37, 0.11);
+  --welcome-choice-shadow-active: inset 0 1px 0 rgba(41, 39, 37, 0.05), 0 1px 0 rgba(41, 39, 37, 0.11), 0 2px 4px rgba(41, 39, 37, 0.07);
+
+  color-scheme: light;
 }

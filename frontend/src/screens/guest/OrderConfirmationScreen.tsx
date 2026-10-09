@@ -35,7 +35,7 @@ export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOr
         {connectionLost ? (
           <>
             <p>{t('guest.status.loadError')}</p>
-            <button type="button" className="cart-screen__add-more" onClick={onNewOrder}>
+            <button type="button" className="button button--block" onClick={onNewOrder}>
               {t('guest.confirmation.newOrder')}
             </button>
           </>
@@ -80,7 +80,7 @@ export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOr
         </section>
       </main>
 
-      <button type="button" className="guest-screen__action-bar meal-detail-screen__cta" onClick={onNewOrder}>
+      <button type="button" className="button button--primary button--large guest-screen__action-bar meal-detail-screen__cta" onClick={onNewOrder}>
         <span>{t('guest.confirmation.newOrder')}</span>
       </button>
     </div>

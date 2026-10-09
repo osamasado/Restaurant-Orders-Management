@@ -1,18 +1,7 @@
-.theme-toggle {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-pill);
-  padding: 6px 12px;
-  cursor: pointer;
-}
+/* The theme toggle is a .button (small, or a round icon in the admin rail); only the Arabic detail lives here. */
 
-.theme-toggle:hover {
-  color: var(--text);
-  border-color: var(--accent-forest);
+/* Letter-spacing breaks the joined letters of Arabic into separate glyphs, so the text label keeps none there. */
+[dir='rtl'] .theme-toggle,
+[dir='rtl'] .language-switcher__option {
+  letter-spacing: 0;
 }

@@ -1,0 +1,317 @@
+/*
+ * THE button system. Every button in the app is one of these, so the app has one set of buttons, not one per screen.
+ *
+ *   .button                  the base (also the secondary look: a neutral raised surface)
+ *   .button--primary         coral: the main action (Save, Add, Confirm, Start preparing)
+ *   .button--success         green: the order moves on (Ready, Served, Complete)
+ *   .button--warning         orange: needs attention (Retry, Change)
+ *   .button--danger          red: destructive (Delete, Cancel order, Remove)
+ *   .button--secondary       neutral gray (Edit, View, Details, Back); the default, spelled out where it helps
+ *   sizes                    .button--small (tables, cards) and .button--large (the one big action)
+ *   .button--block           fills the row           .button--pill   a pill instead of a rounded rectangle
+ *   .button--icon            an icon-only control with a background (add --round for a circle); needs an aria-label
+ *
+ * Every state is on every button: hover brightens the surface and lifts it 1px, a press sinks it, focus shows the
+ * coral ring, disabled is dimmed and flat but keeps its colour, and aria-busy="true" keeps the size and shows a
+ * spinner in place of the label. Hover and press move only colour, shadow and transform, never the box, so a button
+ * never changes size. The colours and depth come from the --btn-* tokens (tokens.css), one set per theme.
+ *
+ * .stepper-button (quantity - and +) and .segmented (a row of options, the chosen one raised) are the same language.
+ */
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: var(--button-height);
+  padding: 0 16px;
+  border: 1px solid var(--_border, var(--btn-secondary-border));
+  border-radius: var(--button-radius);
+  background-color: var(--_c, var(--btn-secondary-bg));
+  background-image: var(--_g, none);
+  color: var(--_ink, var(--btn-secondary-ink));
+  box-shadow: var(--_shadow, var(--btn-shadow-quiet));
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--button-transition),
+    background-image var(--button-transition),
+    box-shadow var(--button-transition),
+    transform var(--button-transition),
+    border-color var(--button-transition),
+    color var(--button-transition);
+}
+
+.button .icon {
+  flex: none;
+}
+
+.button:hover:not(:disabled, [aria-busy='true']) {
+  background-color: var(--_c-hover, var(--btn-secondary-bg-hover));
+  background-image: var(--_g-hover, none);
+  box-shadow: var(--_shadow-hover, var(--btn-shadow-quiet-hover));
+  transform: translateY(-1px);
+}
+
+.button:active:not(:disabled, [aria-busy='true']) {
+  background-color: var(--_c-active, var(--btn-secondary-bg-active));
+  background-image: var(--_g-active, none);
+  box-shadow: var(--_shadow-active, var(--btn-shadow-quiet-active));
+  transform: translateY(var(--_press, 1px));
+}
+
+.button--primary {
+  --_c: var(--btn-primary-solid);
+  --_c-hover: var(--btn-primary-solid-hover);
+  --_c-active: var(--btn-primary-solid-active);
+  --_g: var(--btn-primary-bg);
+  --_g-hover: var(--btn-primary-bg-hover);
+  --_g-active: var(--btn-primary-bg-active);
+  --_ink: var(--btn-primary-ink);
+  --_border: var(--btn-primary-border);
+  --_shadow: var(--btn-shadow);
+  --_shadow-hover: var(--btn-shadow-hover);
+  --_shadow-active: var(--btn-shadow-active);
+  --_press: 2px;
+}
+
+.button--success {
+  --_c: var(--btn-success-solid);
+  --_c-hover: var(--btn-success-solid-hover);
+  --_c-active: var(--btn-success-solid-active);
+  --_g: var(--btn-success-bg);
+  --_g-hover: var(--btn-success-bg-hover);
+  --_g-active: var(--btn-success-bg-active);
+  --_ink: var(--btn-success-ink);
+  --_border: var(--btn-success-border);
+  --_shadow: var(--btn-shadow);
+  --_shadow-hover: var(--btn-shadow-hover);
+  --_shadow-active: var(--btn-shadow-active);
+  --_press: 2px;
+}
+
+.button--warning {
+  --_c: var(--btn-warning-solid);
+  --_c-hover: var(--btn-warning-solid-hover);
+  --_c-active: var(--btn-warning-solid-active);
+  --_g: var(--btn-warning-bg);
+  --_g-hover: var(--btn-warning-bg-hover);
+  --_g-active: var(--btn-warning-bg-active);
+  --_ink: var(--btn-warning-ink);
+  --_border: var(--btn-warning-border);
+  --_shadow: var(--btn-shadow);
+  --_shadow-hover: var(--btn-shadow-hover);
+  --_shadow-active: var(--btn-shadow-active);
+  --_press: 2px;
+}
+
+.button--danger {
+  --_c: var(--btn-danger-solid);
+  --_c-hover: var(--btn-danger-solid-hover);
+  --_c-active: var(--btn-danger-solid-active);
+  --_g: var(--btn-danger-bg);
+  --_g-hover: var(--btn-danger-bg-hover);
+  --_g-active: var(--btn-danger-bg-active);
+  --_ink: var(--btn-danger-ink);
+  --_border: var(--btn-danger-border);
+  --_shadow: var(--btn-shadow);
+  --_shadow-hover: var(--btn-shadow-hover);
+  --_shadow-active: var(--btn-shadow-active);
+  --_press: 2px;
+}
+
+/* Sizes: large 46px for the one big action, normal 40px, small 34px for rows, cards and tables. */
+.button--large {
+  height: var(--button-height-large);
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.button--small {
+  height: var(--button-height-small);
+  padding: 0 12px;
+  border-radius: var(--button-radius-small);
+  font-size: 13px;
+}
+
+.button--pill {
+  border-radius: var(--radius-pill);
+}
+
+.button--block {
+  width: 100%;
+}
+
+/* Icon-only: a raised square with the same states; give it an aria-label (and a title for a mouse). */
+.button--icon {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--button-radius-small);
+}
+
+.button--icon.button--small {
+  width: 34px;
+}
+
+.button--round {
+  border-radius: 50%;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Loading: the label stays in place (so the width does not change) but is hidden behind a spinner. */
+.button[aria-busy='true'] {
+  color: transparent;
+  cursor: progress;
+}
+
+.button[aria-busy='true']::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid var(--_ink, var(--btn-secondary-ink));
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 0.7s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The quantity - and + controls: small raised squares. The + may carry the accent when it adds an item. */
+.stepper-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--btn-control-border);
+  border-radius: var(--button-radius-small);
+  background: var(--btn-control-bg);
+  color: var(--btn-secondary-ink);
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: var(--btn-shadow-quiet);
+  cursor: pointer;
+  transition:
+    background-color var(--button-transition),
+    box-shadow var(--button-transition),
+    transform var(--button-transition);
+}
+
+.stepper-button:hover:not(:disabled) {
+  background: var(--btn-secondary-bg-hover);
+  box-shadow: var(--btn-shadow-quiet-hover);
+  transform: translateY(-1px);
+}
+
+.stepper-button:active:not(:disabled) {
+  background: var(--btn-secondary-bg-active);
+  box-shadow: var(--btn-shadow-quiet-active);
+  transform: translateY(1px);
+}
+
+.stepper-button:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.stepper-button--accent:not(:disabled) {
+  color: var(--accent-text);
+}
+
+/* A segmented control: the chosen option is raised and carries the accent, the others stay quiet. */
+.segmented {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: calc(var(--button-radius) + 3px);
+  background: var(--bg-secondary);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.segmented__option {
+  height: 34px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--button-radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--button-transition),
+    box-shadow var(--button-transition),
+    transform var(--button-transition),
+    color var(--button-transition);
+}
+
+.segmented__option:hover:not(:disabled, [aria-pressed='true'], [aria-checked='true']) {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+.segmented__option[aria-pressed='true'],
+.segmented__option[aria-checked='true'] {
+  background-color: var(--btn-primary-solid);
+  background-image: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  color: var(--btn-primary-ink);
+  box-shadow: var(--btn-shadow);
+}
+
+.segmented__option[aria-pressed='true']:hover:not(:disabled),
+.segmented__option[aria-checked='true']:hover:not(:disabled) {
+  box-shadow: var(--btn-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.segmented__option:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .stepper-button,
+  .segmented__option {
+    transition: none;
+  }
+
+  .button:hover,
+  .button:active,
+  .stepper-button:hover,
+  .stepper-button:active {
+    transform: none;
+  }
+
+  .button[aria-busy='true']::after {
+    animation: none;
+  }
+}

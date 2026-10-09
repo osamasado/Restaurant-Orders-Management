@@ -1,0 +1,64 @@
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.slider__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+}
+
+.slider__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-3);
+  max-width: 100%;
+}
+
+.slider__more {
+  gap: 4px;
+  padding-inline: var(--space-4) var(--space-3);
+}
+
+/* The previous arrow is the chevron turned round; in right-to-left the chevron already turns, so it stays. */
+.slider__previous .icon--directional {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .slider__previous .icon--directional {
+  transform: none;
+}
+
+/* The track scrolls sideways one snapped page at a time; the vertical padding keeps shadows and the hover lift unclipped. */
+.slider__track {
+  display: flex;
+  gap: var(--slider-gap, 16px);
+  margin-block: -6px -10px;
+  padding-block: 6px 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.slider__track::-webkit-scrollbar {
+  display: none;
+}
+
+.slider__item {
+  flex: 0 0 calc((100% - (var(--per-page) - 1) * var(--slider-gap)) / var(--per-page));
+  min-width: 0;
+  display: flex;
+  scroll-snap-align: start;
+}
+
+.slider__item > * {
+  flex: 1;
+  min-width: 0;
+}

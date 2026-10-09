@@ -13,8 +13,10 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
 import { formatMoney } from '../../lib/formatMoney'
+import { useMediaQuery } from '../../lib/useMediaQuery'
 import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
+import { CartPanel } from './CartPanel'
 import { CartScreen } from './CartScreen'
 import { MAX_QUANTITY, MIN_QUANTITY, type CartLineItem } from './cartTypes'
 import { clearDeviceCode, readDeviceCode, writeDeviceCode } from './deviceStorage'
@@ -56,6 +58,8 @@ function readInitialStep(): GuestStep {
 function GuestScreenContent() {
   const { t } = useT()
   const { language } = useLanguage()
+  // A tablet or a desktop browser shows the cart beside the menu; a phone opens it as a screen of its own.
+  const wide = useMediaQuery('(min-width: 1100px)')
   const [step, setStep] = useState<GuestStep>(readInitialStep)
   const [selectedMeal, setSelectedMeal] = useState<GuestMealResponse | null>(null)
   // Lives here rather than in a screen so it survives menu/detail/cart
@@ -287,7 +291,7 @@ function GuestScreenContent() {
     )
   }
 
-  if (step === 'cart' && cartItems.length > 0) {
+  if (step === 'cart' && cartItems.length > 0 && !wide) {
     return (
       <CartScreen
         items={cartItems}
@@ -305,19 +309,39 @@ function GuestScreenContent() {
   }
 
   return (
-    <div className="guest-screen">
-      <header className="guest-screen__header">
-        <span className="guest-screen__eyebrow">{tableLabel}</span>
-        <div className="guest-screen__header-controls">
-          <LanguageSwitcher />
-          <ThemeToggle />
+    <div className={`guest-screen guest-dashboard${wide ? ' guest-dashboard--wide' : ''}`}>
+      <div className="guest-dashboard__main">
+        <header className="guest-header">
+          <div>
+            <h1 className="guest-header__title">{tableLabel}</h1>
+            <p className="guest-header__subtitle">{t('guest.menu.subtitle')}</p>
+          </div>
+          <div className="guest-screen__header-controls">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+        </header>
+        <main className="guest-screen__content">
+          <MenuScreen settings={settings} onSelectMeal={handleSelectMeal} />
+        </main>
+      </div>
+      {wide && (
+        <div className="guest-dashboard__side">
+          <CartPanel
+            items={cartItems}
+            settings={settings}
+            quote={cartQuote.quote}
+            quoteLoading={cartQuote.loading}
+            quoteError={cartQuote.error}
+            onChangeQuantity={handleChangeQuantity}
+            onRemove={handleRemoveLine}
+            onChoosePayment={handleChoosePayment}
+            notice={cartNotice}
+          />
         </div>
-      </header>
-      <main className="guest-screen__content">
-        <MenuScreen settings={settings} onSelectMeal={handleSelectMeal} />
-      </main>
-      {cartItems.length > 0 && (
-        <button type="button" className="guest-screen__action-bar guest-screen__cart-bar" onClick={() => setStep('cart')}>
+      )}
+      {!wide && cartItems.length > 0 && (
+        <button type="button" className="button button--primary button--large guest-screen__action-bar guest-screen__cart-bar" onClick={() => setStep('cart')}>
           <span className="guest-screen__cart-bar-label">
             <span className="guest-screen__cart-count">{itemCount}</span>
             <span>{t('guest.cart.reviewOrder')}</span>
@@ -331,7 +355,7 @@ function GuestScreenContent() {
 
 export function GuestScreen() {
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider defaultTheme="dark">
       <LanguageProvider defaultLanguage="de">
         <GuestScreenContent />
       </LanguageProvider>

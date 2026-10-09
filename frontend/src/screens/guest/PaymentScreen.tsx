@@ -99,9 +99,10 @@ export function PaymentScreen({ settings, quote, submitting, error, onBack, onCo
 
       <button
         type="button"
-        className="guest-screen__action-bar meal-detail-screen__cta"
+        className="button button--primary button--large guest-screen__action-bar meal-detail-screen__cta"
         onClick={() => selectedMethod && onConfirm(selectedMethod)}
         disabled={!canConfirm}
+        aria-busy={submitting || undefined}
       >
         {submitting ? (
           <span>{t('guest.payment.sending')}</span>

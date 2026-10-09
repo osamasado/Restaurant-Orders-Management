@@ -20,14 +20,6 @@
   gap: var(--space-3);
 }
 
-.guest-screen__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
 .guest-screen__content {
   flex: 1;
   overflow-y: auto;
@@ -35,27 +27,83 @@
   font-family: var(--font-body);
 }
 
+/* The ordering screen: the same layout as the admin dashboard, without the navigation rail. */
+.guest-dashboard__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+.guest-header__title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: var(--weight-display);
+  color: var(--text);
+}
+
+.guest-header__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.guest-screen .search-bar {
+  max-width: none;
+}
+
+@media (min-width: 1100px) {
+  .guest-dashboard--wide {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--panel-width);
+    gap: var(--space-7);
+    align-items: start;
+    padding: var(--space-7) var(--space-8) var(--space-8);
+  }
+
+  .guest-dashboard--wide .guest-header,
+  .guest-dashboard--wide .guest-screen__content {
+    padding-inline: 0;
+  }
+
+  .guest-dashboard--wide .guest-header {
+    padding-top: 0;
+  }
+
+  .guest-dashboard__side {
+    position: sticky;
+    top: var(--space-7);
+    max-height: calc(100svh - 2 * var(--space-7));
+    overflow-y: auto;
+    border-radius: var(--radius-card);
+    scrollbar-width: thin;
+  }
+}
+
+/*
+ * The bar at the bottom of the phone (the cart bar, the Add to order and Choose payment buttons) is a .button floating
+ * above the page, not a strip glued to its edge; this is only its position.
+ */
 .guest-screen__action-bar {
   position: sticky;
-  bottom: 0;
-  padding: var(--space-5);
-  text-align: center;
-  font-family: var(--font-body);
-  font-weight: 600;
-  color: var(--bg-card);
-  background: var(--accent-forest);
-  box-shadow: var(--shadow-primary-bar);
+  bottom: var(--space-4);
+  margin: var(--space-3) var(--space-5) var(--space-4);
+  padding-inline: var(--space-5);
 }
 
 .guest-screen__cart-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  border: none;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
   animation: cart-bar-rise 0.25s ease;
 }
 
@@ -66,15 +114,15 @@
 }
 
 .guest-screen__cart-count {
-  min-width: 24px;
-  height: 24px;
+  min-width: 26px;
+  height: 26px;
   padding: 0 var(--space-2);
-  border-radius: 12px;
-  background: var(--bg-card);
-  color: var(--accent-forest);
+  border-radius: 13px;
+  background: var(--on-accent);
+  color: var(--accent-text);
   font-family: var(--font-mono);
   font-size: 13px;
-  line-height: 24px;
+  line-height: 26px;
 }
 
 .guest-screen__cart-total {
@@ -95,4 +143,10 @@
   justify-content: center;
   font-family: var(--font-body);
   color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guest-screen__cart-bar {
+    animation: none;
+  }
 }

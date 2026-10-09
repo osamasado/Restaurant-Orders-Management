@@ -28,7 +28,7 @@ export function CancelledOrderBanner({ orders, busyOrderId, onAcknowledge }: Can
           </span>
           <button
             type="button"
-            className="cancelled-banner__action"
+            className="cancelled-banner__action button button--danger"
             disabled={busyOrderId === order.orderId}
             onClick={() => onAcknowledge(order)}
           >

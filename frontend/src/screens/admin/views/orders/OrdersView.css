@@ -7,7 +7,7 @@
 .orders-view__title {
   font-family: var(--font-display);
   font-size: 25px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0 0 var(--space-2);
   color: var(--text);
 }
@@ -27,16 +27,6 @@
 
 .orders-view__more {
   align-self: flex-start;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12.5px;
-  padding: var(--space-3) var(--space-5);
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text);
-  cursor: pointer;
 }
 
 .orders-view__empty {
@@ -50,7 +40,7 @@
 .orders-view__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
   margin: 0;
 }
 
@@ -74,7 +64,7 @@
 .orders-view__filter input {
   min-width: 170px;
   padding: var(--space-3) var(--space-4);
-  border-radius: 10px;
+  border-radius: var(--radius-chip);
   border: 1px solid var(--hairline);
   background: var(--bg-card);
   color: var(--text);
@@ -82,15 +72,3 @@
   font-size: 14px;
 }
 
-.orders-view__clear {
-  padding: var(--space-3) var(--space-5);
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12.5px;
-  cursor: pointer;
-}

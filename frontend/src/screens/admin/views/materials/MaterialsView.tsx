@@ -62,7 +62,7 @@ export function MaterialsView() {
       {error && <p className="materials-view__error">{error}</p>}
 
       <div className="materials-view__header">
-        <button className="materials-view__add-button" onClick={openAddModal}>
+        <button className="materials-view__add-button button button--small button--primary" onClick={openAddModal}>
           {t('admin.materials.add')}
         </button>
       </div>
@@ -91,8 +91,8 @@ export function MaterialsView() {
                 .join(' · ')}
             </span>
             <div className="material-row__actions">
-              <button onClick={() => openEditModal(rawMaterial)}>{t('admin.materials.edit')}</button>
-              <button onClick={() => setDeleting(rawMaterial)}>{t('admin.materials.delete')}</button>
+              <button className="button button--small" onClick={() => openEditModal(rawMaterial)}>{t('admin.materials.edit')}</button>
+              <button className="button button--small button--danger" onClick={() => setDeleting(rawMaterial)}>{t('admin.materials.delete')}</button>
             </div>
           </div>
         ))}

@@ -1,4 +1,4 @@
-// Renders the PWA icons from public/favicon.svg (the app icon: a serving cloche on forest green).
+// Renders the PWA icons from public/favicon.svg (the app icon: a coral serving cloche on charcoal).
 //
 //   node scripts/render-icons.mjs
 //

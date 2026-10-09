@@ -9,8 +9,8 @@
   gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-card);
-  border: 1.5px solid var(--accent-clay);
-  background: rgba(179, 64, 44, 0.16);
+  border: 1.5px solid var(--danger);
+  background: var(--tint-danger);
 }
 
 .cancelled-banner__row {
@@ -23,7 +23,7 @@
   font-family: var(--font-mono);
   font-size: 24px;
   font-weight: 600;
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }
 
 .cancelled-banner__text {
@@ -34,18 +34,4 @@
 }
 
 /* Solid clay with white text, as in the design. */
-.cancelled-banner__action {
-  padding: var(--space-3) var(--space-5);
-  border: none;
-  border-radius: var(--radius-chip);
-  background: #b3402c;
-  color: #fff;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
 
-.cancelled-banner__action:disabled {
-  opacity: 0.5;
-  cursor: default;
-}

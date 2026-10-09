@@ -1,0 +1,116 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.dashboard__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.dashboard__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.dashboard__title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: var(--weight-display);
+  color: var(--text);
+}
+
+.dashboard__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.dashboard__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dashboard__section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.dashboard__section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dashboard__link {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+  transition: background var(--duration) var(--ease);
+}
+
+.dashboard__link:hover {
+  background: var(--tint-accent);
+}
+
+.dashboard__meals {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-5);
+}
+
+.dashboard__more {
+  align-self: flex-start;
+}
+
+.dashboard__status,
+.dashboard__notice {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.dashboard__notice {
+  color: var(--danger-text);
+}
+
+/* Wide: the order panel stays beside the page while the page scrolls. */
+@media (min-width: 1200px) {
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr) var(--panel-width);
+  }
+
+  .dashboard__header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .dashboard__side {
+    position: sticky;
+    top: var(--space-7);
+    max-height: calc(100svh - 2 * var(--space-7));
+    overflow-y: auto;
+    border-radius: var(--radius-card);
+    scrollbar-width: thin;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard__link {
+    transition: none;
+  }
+}

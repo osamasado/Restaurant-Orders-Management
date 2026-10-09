@@ -42,7 +42,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: rgba(19, 18, 17, 0.14);
+  background: var(--fill-strong);
   color: var(--text-secondary);
   font-size: 13px;
   line-height: 26px;
@@ -50,8 +50,8 @@
 }
 
 .order-status-timeline__row--reached .order-status-timeline__dot {
-  background: var(--accent-forest);
-  color: var(--bg-card);
+  background: var(--accent-fill);
+  color: var(--on-accent);
 }
 
 .order-status-timeline__label {
@@ -68,7 +68,7 @@
   margin: 0;
   padding: var(--space-5);
   border-radius: var(--radius-card-inner);
-  background: rgba(179, 64, 44, 0.12);
-  color: var(--accent-clay);
+  background: var(--tint-danger);
+  color: var(--danger-text);
   font-weight: 600;
 }

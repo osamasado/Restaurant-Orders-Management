@@ -290,7 +290,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
               <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} hidden />
             </label>
             {imagePreview && (
-              <button type="button" onClick={handleRemoveImage}>
+              <button type="button" className="button button--small" onClick={handleRemoveImage}>
                 {t('admin.meals.removeImage')}
               </button>
             )}
@@ -318,7 +318,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
             <button
               type="button"
               key={language}
-              className={activeLanguage === language ? 'meal-form__tab meal-form__tab--active' : 'meal-form__tab'}
+              className={activeLanguage === language ? 'meal-form__tab meal-form__tab--active button button--small button--primary' : 'meal-form__tab button button--small'}
               onClick={() => setActiveLanguage(language)}
             >
               {language}
@@ -382,6 +382,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
                 />
                 <button
                   type="button"
+                  className="button button--icon button--small button--danger"
                   onClick={() => removeSize(size.localKey)}
                   aria-label={t('admin.meals.removeSize')}
                 >
@@ -393,7 +394,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
                 <p className="meal-form__recipe-hint">{t('admin.meals.recipe.saveFirst')}</p>
               ) : (
                 <div className="meal-form__recipe">
-                  <button type="button" className="meal-form__recipe-toggle" onClick={() => toggleRecipe(size)}>
+                  <button type="button" className="meal-form__recipe-toggle button button--small" onClick={() => toggleRecipe(size)}>
                     {expandedSizeKey === size.localKey
                       ? t('admin.meals.recipe.hide')
                       : t('admin.meals.recipe.show')}
@@ -432,6 +433,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
                               />
                               <button
                                 type="button"
+                                className="button button--icon button--small button--danger"
                                 onClick={() => removeRecipeLine(size.localKey, line.localKey)}
                                 aria-label={t('admin.meals.recipe.removeIngredient')}
                               >
@@ -442,6 +444,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
                           <div className="meal-form__recipe-actions">
                             <button
                               type="button"
+                              className="button button--small"
                               onClick={() => addRecipeLine(size.localKey)}
                               disabled={rawMaterials.length === 0}
                             >
@@ -449,6 +452,8 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
                             </button>
                             <button
                               type="button"
+                              className="button button--small button--primary"
+                              aria-busy={recipeSaving[size.localKey] || undefined}
                               onClick={() => void saveRecipe(size)}
                               disabled={recipeSaving[size.localKey]}
                             >
@@ -466,7 +471,7 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
               )}
             </div>
           ))}
-          <button type="button" onClick={addSize} className="meal-form__add-size">
+          <button type="button" onClick={addSize} className="meal-form__add-size button button--small">
             {t('admin.meals.addSize')}
           </button>
         </div>
@@ -474,10 +479,10 @@ export function MealFormModal({ meal, categories, rawMaterials, onClose, onSaved
         {error && <p className="meal-form__error">{error}</p>}
 
         <div className="meal-form__actions">
-          <button type="button" onClick={onClose}>
+          <button type="button" className="button" onClick={onClose}>
             {t('admin.meals.cancel')}
           </button>
-          <button type="submit" disabled={saving}>
+          <button type="submit" className="button button--primary" disabled={saving} aria-busy={saving || undefined}>
             {t('admin.meals.save')}
           </button>
         </div>

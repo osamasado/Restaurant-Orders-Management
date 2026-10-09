@@ -7,7 +7,7 @@
 .settings-view__title {
   font-family: var(--font-display);
   font-size: 25px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0 0 var(--space-2);
   color: var(--text);
 }
@@ -38,11 +38,10 @@
 }
 
 .settings-card__title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .settings-card__field {
@@ -72,25 +71,10 @@
   gap: var(--space-4);
 }
 
-.settings-card__toggle-group {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.settings-card__toggle-button {
+/* The symbol position is a .segmented control; its options show a price, so they use the mono face. */
+.settings-card__toggle-group .segmented__option {
   font-family: var(--font-mono);
   font-size: 12px;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-card-inner);
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text-secondary);
-}
-
-.settings-card__toggle-button--active {
-  color: var(--bg);
-  background: var(--text);
-  box-shadow: none;
 }
 
 .payment-method-row {
@@ -113,23 +97,6 @@
   color: var(--text);
 }
 
-.payment-method-row__toggle {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 11.5px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 9px;
-}
-
-.payment-method-row__toggle--on {
-  background: rgba(31, 77, 58, 0.1);
-  color: var(--accent-forest);
-}
-
-.payment-method-row__toggle--off {
-  background: rgba(179, 64, 44, 0.14);
-  color: var(--accent-clay);
-}
 
 .settings-card__caption {
   font-family: var(--font-body);
@@ -145,32 +112,21 @@
 }
 
 .settings-view__save {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--bg);
-  background: var(--accent-forest);
-  border-radius: var(--radius-card-inner);
-  padding: var(--space-3) var(--space-6);
   align-self: flex-start;
-}
-
-.settings-view__save:hover:not(:disabled) {
-  background: var(--accent-forest-hover);
-}
-
-.settings-view__save:disabled {
-  opacity: 0.6;
 }
 
 .settings-view__success {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-forest);
+  color: var(--success-text);
 }
 
 .settings-view__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
+}
+
+.settings-card__toggle-group {
+  align-self: flex-start;
 }

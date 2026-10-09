@@ -48,7 +48,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast toast--${toast.kind}`} role={toast.kind === 'error' ? 'alert' : 'status'}>
             <span className="toast__message">{toast.message}</span>
-            <button type="button" className="toast__dismiss" onClick={() => dismiss(toast.id)} aria-label={t('common.dismiss')}>
+            <button type="button" className="toast__dismiss button button--icon button--small" onClick={() => dismiss(toast.id)} aria-label={t('common.dismiss')}>
               &times;
             </button>
           </div>

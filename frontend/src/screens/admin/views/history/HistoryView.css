@@ -7,7 +7,7 @@
 .history-view__title {
   font-family: var(--font-display);
   font-size: 25px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0 0 var(--space-2);
   color: var(--text);
 }
@@ -31,7 +31,7 @@
 
 .history-view__search input {
   padding: var(--space-3) var(--space-4);
-  border-radius: 10px;
+  border-radius: var(--radius-chip);
   border: 1px solid var(--hairline);
   background: var(--bg-card);
   color: var(--text);
@@ -47,20 +47,6 @@
 
 .history-view__more {
   align-self: flex-start;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12.5px;
-  padding: var(--space-3) var(--space-5);
-  border-radius: 10px;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.history-view__more:disabled {
-  opacity: 0.5;
-  cursor: default;
 }
 
 .history-view__empty {
@@ -73,6 +59,6 @@
 .history-view__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
   margin: 0;
 }

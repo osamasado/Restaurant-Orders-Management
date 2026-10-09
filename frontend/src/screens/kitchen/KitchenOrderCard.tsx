@@ -62,7 +62,7 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
       {action && (
         <button
           type="button"
-          className={`kitchen-order-card__action kitchen-order-card__action--${action.variant}`}
+          className={`kitchen-order-card__action kitchen-order-card__action--${action.variant} button button--large ${action.variant === 'start' ? 'button--primary' : action.variant === 'ready' ? 'button--success' : ''}`}
           disabled={busy}
           onClick={() => onAdvance(order)}
         >

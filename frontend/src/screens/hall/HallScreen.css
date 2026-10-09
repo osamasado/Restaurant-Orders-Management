@@ -2,15 +2,15 @@
  * The hall board (design doc, "Hall status board"). A wall display: nobody scrolls it, so the whole board is
  * exactly one screen tall and the numbers shrink in steps when there are too many (useFitScale).
  *
- * The colours are the design doc's own: the on-dark amber and forest tints, the forest panel and its ring.
- * Nothing here is new.
+ * Amber while it is being prepared, a green panel with a soft ring once it is ready. Both come from the
+ * theme's status tokens, so the board follows the light and dark palettes.
  */
 .hall-screen {
-  --hall-ready-ground: #1f4d3a; /* forest */
-  --hall-ready-ink: #a8dcc0; /* "ready" on the forest panel */
-  --hall-ready-ring: rgba(125, 190, 155, 0.35);
-  --hall-amber: var(--accent-amber); /* amber on a dark ground */
-  --hall-amber-on-forest: #f3c77a;
+  --hall-ready-ground: color-mix(in srgb, var(--success) 20%, var(--bg-card));
+  --hall-ready-ink: color-mix(in srgb, var(--success-text) 70%, var(--text)); /* a touch toward the ink so the label keeps 4.5:1 on the green panel */
+  --hall-ready-ring: color-mix(in srgb, var(--success) 45%, transparent);
+  --hall-amber: var(--warning-text);
+  --hall-amber-on-ready: var(--warning-text);
 
   height: 100svh;
   min-height: 0;
@@ -19,11 +19,6 @@
   padding: 26px 28px 30px;
   background: var(--bg);
   color: var(--text);
-}
-
-/* On a paper ground the on-dark amber is too pale to read from across a room: use the design's darker amber. */
-:root[data-theme='light'] .hall-screen {
-  --hall-amber: var(--accent-amber-note);
 }
 
 .hall-screen__header {
@@ -37,7 +32,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 400;
+  font-weight: var(--weight-display);
 }
 
 .hall-screen__header-right {
@@ -72,14 +67,14 @@
 
 /* In preparation: a subtle tint of its own colour. */
 .hall-screen__panel--preparing {
-  background: color-mix(in srgb, var(--accent-amber) 8%, transparent);
+  background: var(--tint-warning);
   --hall-size: 74px;
   --hall-ink: var(--hall-amber);
   --hall-label: var(--hall-amber);
   --hall-table: var(--hall-amber);
 }
 
-/* Ready: the forest panel with its soft ring, the same in both themes. */
+/* Ready: the green panel with its soft ring. */
 .hall-screen__panel--ready {
   background: var(--hall-ready-ground);
   border-color: transparent;
@@ -87,7 +82,7 @@
   --hall-size: 86px;
   --hall-ink: var(--hall-ready-ink);
   --hall-label: var(--hall-ready-ink);
-  --hall-table: var(--hall-amber-on-forest);
+  --hall-table: var(--hall-amber-on-ready);
 }
 
 .hall-screen__panel-header {
@@ -197,8 +192,8 @@
   margin: var(--space-4) 0 0;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-chip);
-  background: rgba(179, 64, 44, 0.16);
-  color: var(--accent-clay);
+  background: var(--tint-danger);
+  color: var(--danger-text);
   font-size: 14px;
 }
 

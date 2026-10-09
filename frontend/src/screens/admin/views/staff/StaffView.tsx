@@ -77,7 +77,7 @@ export function StaffView() {
       {error && <p className="staff-view__error">{error}</p>}
 
       <div className="staff-view__header">
-        <button className="staff-view__add-button" onClick={openAddModal}>
+        <button className="staff-view__add-button button button--small button--primary" onClick={openAddModal}>
           {t('admin.staff.add')}
         </button>
       </div>
@@ -96,10 +96,10 @@ export function StaffView() {
               ].join(' · ')}
             </span>
             <div className="staff-row__actions">
-              <button onClick={() => openEditModal(account)}>{t('admin.staff.edit')}</button>
-              <button onClick={() => setResettingPin(account)}>{t('admin.staff.resetPin')}</button>
+              <button className="button button--small" onClick={() => openEditModal(account)}>{t('admin.staff.edit')}</button>
+              <button className="button button--small" onClick={() => setResettingPin(account)}>{t('admin.staff.resetPin')}</button>
               {currentStaff?.id !== account.id && (
-                <button onClick={() => setDeleting(account)}>{t('admin.staff.delete')}</button>
+                <button className="button button--small button--danger" onClick={() => setDeleting(account)}>{t('admin.staff.delete')}</button>
               )}
             </div>
           </div>

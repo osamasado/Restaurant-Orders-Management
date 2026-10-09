@@ -47,7 +47,7 @@ export function PairingScreen({ onPaired }: PairingScreenProps) {
           dir="ltr"
         />
         {error && <p className="pairing-screen__error">{error}</p>}
-        <button type="submit" className="pairing-screen__submit" disabled={submitting || !code.trim()}>
+        <button type="submit" className="pairing-screen__submit button button--primary button--large" disabled={submitting || !code.trim()}>
           {submitting ? t('guest.pairing.connecting') : t('guest.pairing.connect')}
         </button>
       </form>

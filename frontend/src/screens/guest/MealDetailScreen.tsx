@@ -40,6 +40,7 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
       size: selectedSize.label,
       quantity,
       unitPrice: selectedSize.price,
+      imageUrl: meal.imageUrl,
       note: note.trim() ? note.trim() : undefined,
     })
   }
@@ -118,7 +119,7 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
         <div className="meal-detail-screen__stepper">
           <button
             type="button"
-            className="meal-detail-screen__stepper-button"
+            className="stepper-button meal-detail-screen__stepper-button"
             onClick={() => setQuantity((q) => Math.max(MIN_QUANTITY, q - 1))}
             disabled={quantity <= MIN_QUANTITY}
             aria-label={t('guest.detail.decreaseQuantity')}
@@ -128,7 +129,7 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
           <span className="meal-detail-screen__stepper-count">{quantity}</span>
           <button
             type="button"
-            className="meal-detail-screen__stepper-button"
+            className="stepper-button stepper-button--accent meal-detail-screen__stepper-button"
             onClick={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
             disabled={quantity >= MAX_QUANTITY}
             aria-label={t('guest.detail.increaseQuantity')}
@@ -148,7 +149,7 @@ export function MealDetailScreen({ meal, settings, onBack, onAddToOrder }: MealD
 
       <button
         type="button"
-        className="guest-screen__action-bar meal-detail-screen__cta"
+        className="button button--primary button--large guest-screen__action-bar meal-detail-screen__cta"
         onClick={handleAddToOrder}
         disabled={!canAddToOrder}
       >

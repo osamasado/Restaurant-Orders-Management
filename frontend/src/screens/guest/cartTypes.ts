@@ -12,6 +12,8 @@ export type CartLineItem = {
   size: string
   quantity: number
   unitPrice: number
+  /** The meal's photo, for the small round picture beside its name in the cart. */
+  imageUrl: string | null
   note: string | undefined
 }
 

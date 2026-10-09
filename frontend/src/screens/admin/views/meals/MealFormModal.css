@@ -15,12 +15,12 @@
   width: 64px;
   height: 64px;
   flex: none;
-  border-radius: 9px;
+  border-radius: var(--radius-chip);
   object-fit: cover;
 }
 
 .meal-form__image-placeholder {
-  background: rgba(19, 18, 17, 0.06);
+  background: var(--fill-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,13 +36,12 @@
 }
 
 .meal-form__image-upload {
-  color: var(--accent-forest);
+  color: var(--accent-text);
   font-weight: 600;
   cursor: pointer;
 }
 
 .meal-form__image-actions button {
-  color: var(--accent-clay);
   text-align: start;
 }
 
@@ -86,23 +85,6 @@
   gap: var(--space-2);
 }
 
-.meal-form__tab {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
-  color: var(--text-secondary);
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-}
-
-.meal-form__tab--active {
-  color: var(--bg);
-  background: var(--text);
-  box-shadow: none;
-}
-
 .meal-form__translation {
   display: flex;
   flex-direction: column;
@@ -116,11 +98,10 @@
 }
 
 .meal-form__sizes-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .meal-form__size-row {
@@ -140,18 +121,8 @@
   padding: var(--space-3) var(--space-4);
 }
 
-.meal-form__size-row button {
-  color: var(--accent-clay);
-  font-size: 16px;
-  padding: var(--space-2);
-}
-
 .meal-form__add-size {
   align-self: flex-start;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--accent-forest);
 }
 
 .meal-form__recipe-hint {
@@ -165,14 +136,6 @@
   margin-top: var(--space-2);
 }
 
-.meal-form__recipe-toggle {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent-forest);
-}
-
 .meal-form__recipe-editor {
   display: flex;
   flex-direction: column;
@@ -180,7 +143,7 @@
   margin-top: var(--space-2);
   padding: var(--space-3);
   border-radius: var(--radius-card-inner);
-  background: rgba(19, 18, 17, 0.03);
+  background: var(--fill-faint);
 }
 
 .meal-form__recipe-row {
@@ -201,32 +164,15 @@
   padding: var(--space-2) var(--space-3);
 }
 
-.meal-form__recipe-row button {
-  color: var(--accent-clay);
-  font-size: 14px;
-  padding: var(--space-2);
-}
-
 .meal-form__recipe-actions {
   display: flex;
   gap: var(--space-3);
 }
 
-.meal-form__recipe-actions button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--accent-forest);
-}
-
-.meal-form__recipe-actions button:disabled {
-  opacity: 0.5;
-}
-
 .meal-form__error {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--accent-clay);
+  color: var(--danger-text);
   margin: 0;
 }
 
@@ -236,29 +182,3 @@
   gap: var(--space-3);
 }
 
-.meal-form__actions button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
-  border-radius: var(--radius-card-inner);
-  padding: var(--space-3) var(--space-5);
-}
-
-.meal-form__actions button[type='submit'] {
-  color: var(--bg);
-  background: var(--accent-forest);
-}
-
-.meal-form__actions button[type='submit']:hover:not(:disabled) {
-  background: var(--accent-forest-hover);
-}
-
-.meal-form__actions button[type='submit']:disabled {
-  opacity: 0.6;
-}
-
-.meal-form__actions button[type='button'] {
-  color: var(--text-secondary);
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hairline);
-}

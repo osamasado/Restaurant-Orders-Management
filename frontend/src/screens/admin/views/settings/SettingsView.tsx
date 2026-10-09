@@ -7,9 +7,6 @@ import './SettingsView.css'
 const PAYMENT_METHODS: PaymentMethod[] = ['CASH', 'CARD', 'PAYPAL', 'CASH_DESK']
 const LANGUAGES: Language[] = ['DE', 'EN', 'AR']
 
-function toggleClassName(active: boolean): string {
-  return active ? 'settings-card__toggle-button settings-card__toggle-button--active' : 'settings-card__toggle-button'
-}
 
 export function SettingsView() {
   const { t } = useT()
@@ -117,11 +114,11 @@ export function SettingsView() {
 
           <div className="settings-card__field">
             <span>{t('admin.settings.symbolPosition')}</span>
-            <div className="settings-card__toggle-group">
-              <button type="button" className={toggleClassName(symbolPosition === 'PREFIX')} onClick={() => setSymbolPosition('PREFIX')}>
+            <div className="settings-card__toggle-group segmented" role="group" aria-label={t('admin.settings.symbolPosition')}>
+              <button type="button" className="segmented__option" aria-pressed={symbolPosition === 'PREFIX'} onClick={() => setSymbolPosition('PREFIX')}>
                 {prefixPreview}
               </button>
-              <button type="button" className={toggleClassName(symbolPosition === 'SUFFIX')} onClick={() => setSymbolPosition('SUFFIX')}>
+              <button type="button" className="segmented__option" aria-pressed={symbolPosition === 'SUFFIX'} onClick={() => setSymbolPosition('SUFFIX')}>
                 {suffixPreview}
               </button>
             </div>
@@ -160,11 +157,8 @@ export function SettingsView() {
                 <span className="payment-method-row__name">{t(`admin.settings.paymentMethodNames.${method}`)}</span>
                 <button
                   type="button"
-                  className={
-                    enabled
-                      ? 'payment-method-row__toggle payment-method-row__toggle--on'
-                      : 'payment-method-row__toggle payment-method-row__toggle--off'
-                  }
+                  className={`payment-method-row__toggle button button--small${enabled ? ' button--success' : ''}`}
+                  aria-pressed={enabled}
                   onClick={() => togglePaymentMethod(method)}
                 >
                   {enabled ? t('admin.settings.on') : t('admin.settings.off')}
@@ -179,7 +173,7 @@ export function SettingsView() {
       {saveError && <p className="settings-view__error">{saveError}</p>}
 
       <div className="settings-view__actions">
-        <button className="settings-view__save" onClick={() => void handleSave()} disabled={saving}>
+        <button className="settings-view__save button button--primary" onClick={() => void handleSave()} disabled={saving} aria-busy={saving || undefined}>
           {t('admin.settings.save')}
         </button>
         {saved && <span className="settings-view__success">{t('admin.settings.saved')}</span>}

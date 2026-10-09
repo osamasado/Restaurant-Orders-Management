@@ -54,10 +54,10 @@ export function PairingCodeDialog({ table, onClose }: PairingCodeDialogProps) {
         <span className="pairing-dialog__copied" role="status">
           {copied ? t('common.copied') : ''}
         </span>
-        <button ref={copyRef} type="button" className="dialog__button dialog__button--plain" onClick={() => void handleCopy()}>
+        <button ref={copyRef} type="button" className="button" onClick={() => void handleCopy()}>
           {t('common.copy')}
         </button>
-        <button type="button" className="dialog__button dialog__button--primary" onClick={onClose}>
+        <button type="button" className="button button--primary" onClick={onClose}>
           {t('common.done')}
         </button>
       </div>

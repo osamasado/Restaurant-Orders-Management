@@ -25,7 +25,7 @@
 }
 
 .pin-dialog__field input[aria-invalid='true'] {
-  border-color: var(--accent-clay);
+  border-color: var(--danger);
 }
 
 .pin-dialog__hint {
@@ -39,7 +39,7 @@
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent-clay);
+  color: var(--danger-text);
 }
 
 .pin-dialog__show {

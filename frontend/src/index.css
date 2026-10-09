@@ -1,4 +1,5 @@
 @import './styles/tokens.css';
+@import './styles/buttons.css';
 
 *,
 *::before,
@@ -11,6 +12,19 @@ body {
   margin: 0;
 }
 
+/* Buttons start from nothing, so none shows the browser's grey face or bevelled border; each class adds its own look. */
+button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 body {
   font-family: var(--font-body);
   color: var(--text);
@@ -21,4 +35,40 @@ body {
 
 #root {
   min-height: 100svh;
+}
+
+/* One visible keyboard focus ring for every control; mouse clicks do not show it. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.icon {
+  flex: none;
+}
+
+/* Arrows that point along the reading direction (a chevron) turn around in right-to-left layouts. */
+[dir='rtl'] .icon--directional {
+  transform: scaleX(-1);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* With "reduce motion" on, nothing eases: hovers, presses and the drawer simply change. (Animations have their own switches.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
 }

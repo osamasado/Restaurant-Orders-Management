@@ -95,7 +95,7 @@ export function Modal({ title, onClose, children, size = 'default', initialFocus
           <h2 id={titleId} className="modal__title">
             {title}
           </h2>
-          <button type="button" className="modal__close" onClick={onClose} disabled={!dismissible} aria-label={t('common.close')}>
+          <button type="button" className="modal__close button button--icon button--small" onClick={onClose} disabled={!dismissible} aria-label={t('common.close')}>
             &times;
           </button>
         </div>
