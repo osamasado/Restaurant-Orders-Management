@@ -1,0 +1,364 @@
+/*
+ * The admin navigation rail, after the reference (Documentation/Design/new-style/slidbar.png).
+ *
+ * A narrow panel one tone lighter than the page (no border), rounded like the app around it. From the top: the
+ * logo straight on the panel, a stretch of empty space, then the pages and Sign out as small icons sitting on one
+ * large neutral capsule that reaches in from the rail's edge (its far end is a big curve) with a tiny label beside
+ * each icon on the dark. The current page has a coral icon and label and a dot on the capsule's edge that slides
+ * to it. Two round controls (settings, theme) are pushed to the bottom. Below 900px the rail is a drawer.
+ */
+
+.admin-topbar {
+  display: none;
+}
+
+.admin-sidebar {
+  --rail-icon-column: 48px;
+
+  position: sticky;
+  top: 12px;
+  align-self: start;
+  width: var(--sidebar-width);
+  height: calc(100svh - 24px);
+  margin: 12px 0 12px 12px;
+  margin-inline: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: var(--space-6) 0 var(--space-5);
+  background: var(--bg-sidebar);
+  border-radius: var(--radius-card);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-sidebar__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block-end: 60px;
+}
+
+.admin-sidebar__eyebrow {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.admin-sidebar__close {
+  display: none;
+}
+
+/* The list of pages sits on the capsule: a tall rounded shape from the rail's edge, overhanging the list above and below. */
+.admin-sidebar__menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-block: 56px;
+  isolation: isolate;
+}
+
+.admin-sidebar__menu::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-block: -56px;
+  inset-inline-start: 0;
+  width: var(--rail-icon-column);
+  background: var(--nav-capsule);
+  border-start-end-radius: 46px;
+  border-end-end-radius: 46px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.admin-sidebar__nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* The marker on the capsule's edge: slides to the current page. */
+.admin-sidebar__dot {
+  position: absolute;
+  top: -3px;
+  inset-inline-start: calc(var(--rail-icon-column) - 11px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nav-dot);
+  transition: transform 230ms var(--ease);
+}
+
+.admin-sidebar__link {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--rail-icon-column) minmax(0, 1fr);
+  align-items: center;
+  min-height: 36px;
+  padding: 0;
+  margin-inline-end: var(--space-1);
+  border: none;
+  border-start-end-radius: 12px;
+  border-end-end-radius: 12px;
+  background: transparent;
+  color: var(--nav-ink);
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  line-height: 1.25;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.admin-sidebar__link .icon {
+  justify-self: center;
+  color: var(--nav-icon);
+  transition: color 180ms ease-out;
+}
+
+.admin-sidebar__link:hover {
+  background: var(--nav-hover);
+  color: var(--nav-hover-ink);
+}
+
+.admin-sidebar__link:hover .icon {
+  color: var(--nav-hover-ink);
+}
+
+.admin-sidebar__link--active,
+.admin-sidebar__link--active:hover {
+  background: transparent;
+  color: var(--nav-active-ink);
+  font-weight: 600;
+}
+
+.admin-sidebar__link--active .icon,
+.admin-sidebar__link--active:hover .icon {
+  color: var(--nav-active-icon);
+}
+
+/* Sign out is a muted item like the rest; only under the pointer does it turn a soft red. */
+.admin-sidebar__logout:hover {
+  color: var(--danger-text);
+}
+
+.admin-sidebar__logout:hover .icon {
+  color: var(--danger-text);
+}
+
+.admin-sidebar__label {
+  min-width: 0;
+  padding-inline-start: 2px;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.admin-sidebar__bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.admin-sidebar__round-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Settings and theme: two small round controls with a muted red-brown surface (the shared button engine, recoloured). */
+.admin-sidebar .admin-sidebar__circle,
+.admin-sidebar__round-controls .theme-toggle--icon {
+  --_c: var(--nav-circle-bg);
+  --_c-hover: var(--nav-circle-bg-hover);
+  --_c-active: var(--nav-circle-bg-active);
+  --_g: none;
+  --_g-hover: none;
+  --_g-active: none;
+  --_ink: var(--nav-circle-ink);
+  --_border: transparent;
+  --_shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --_shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.24);
+  --_shadow-active: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --_press: 1px;
+  width: 36px;
+  height: 36px;
+}
+
+.admin-sidebar .admin-sidebar__circle[aria-current='page'] {
+  --_ink: var(--accent-text);
+  box-shadow: inset 0 0 0 2px var(--accent), var(--_shadow);
+}
+
+/* The language options are three still smaller round buttons above them. */
+.admin-sidebar__bottom .language-switcher.segmented {
+  gap: 5px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.admin-sidebar__bottom .segmented__option {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--btn-control-border);
+  border-radius: 50%;
+  background: var(--btn-control-bg);
+  box-shadow: var(--btn-shadow-quiet);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.admin-sidebar__bottom .segmented__option:hover:not([aria-pressed='true']) {
+  background: var(--btn-secondary-bg-hover);
+  transform: translateY(-1px);
+}
+
+.admin-sidebar__bottom .segmented__option[aria-pressed='true'] {
+  background-color: var(--btn-primary-solid);
+  background-image: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  box-shadow: var(--btn-shadow);
+}
+
+/* A short screen: less air above, below and between the items so the rail still fits without scrolling. */
+@media (max-height: 820px) {
+  .admin-sidebar__top {
+    padding-block-end: 36px;
+  }
+
+  .admin-sidebar__menu {
+    margin-block: 40px;
+    gap: 8px;
+  }
+
+  .admin-sidebar__menu::before {
+    inset-block: -40px;
+  }
+
+  .admin-sidebar__nav {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-sidebar);
+  }
+
+  .admin-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    inset-inline-start: 0;
+    width: min(300px, 86vw);
+    height: 100svh;
+    margin: 0;
+    border-radius: 0;
+    border-start-end-radius: var(--radius-card);
+    border-end-end-radius: var(--radius-card);
+    box-shadow: var(--shadow-popover);
+    transform: translateX(-105%);
+    visibility: hidden;
+    transition:
+      transform var(--duration) var(--ease),
+      visibility 0s linear var(--duration);
+  }
+
+  [dir='rtl'] .admin-sidebar:not(.admin-sidebar--open) {
+    transform: translateX(105%);
+  }
+
+  .admin-sidebar--open {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .admin-sidebar__scrim {
+    position: fixed;
+    z-index: 30;
+    inset: 0;
+    background: var(--bg-overlay);
+  }
+
+  .admin-sidebar__top {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-inline: var(--space-5);
+    padding-block-end: 28px;
+  }
+
+  .admin-sidebar__eyebrow {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    flex: 1;
+    padding-inline-start: var(--space-3);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .admin-sidebar__close {
+    display: inline-flex;
+  }
+
+  .admin-sidebar__menu {
+    margin-block: 40px;
+  }
+
+  .admin-sidebar__link {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .admin-sidebar__bottom {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-inline: var(--space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-sidebar__dot,
+  .admin-sidebar__link,
+  .admin-sidebar__link .icon {
+    transition: none;
+  }
+}
