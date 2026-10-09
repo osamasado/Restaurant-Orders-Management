@@ -9,7 +9,7 @@
 //     at once and refresh it in the background.
 //
 // Bump VERSION to drop every old cache on the next visit.
-const VERSION = 'v1'
+const VERSION = 'v2'
 const SHELL_CACHE = `rom-shell-${VERSION}`
 const ASSET_CACHE = `rom-assets-${VERSION}`
 const STATIC_CACHE = `rom-static-${VERSION}`
