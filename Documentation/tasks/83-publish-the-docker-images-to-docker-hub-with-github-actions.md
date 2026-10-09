@@ -35,8 +35,9 @@ Docker Hub itself could not be pushed to from here (no credentials), so the publ
 4. The existing compose file still builds the same images (both Dockerfiles built fine with the new `--platform` line).
 
 Issues found along the way:
+- **The first GitHub run of the backend image failed with `./mvnw: Permission denied`.** `backend/mvnw` was stored in git without its executable bit; a Windows or WSL checkout hides that, a Linux checkout does not (the SonarCloud workflow calls `mvn`, so nobody had noticed). The mode is now set in git and the Dockerfile copies the wrapper with `--chmod=755`. After the fix both image builds pass on the pull request.
 - **A wrong emulation image name** in my first draft of the manual-push instructions (`tonistiiv`; the real one is `tonistiigi/binfmt`). Caught when the command failed, and fixed in the docs.
 
 Not done, for a decision (needs you, on GitHub and Docker Hub):
-- **Add the two secrets** `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` (a Read & Write access token) and **push the first tag** (`v0.1.0`). Until then nothing is published; the workflow's first real run on Docker Hub is the one thing not rehearsed.
+- **Add the two secrets** `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` (a Read & Write access token) and **push the first tag** (`v0.1.0`). Until then nothing is published; the push to Docker Hub itself is the one thing not rehearsed (the pull-request build of both images already runs green on GitHub).
 - **Give the two repositories a short description** on Docker Hub.
