@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 
 # ---- build: compile the jar and split it into layers (dependencies change rarely, the application often) ----
-FROM eclipse-temurin:25-jdk-alpine AS build
+# The jar is the same on every CPU, so it is built once on the machine that runs the build (not under emulation)
+# even when the image is made for several architectures.
+FROM --platform=$BUILDPLATFORM eclipse-temurin:25-jdk-alpine AS build
 WORKDIR /build
 
 # The wrapper and the pom first, so the dependency download is a cached layer that a source change does not redo.
