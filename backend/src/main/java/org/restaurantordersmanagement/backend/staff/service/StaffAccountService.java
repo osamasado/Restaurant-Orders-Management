@@ -1,6 +1,7 @@
 package org.restaurantordersmanagement.backend.staff.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.model.StaffAccount;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
@@ -20,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class StaffAccountService {
 
+    private static final Pattern PIN_FORMAT = Pattern.compile("^[0-9]{4,8}$");
+
     private final StaffAccountRepository staffAccountRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -37,7 +40,23 @@ public class StaffAccountService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Staff account not found"));
     }
 
+    /**
+     * 4 to 8 digits: short enough to type on a tablet, long enough that the sign-in throttle means something. The one
+     * place this rule lives: the admin screen's API and the start-up bootstrap both go through it.
+     */
+    public static boolean isValidPin(String pin) {
+        return pin != null && PIN_FORMAT.matcher(pin).matches();
+    }
+
+    /** @throws ResponseStatusException 400 when the PIN does not follow the rule above */
+    public static void requireValidPin(String pin) {
+        if (!isValidPin(pin)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pin must be 4 to 8 digits");
+        }
+    }
+
     public StaffAccount create(StaffAccountCreateRequest request) {
+        requireValidPin(request.pin());
         StaffAccount staffAccount = new StaffAccount();
         staffAccount.setName(request.name());
         staffAccount.setRole(request.role());
@@ -82,6 +101,7 @@ public class StaffAccountService {
     }
 
     public StaffAccount resetPin(Long id, String newPin) {
+        requireValidPin(newPin);
         StaffAccount staffAccount = findById(id);
         staffAccount.setPinHash(passwordEncoder.encode(newPin));
         return staffAccountRepository.saveAndFlush(staffAccount);
