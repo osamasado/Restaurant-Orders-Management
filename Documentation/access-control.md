@@ -139,6 +139,7 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 | GET | `/api/guest/settings` | None (public) | Currency, tax rate, default language, enabled payment methods. |
 | GET | `/api/hall/orders` | None (public) | Order number and table number only. No names, prices or items. |
 | POST | `/api/staff/login` | None (public) | Name and PIN. |
+| GET, HEAD | `/`, `/index.html`, `/version.txt`, `/sw.js`, `/manifest.webmanifest`, `/favicon.svg`, `/assets/**`, `/icons/**`, `/guest`, `/kitchen`, `/hall`, `/admin`, `/admin/**` | None (public) | The React app's own files and screen paths, only when the backend serves the app itself (the single-image deployment; the paths are in `SpaPaths`). No data: the screens ask for the name and PIN themselves. |
 | GET | `/api/staff/me` | Signed-in staff (any role) | Any signed-in staff account. |
 
 ## Other rules

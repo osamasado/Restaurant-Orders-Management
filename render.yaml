@@ -1,0 +1,64 @@
+# Render Blueprint: the app as ONE free web service (the image from Docker Hub that serves the API and the React app)
+# plus a free PostgreSQL database. In the Render dashboard: New > Blueprint > pick this repository.
+#
+# Nothing secret is in this file. The two BOOTSTRAP_* values are asked for in the dashboard when the Blueprint is
+# created (sync: false). The database values are handed from the database to the service by Render.
+#
+# This is the DEMO layout: the free web service sleeps after 15 idle minutes and loses its files, and the free database
+# expires 30 days after it was created. See Documentation/deployment.md ("Deploying to Render") for the limits and for
+# moving to paid plans.
+#
+# Releases are deployed by .github/workflows/deploy-render.yml (it calls this service's deploy hook with the new
+# image tag), so the tag below is only the first one Render pulls.
+services:
+  - type: web
+    name: restaurant-orders
+    runtime: image
+    image:
+      url: docker.io/osamasado2024/restaurant-orders-app:latest
+    plan: free
+    region: frankfurt
+    # Public, and reads the database: a 200 means the app is up and the database is reachable.
+    healthCheckPath: /api/guest/settings
+    envVars:
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: restaurant-orders-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: restaurant-orders-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: restaurant-orders-db
+          property: database
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: restaurant-orders-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: restaurant-orders-db
+          property: password
+      # Render terminates HTTPS, so the session cookie can be Secure.
+      - key: SESSION_COOKIE_SECURE
+        value: 'true'
+      # The demo menu, tables and staff (PIN 1234 for all) are put back on every start. That is what makes a demo useful
+      # on a plan whose files are erased; it also means the demo accounts are public. Never for real use.
+      - key: APP_SEED_DEMO
+        value: 'true'
+      # Your own administrator (a name and a 4 to 8 digit PIN), created before the demo data on the first start.
+      - key: BOOTSTRAP_ADMIN_NAME
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PIN
+        sync: false
+
+databases:
+  - name: restaurant-orders-db
+    plan: free
+    region: frankfurt
+    databaseName: restaurant_orders
+    user: restaurant_orders
+    # Only the app (over Render's private network) may connect.
+    ipAllowList: []

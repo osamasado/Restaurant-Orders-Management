@@ -1,0 +1,61 @@
+# syntax=docker/dockerfile:1
+
+# ONE image with the whole app: the Spring Boot backend, which also serves the React app (Spring Boot's static
+# folder) and the meal photos. For hosts that run a single service, such as the free Render plan, where the two
+# images of docker-compose.yml (backend + nginx) do not fit. The context is the repository root:
+#
+#   docker build -f Dockerfile.combined --build-arg APP_VERSION=0.1.0 -t restaurant-orders-app .
+#
+# The browser still sees one origin (the session cookie works, no CORS). Needs the same environment as the backend
+# image (see Documentation/deployment.md); a host's PORT is honoured.
+
+# ---- frontend: the production bundle ----
+FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# ---- backend: the jar with the bundle inside, split into layers ----
+FROM --platform=$BUILDPLATFORM eclipse-temurin:25-jdk-alpine AS backend
+WORKDIR /build
+COPY backend/.mvn .mvn
+COPY --chmod=755 backend/mvnw ./
+COPY backend/pom.xml ./
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q dependency:go-offline
+
+COPY backend/src src
+# The bundle goes into the static folder, so it is served from the jar (SpaConfig turns on when index.html is there).
+COPY --from=frontend /build/dist src/main/resources/static
+# The release this image was built for: /version.txt lets the deploy workflow check which version is live.
+ARG APP_VERSION=dev
+RUN printf '%s' "$APP_VERSION" > src/main/resources/static/version.txt
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q -DskipTests package \
+ && java -Djarmode=tools -jar target/rom-app.jar extract --layers --destination /build/extracted
+
+# ---- run: a JRE only, as a user that owns nothing but the upload folder ----
+FROM eclipse-temurin:25-jre-alpine
+RUN addgroup -S app && adduser -S -G app -h /app app \
+ && mkdir -p /data/uploads && chown -R app:app /data
+WORKDIR /app
+USER app
+
+COPY --from=backend --chown=app:app /build/extracted/dependencies/ ./
+COPY --from=backend --chown=app:app /build/extracted/spring-boot-loader/ ./
+COPY --from=backend --chown=app:app /build/extracted/snapshot-dependencies/ ./
+COPY --from=backend --chown=app:app /build/extracted/application/ ./
+
+# A small instance (the free Render plan has 512 MB): 75% of it for the heap, and the serial collector and a small
+# thread stack keep the rest of the process small. The backend image uses the same settings minus the last two.
+ENV SPRING_PROFILES_ACTIVE=prod \
+    UPLOAD_DIR=/data/uploads \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError -XX:+UseSerialGC -Xss512k"
+VOLUME /data/uploads
+EXPOSE 8080
+
+# The public settings endpoint also proves the database is reachable. PORT is the host's, else 8080.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=90s --retries=5 \
+  CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-8080}/api/guest/settings" || exit 1
+
+ENTRYPOINT ["java", "-jar", "rom-app.jar"]

@@ -3,6 +3,7 @@ package org.restaurantordersmanagement.backend.security;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
+import org.restaurantordersmanagement.backend.web.SpaPaths;
 import org.restaurantordersmanagement.backend.staff.repository.StaffAccountRepository;
 import org.restaurantordersmanagement.backend.staff.security.StaffSessionRecheckFilter;
 import org.springframework.context.annotation.Configuration;
@@ -74,6 +75,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/guest/cart/quote", "/api/guest/device/claim", "/api/guest/orders").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/guest/orders/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        // The React app's own files and screens, when the backend serves them (SpaConfig).
+                        // HEAD too: a monitor or a proxy checking that the page is there asks with HEAD.
+                        .requestMatchers(HttpMethod.GET, SpaPaths.FILES).permitAll()
+                        .requestMatchers(HttpMethod.GET, SpaPaths.SCREENS).permitAll()
+                        .requestMatchers(HttpMethod.HEAD, SpaPaths.FILES).permitAll()
+                        .requestMatchers(HttpMethod.HEAD, SpaPaths.SCREENS).permitAll()
                         .anyRequest().authenticated())
                 .logout(logout -> logout
                         .logoutUrl("/api/staff/logout")

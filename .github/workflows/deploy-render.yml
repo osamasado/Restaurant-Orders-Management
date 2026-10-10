@@ -1,0 +1,136 @@
+# Deploys a released version of the app to Render, and checks that exactly that version is live.
+#
+#   - automatically: when the "Docker images" workflow succeeds for a release tag (vX.Y.Z), which means the image
+#     osamasado2024/restaurant-orders-app:X.Y.Z exists on Docker Hub
+#   - by hand (Actions > Deploy to Render > Run workflow) with a version: this is also the ROLLBACK, run it with an
+#     older version
+#
+# It calls the service's Render deploy hook with that image tag (never "latest"), then waits until the public address
+# serves /version.txt equal to the version, and / and /api/guest/settings answer 200. If that does not happen within
+# 15 minutes the workflow ends red.
+#
+# Needs: the secret RENDER_DEPLOY_HOOK (the service's deploy hook URL; it contains a secret key) and the variable
+# RENDER_PUBLIC_URL (the service's address, such as https://restaurant-orders.onrender.com), both in the GitHub
+# Environment "production" (Settings > Environments), where a required reviewer can be added to approve each deploy.
+# See Documentation/deployment.md ("Deploying to Render").
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows: ['Docker images']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy or roll back to, for example 0.2.0 (the image tag, without the v)'
+        required: true
+        type: string
+
+# Nothing here touches the repository, so the token gets no permissions at all.
+permissions: {}
+
+# Two deployments never overlap; a second one waits for the first.
+concurrency:
+  group: deploy-render
+  cancel-in-progress: false
+
+env:
+  # The same names as docker-publish.yml.
+  DOCKERHUB_NAMESPACE: osamasado2024
+  IMAGE: restaurant-orders-app
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    # Automatic runs: only a successful image build of a version tag.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       startsWith(github.event.workflow_run.head_branch, 'v'))
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 25
+    steps:
+      - name: Work out the version
+        id: version
+        env:
+          # Untrusted text goes through the environment, never straight into the script.
+          INPUT_VERSION: ${{ inputs.version }}
+          RUN_TAG: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          raw="${INPUT_VERSION:-$RUN_TAG}"
+          version="${raw#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+              echo "::error::'$raw' is not a version like 1.2.3."
+              exit 1
+            fi
+            echo "::notice::'$raw' is not a plain release version (a pre-release?), so nothing is deployed."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check that the image exists on Docker Hub
+        if: steps.version.outputs.deploy == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          url="https://hub.docker.com/v2/repositories/${DOCKERHUB_NAMESPACE}/${IMAGE}/tags/${VERSION}"
+          if ! curl -fsS --retry 3 -o /dev/null "$url"; then
+            echo "::error::There is no image ${DOCKERHUB_NAMESPACE}/${IMAGE}:${VERSION} on Docker Hub."
+            exit 1
+          fi
+
+      - name: Tell Render to deploy that image
+        if: steps.version.outputs.deploy == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::The secret RENDER_DEPLOY_HOOK is not set (Settings > Environments > production)."
+            exit 1
+          fi
+          image="docker.io/${DOCKERHUB_NAMESPACE}/${IMAGE}:${VERSION}"
+          # Only "/" and ":" need encoding in this name (letters, digits, dots and hyphens are safe in a URL).
+          encoded="${image//\//%2F}"
+          encoded="${encoded//:/%3A}"
+          # The hook URL already has "?key=..."; the image tag is added to it. Its output is not printed: it names the service.
+          curl -fsS --retry 2 -X POST -o /dev/null "${HOOK}&imgURL=${encoded}"
+          echo "Asked Render to deploy ${image}"
+
+      - name: Wait until that version is live
+        if: steps.version.outputs.deploy == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          PUBLIC_URL: ${{ vars.RENDER_PUBLIC_URL }}
+        run: |
+          if [ -z "$PUBLIC_URL" ]; then
+            echo "::error::The variable RENDER_PUBLIC_URL is not set (Settings > Environments > production)."
+            exit 1
+          fi
+          PUBLIC_URL="${PUBLIC_URL%/}"
+          # A free service sleeps and starts slowly, and the old version answers until the new one is ready:
+          # keep asking until /version.txt names the new one.
+          deadline=$((SECONDS + 900))
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            live=$(curl -fsS --max-time 30 "$PUBLIC_URL/version.txt" 2>/dev/null || true)
+            if [ "$live" = "$VERSION" ]; then
+              home=$(curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$PUBLIC_URL/" || true)
+              api=$(curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$PUBLIC_URL/api/guest/settings" || true)
+              if [ "$home" = 200 ] && [ "$api" = 200 ]; then
+                echo "Version $VERSION is live at $PUBLIC_URL (/ $home, /api/guest/settings $api)."
+                echo "Deployed **$VERSION** to $PUBLIC_URL" >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+              echo "Version $VERSION is up but / answers $home and /api/guest/settings $api; waiting."
+            else
+              echo "Live version: '${live:-no answer}', waiting for $VERSION."
+            fi
+            sleep 15
+          done
+          echo "::error::$PUBLIC_URL did not serve version $VERSION (with / and /api/guest/settings answering 200) within 15 minutes."
+          exit 1
