@@ -60,6 +60,8 @@ The first start has an empty database and no staff account. For real use set `BO
 
 To run the ready-made images from Docker Hub instead of building (`osamasado2024/restaurant-orders-backend` and `-frontend`, for amd64 and arm64), use `docker compose -f docker-compose.hub.yml up -d`. Every setting, the volumes, backups, HTTPS and how a release is published are in `Documentation/deployment.md`.
 
+A free demo on [Render](https://render.com) (one service from the single-image build, `render.yaml`, deployed by a GitHub Actions workflow on every release) is described in `Documentation/deployment.md`, "Deploying to Render (free demo)".
+
 ## Project status
 
 All four screens (guest ordering, kitchen display, hall board and management backend) are implemented, in German, English and Arabic, light and dark.

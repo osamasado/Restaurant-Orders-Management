@@ -34,7 +34,7 @@ BOOTSTRAP_KITCHEN_NAME=Kitchen          # optional, together with its PIN
 BOOTSTRAP_KITCHEN_PIN=<4 to 8 digits>
 ```
 
-On the first start of an **empty** installation the backend creates that administrator, and the kitchen account when both kitchen values are set (both or neither, in one transaction). Sign in at `/login` with the name and PIN, create the waiter and cashier accounts in Staff accounts, **then remove the two PIN lines from `.env`** and restart (`docker compose up -d`). The log says so after the accounts are created.
+On the first start of an **empty** installation the backend creates that administrator, and the kitchen account when both kitchen values are set (both or neither, in one transaction). Open `/admin` (the app has no separate login page: each staff screen asks for the name and PIN) and sign in, create the waiter and cashier accounts in Staff accounts, **then remove the two PIN lines from `.env`** and restart (`docker compose up -d`). The log says so after the accounts are created.
 
 What it will and will not do:
 
@@ -97,7 +97,8 @@ The images speak plain HTTP. For a real deployment put a TLS-terminating proxy (
 
 - **Backend** (`backend/Dockerfile`): built with the Maven wrapper on a JDK 25 image, the jar split into layers (dependencies, loader, application) so a code change rebuilds only the last layer, and run on a JRE 25 image as a non-root user. Tests are not run in the image build (they need Docker themselves); run them with `./mvnw test`. A health check calls the public `GET /api/guest/settings`, which also proves the database is reachable.
 - **Frontend** (`frontend/Dockerfile`): `npm ci` and `npm run build` on a Node 24 image, then only the `dist` folder and `nginx.conf` on an nginx image. nginx never caches `index.html` and `sw.js` (so an update reaches installed apps), caches `/assets/*` for a year (the names are hashed), compresses text, and allows 6 MB uploads.
-- Both have a `.dockerignore`, so the build context holds no `node_modules`, `target`, `dist`, `uploads` or `.git`.
+- **App** (`Dockerfile.combined`, built from the repository root): both in ONE image. The React build is copied into the Spring Boot jar's static folder and the backend serves it (every screen path answers with `index.html`, hashed assets are cached for a year, `index.html` and `sw.js` never), together with the API and the meal photos, so there is one process and no nginx. It exists for hosts that run a single service, such as the free Render plan. The jar's `/version.txt` holds the release the image was built for. The JVM settings are tuned for 512 MB (`-XX:+UseSerialGC -Xss512k`); the backend honours the host's `PORT`. The backend and frontend images and both compose files are unchanged by it.
+- All three have a `.dockerignore`, so the build context holds no `node_modules`, `target`, `dist`, `uploads` or `.git`.
 
 ## Checks against the container stack
 
@@ -132,13 +133,13 @@ docker compose -f docker-compose.hub.yml up -d
 
 ## Publishing a release
 
-`.github/workflows/docker-publish.yml` builds both images and pushes them. Nobody needs to build on a laptop.
+`.github/workflows/docker-publish.yml` builds the three images (backend, frontend and the single `app` image) and pushes them. Nobody needs to build on a laptop.
 
 | Event | What happens |
 |---|---|
-| a tag `vX.Y.Z` is pushed | both images are built and pushed as `X.Y.Z`, `X.Y` and `latest` (a tag with a hyphen, such as `v1.0.0-rc.1`, gets no `latest`) |
-| a push to `master` | both images are built and pushed as `edge` |
-| a pull request | both images are only built (for `amd64`), nothing is pushed, no secrets are needed |
+| a tag `vX.Y.Z` is pushed | all images are built and pushed as `X.Y.Z`, `X.Y` and `latest` (a tag with a hyphen, such as `v1.0.0-rc.1`, gets no `latest`) |
+| a push to `master` | all images are built and pushed as `edge` |
+| a pull request | all images are only built (for `amd64`), nothing is pushed, no secrets are needed |
 
 **One-time setup**
 
@@ -172,3 +173,61 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 
 Add `--provenance=false --sbom=false` to keep the tag list free of extra "unknown/unknown" entries. If your Docker uses the default builder and refuses a multi-platform build, run `docker buildx create --use` once; on a Linux machine without emulation, `docker run --privileged --rm tonistiigi/binfmt --install arm64` adds it.
 
+## Deploying to Render (free demo)
+
+[Render](https://render.com) runs the single `app` image (`osamasado2024/restaurant-orders-app`) as one web service next to a managed PostgreSQL database, at an HTTPS address. This is the **free demo** layout; the limits below are Render's free-plan limits as of October 2026, so check [render.com/pricing](https://render.com/pricing) before relying on them.
+
+| Free-plan fact | What it means for the demo |
+|---|---|
+| The service sleeps after 15 minutes without traffic and takes about a minute to wake (the app itself needs about 50 s on a 0.5 CPU instance) | The first visit after a quiet period is slow. A kitchen screen left open keeps polling, so it keeps the service awake while it is open |
+| Its files are erased on every sleep and deploy | Uploaded meal photos are lost; the demo seed puts the demo menu and photos back at every start |
+| 750 free instance hours per month for the whole workspace | One service awake all month fits (about 744 hours); a second always-on service would not, which is why the app is one service |
+| The free database **expires 30 days after it was created** (14 more days to upgrade, then it is deleted), 1 GB, no backups | Everything in it is demo data. To keep going, upgrade the database or create a new one (the schema and demo data are created again at the first start) |
+| 512 MB of memory | Measured in Docker with `--memory=512m --cpus=0.5`: about 280 MB used after the full demo rehearsal, no restarts |
+
+**The demo accounts are public** (PIN `1234`, in this repository). Do not put real data on a demo. Your own administrator (`BOOTSTRAP_ADMIN_NAME` and `BOOTSTRAP_ADMIN_PIN`, see "First administrator") is created before the demo data, so you can sign in with a PIN only you know.
+
+### One-time setup
+
+1. **Render account**, and connect your GitHub account to it.
+2. **Blueprint:** in the dashboard choose New, Blueprint, and pick this repository. Render reads `render.yaml` and creates the web service `restaurant-orders` and the database `restaurant-orders-db` in Frankfurt. It asks for the two `sync: false` values: `BOOTSTRAP_ADMIN_NAME` and `BOOTSTRAP_ADMIN_PIN` (4 to 8 digits).
+3. Wait for the first deploy (it pulls `restaurant-orders-app:latest`, so a release must have been published, see "Publishing a release"). The service's address is shown at the top of its page, such as `https://restaurant-orders.onrender.com`.
+4. **The deploy hook:** on the service, Settings, Deploy Hook: copy the URL. It contains a secret key.
+5. **In GitHub** (Settings, Environments) create an environment named `production`. In it add the **secret** `RENDER_DEPLOY_HOOK` (the URL from step 4) and the **variable** `RENDER_PUBLIC_URL` (the address from step 3). To approve every deployment by hand, add yourself under "Required reviewers".
+
+### How a release reaches Render
+
+`.github/workflows/deploy-render.yml`:
+
+1. You push a tag `vX.Y.Z`. The "Docker images" workflow publishes `restaurant-orders-app:X.Y.Z` (and the other two images).
+2. When that workflow succeeds, "Deploy to Render" starts (after your approval, if you required one). It checks the image exists on Docker Hub, then calls the deploy hook with that exact tag (`imgURL=docker.io/osamasado2024/restaurant-orders-app:X.Y.Z`, never `latest`).
+3. It then waits, up to 15 minutes, until `GET /version.txt` on the public address returns `X.Y.Z` (the old version keeps answering until the new one is ready, so this proves the new one is live) and `/` and `/api/guest/settings` answer 200. If not, the workflow ends red.
+
+Pre-release tags such as `v1.0.0-rc.1` are not deployed. Two deployments never run at once.
+
+### Rolling back
+
+Actions, Deploy to Render, Run workflow, and enter an older version such as `0.1.0`. It deploys that image and checks it the same way. (The database is not rolled back: Flyway migrations only move forward, so roll back only to a version whose schema the database still matches.)
+
+### Settings Render needs
+
+`render.yaml` sets all of these; they are listed so you can change them in the dashboard.
+
+| Variable | Value on Render | Meaning |
+|---|---|---|
+| `PORT` | set by Render (10000) | The port the app listens on; without it the app uses 8080 |
+| `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` | from the database (`fromDatabase`) | The connection, in the parts Render hands out. The backend builds the JDBC URL from them; `DATABASE_URL` (a full JDBC URL) still works and wins when set |
+| `SESSION_COOKIE_SECURE` | `true` | Render terminates HTTPS, so the session cookie is only sent over it |
+| `APP_SEED_DEMO` | `true` | Load the demo menu, tables and staff at every start (see the demo warning above) |
+| `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_PIN` | entered in the dashboard | Your own administrator |
+
+The image already sets `SPRING_PROFILES_ACTIVE=prod`, `UPLOAD_DIR=/data/uploads` and the JVM options.
+
+### Going beyond the demo
+
+The free plan is for showing the app. For a restaurant that really uses it: switch the database to a paid plan (it is kept and backed up), the web service to a paid instance (it never sleeps; a 512 MB instance is the smallest, a 2 GB one gives the JVM more room), add a persistent disk mounted at `/data/uploads` so photos survive deploys (a service with a disk runs one instance and stops briefly while deploying), set `APP_SEED_DEMO` to `false` and use the "First administrator" settings. In `render.yaml` that is `plan:` on the service and the database and a `disk:` block; the workflow does not change.
+
+### Limits of this setup
+
+- The checks in this repository ran against the image in Docker with Render's free memory and CPU, and the workflow's steps ran against a local container and a fake deploy hook. The first real deployment on Render (Blueprint creation, the hook's exact behaviour, the cold start) is verified by doing it once.
+- No custom domain, staging environment or monitoring (out of scope).
