@@ -285,6 +285,7 @@ class AdminOrderControllerTest {
         Order reloaded = orderRepository.findById(draft.getId()).orElseThrow();
         assertEquals(OrderStatus.DRAFT, reloaded.getStatus());
         assertNull(reloaded.getOrderNumber());
+        assertNull(reloaded.getDisplayNumber());
     }
 
     @Test

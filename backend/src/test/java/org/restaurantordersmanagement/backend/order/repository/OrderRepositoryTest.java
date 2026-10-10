@@ -159,6 +159,7 @@ class OrderRepositoryTest {
         Order order = new Order();
         order.setTable(table);
         order.setOrderNumber(orderNumber);
+        order.setDisplayNumber(orderNumber);
         order.setPlacedAt(at);
         order.recordTransition(status, at, null);
         return order;

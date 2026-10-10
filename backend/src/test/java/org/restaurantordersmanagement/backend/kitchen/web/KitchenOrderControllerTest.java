@@ -223,7 +223,7 @@ class KitchenOrderControllerTest {
 
         mockMvc.perform(get("/api/kitchen/orders/cancelled").with(asKitchen()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(thisOrder + ".orderNumber").value(contains(order.getOrderNumber())))
+                .andExpect(jsonPath(thisOrder + ".orderNumber").value(contains(order.getDisplayNumber())))
                 .andExpect(jsonPath(thisOrder + ".tableNumber")
                         .value(contains(order.getTable().getTableNumber())));
 
