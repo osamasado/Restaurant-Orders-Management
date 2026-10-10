@@ -42,7 +42,10 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Page<Order> findAllBy(Pageable pageable);
 
     @EntityGraph(attributePaths = {"table", "cancellationAcknowledgedBy"})
-    Page<Order> findByOrderNumber(Integer orderNumber, Pageable pageable);
+    Page<Order> findByDisplayNumber(Integer displayNumber, Pageable pageable);
+
+    /** How many orders are in these statuses (for the reset of the displayed number: the open ones). */
+    long countByStatusIn(java.util.Collection<OrderStatus> statuses);
 
     /**
      * The admin Orders list: see {@link OrderSpecifications#placed}. Only the
@@ -55,12 +58,12 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Page<Order> findAll(Specification<Order> specification, Pageable pageable);
 
     /**
-     * Only the order number and table number of one status, lowest number
-     * first - the hall board's source. A closed projection, so just those two
-     * columns are selected: items, prices and everything else on the order
+     * Only the displayed order number and table number of one status, oldest
+     * first (by the internal number, which never repeats or restarts) - the
+     * hall board's source. A closed projection, so just those two columns are selected: items, prices and everything else on the order
      * are never even loaded.
      */
-    @Query("select o.orderNumber as orderNumber, o.table.tableNumber as tableNumber "
+    @Query("select o.displayNumber as orderNumber, o.table.tableNumber as tableNumber "
             + "from Order o where o.status = :status order by o.orderNumber")
     List<HallBoardRow> findHallBoardRows(@Param("status") OrderStatus status);
 
