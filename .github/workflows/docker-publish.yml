@@ -1,4 +1,5 @@
-# Builds the two Docker images (backend and frontend) and publishes them to Docker Hub.
+# Builds the Docker images and publishes them to Docker Hub: backend and frontend (docker-compose.yml), and app, the
+# single image with both in one (Dockerfile.combined) that the Render deployment runs.
 #
 #   - a version tag (v1.2.3) pushes  1.2.3, 1.2 and latest   (a pre-release tag such as v1.0.0-rc.1 gets no "latest")
 #   - a push to master pushes        edge
@@ -20,6 +21,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - 'Dockerfile.combined*'
       - '.github/workflows/docker-publish.yml'
 
 permissions:
@@ -38,7 +40,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [backend, frontend]
+        include:
+          - image: backend
+            context: ./backend
+            dockerfile: ./backend/Dockerfile
+          - image: frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile
+          # The context is the repository root: the Dockerfile copies the frontend build into the backend jar.
+          - image: app
+            context: .
+            dockerfile: ./Dockerfile.combined
     env:
       # Push only from master and tags, and only when the credentials exist.
       CAN_PUSH: ${{ github.event_name != 'pull_request' && secrets.DOCKERHUB_TOKEN != '' }}
@@ -73,7 +85,10 @@ jobs:
       - name: Build${{ env.CAN_PUSH == 'true' && ' and push' || '' }} the image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
-          context: ./${{ matrix.image }}
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          # The combined image records its release in /version.txt, which the Render deployment checks.
+          build-args: ${{ matrix.image == 'app' && format('APP_VERSION={0}', steps.meta.outputs.version) || '' }}
           # A pull request only checks that the image builds, so one architecture is enough there.
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           push: ${{ env.CAN_PUSH == 'true' }}
