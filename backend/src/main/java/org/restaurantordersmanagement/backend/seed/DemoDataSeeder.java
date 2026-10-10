@@ -164,13 +164,15 @@ public class DemoDataSeeder {
     /**
      * Attaches the illustration of each catalog meal and raw material that has no image yet, by copying the PNG
      * from the classpath into the upload folder (served at /images/...). An image an admin set is never replaced;
-     * one the admin removed comes back on the next start of the dev profile.
+     * one the admin removed comes back on the next start of the dev profile. The seed's own file is copied again when
+     * it is gone from the upload folder: the database outlives the files on a host that erases them (a free Render
+     * service loses its files whenever it sleeps or is redeployed), and the path would then point at nothing.
      */
     private void seedImages(SeedCatalog catalog) {
         int attached = 0;
         for (SeedCatalog.MealEntry entry : catalog.meals()) {
             Meal meal = mealForSlug(catalog, entry.slug());
-            if (meal != null && meal.getImagePath() == null) {
+            if (meal != null && needsSeedImage(meal.getImagePath(), "meals", entry.slug())) {
                 meal.setImagePath(copySeedImage("meals", entry.slug()));
                 attached++;
             }
@@ -178,7 +180,7 @@ public class DemoDataSeeder {
         Map<String, RawMaterial> bySlug = rawMaterialsBySlug(catalog);
         for (SeedCatalog.RawMaterialEntry entry : catalog.rawMaterials()) {
             RawMaterial rawMaterial = bySlug.get(entry.slug());
-            if (rawMaterial != null && rawMaterial.getImagePath() == null) {
+            if (rawMaterial != null && needsSeedImage(rawMaterial.getImagePath(), "raw-materials", entry.slug())) {
                 rawMaterial.setImagePath(copySeedImage("raw-materials", entry.slug()));
                 attached++;
             }
@@ -186,6 +188,15 @@ public class DemoDataSeeder {
         if (attached > 0) {
             log.info("Attached {} demo images", attached);
         }
+    }
+
+    /** No image yet, or the seed's own image whose file is missing. An admin's upload (another name) is never touched. */
+    private boolean needsSeedImage(String currentPath, String folder, String slug) {
+        if (currentPath == null) {
+            return true;
+        }
+        String seedPath = folder + "/" + slug + ".png";
+        return currentPath.equals(seedPath) && !Files.exists(uploadDir.resolve(seedPath));
     }
 
     /** @return the path to store on the entity, relative to the upload folder, like ImageStorageService does */
