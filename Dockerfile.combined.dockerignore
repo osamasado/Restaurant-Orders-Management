@@ -1,0 +1,14 @@
+# Keep the build context to what Dockerfile.combined needs (it copies only backend/ and frontend/).
+.git
+.github
+.idea
+*.iml
+Documentation
+**/node_modules
+**/dist
+**/target
+**/uploads
+backend/seed-art
+frontend/qa-shots
+frontend/boards-shots
+frontend/demo-shots
