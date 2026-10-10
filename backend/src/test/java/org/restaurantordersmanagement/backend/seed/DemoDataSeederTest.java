@@ -273,6 +273,34 @@ class DemoDataSeederTest {
     }
 
     @Test
+    void aDemoImageWhoseFileWasErasedIsCopiedAgainOnTheNextSeed() throws IOException {
+        demoDataSeeder.seedAll();
+        Meal meal = mealRepository.findAll().get(0);
+        String path = meal.getImagePath();
+        Path file = Path.of(uploadDir).resolve(path);
+        // A host that erases its files (a free Render service) keeps the database, so the path stays and the file goes.
+        Files.delete(file);
+
+        demoDataSeeder.seedAll();
+
+        assertEquals(path, meal.getImagePath());
+        assertTrue(Files.isRegularFile(file), "the erased demo image is back");
+    }
+
+    @Test
+    void anAdminsOwnImageWhoseFileIsMissingIsNotReplacedByADemoImage() {
+        demoDataSeeder.seedAll();
+        Meal meal = mealRepository.findAll().get(0);
+        meal.setImagePath("meals/admins-own-photo.jpg");
+        mealRepository.saveAndFlush(meal);
+
+        demoDataSeeder.seedAll();
+
+        assertEquals("meals/admins-own-photo.jpg", meal.getImagePath());
+        assertTrue(Files.notExists(Path.of(uploadDir).resolve("meals/admins-own-photo.jpg")));
+    }
+
+    @Test
     void anImageOrRecipeAnAdminChangedIsLeftAloneOnTheNextSeed() {
         demoDataSeeder.seedAll();
         Meal meal = mealRepository.findAll().get(0);
