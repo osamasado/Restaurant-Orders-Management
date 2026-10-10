@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getSettings, updateSettings } from '../../../../api/settingsApi'
 import type { ConfigRequest, Language, PaymentMethod, SymbolPosition } from '../../../../api/types'
 import { useT } from '../../../../i18n/useT'
+import { OrderNumberCard } from './OrderNumberCard'
 import './SettingsView.css'
 
 const PAYMENT_METHODS: PaymentMethod[] = ['CASH', 'CARD', 'PAYPAL', 'CASH_DESK']
@@ -168,6 +169,8 @@ export function SettingsView() {
           })}
           <p className="settings-card__caption">{t('admin.settings.paymentMethodsCaption')}</p>
         </div>
+
+        <OrderNumberCard />
       </div>
 
       {saveError && <p className="settings-view__error">{saveError}</p>}
