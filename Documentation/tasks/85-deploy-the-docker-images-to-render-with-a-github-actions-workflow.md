@@ -43,3 +43,9 @@ Not done, for a decision (needs you, on Render and GitHub):
 - **The workflow only runs from `master`** (a `workflow_run` and manual runs use the default branch's copy), so it can first run after this is merged and a release tag is pushed.
 - **A release must exist first** (`restaurant-orders-app:latest` is created by the next `vX.Y.Z` tag), because the Blueprint pulls `latest` the first time.
 - **The follow-ups from the issue** (a second `edge` service, a custom domain, monitoring, object storage for photos) are not part of the demo.
+
+## Found after the first deployment
+
+Meal images were broken on the live site after the first redeploy. The demo seed attached an illustration only when a meal had no image path at all, and the database keeps the path while a free Render service loses its files on every sleep and deploy, so the path pointed at a file that no longer existed (the published `0.2.0` image returned 404 for `/images/meals/pumpkin-soup.png` against a database that had already been seeded). The seed now also copies its own illustration again when that file is missing, and never touches an image an admin uploaded (another file name). Tests: `DemoDataSeederTest` (an erased demo image comes back; an admin's own path is left alone). Checked in a container: start, destroy the container, start a new one on the same database, and all 39 images are served again.
+
+Also noticed: the server accepts requests (the health check passes) before the demo seed has finished, so for a few seconds after a start the menu can be empty. It is noted in `Documentation/deployment.md`; making the start wait for the seed would be a separate change.

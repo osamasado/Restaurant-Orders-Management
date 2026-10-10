@@ -180,7 +180,8 @@ Add `--provenance=false --sbom=false` to keep the tag list free of extra "unknow
 | Free-plan fact | What it means for the demo |
 |---|---|
 | The service sleeps after 15 minutes without traffic and takes about a minute to wake (the app itself needs about 50 s on a 0.5 CPU instance) | The first visit after a quiet period is slow. A kitchen screen left open keeps polling, so it keeps the service awake while it is open |
-| Its files are erased on every sleep and deploy | Uploaded meal photos are lost; the demo seed puts the demo menu and photos back at every start |
+| Its files are erased on every sleep and deploy, but the database is kept | Photos an admin uploaded are lost (the meal then shows no picture until it is uploaded again). The demo illustrations are copied back at every start, because the seed checks that each demo image file exists (release 0.2.0 did not, and showed broken images after a redeploy; fixed in the release after it) |
+| The server accepts requests while the demo data is still being loaded at a start | For a few seconds after a wake-up the menu can be empty; reload |
 | 750 free instance hours per month for the whole workspace | One service awake all month fits (about 744 hours); a second always-on service would not, which is why the app is one service |
 | The free database **expires 30 days after it was created** (14 more days to upgrade, then it is deleted), 1 GB, no backups | Everything in it is demo data. To keep going, upgrade the database or create a new one (the schema and demo data are created again at the first start) |
 | 512 MB of memory | Measured in Docker with `--memory=512m --cpus=0.5`: about 280 MB used after the full demo rehearsal, no restarts |
