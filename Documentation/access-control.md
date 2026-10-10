@@ -147,6 +147,7 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 - **The admin transition endpoint** accepts only Start, Ready and Served. `CANCELLED` is refused with 403 (use the cancel endpoint) and so is submitting (the guest's own step, which prices the order and takes its number); an illegal step from the order's current status is a 409.
 - **Cancelling** an order is Admin-only (`/api/admin/orders/{id}/cancel`), and the kitchen transition endpoint refuses `CANCELLED` with 403 even for the kitchen's own account.
 - **Staff accounts:** only Admin can create, edit or delete. An admin cannot delete their own account (400).
+- **Where the first account comes from:** the API cannot create it (every staff endpoint needs a signed-in admin). On an empty installation the backend creates the first administrator, and optionally a kitchen account, at startup from `BOOTSTRAP_ADMIN_NAME`/`BOOTSTRAP_ADMIN_PIN` (and `BOOTSTRAP_KITCHEN_*`), or the demo seed does (`APP_SEED_DEMO`, public PIN `1234`). The bootstrap never touches an installation that has accounts, except that `BOOTSTRAP_ADMIN_RESET=true` resets the PIN of the one named existing administrator for that start. The PIN rule (4 to 8 digits) is enforced in `StaffAccountService` for the API and the bootstrap alike. See `Documentation/deployment.md`.
 - **Uploaded images** under `/images/**` are public, because the guest menu shows them.
 
 ## Sign-in and session rules

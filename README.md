@@ -49,7 +49,7 @@ docker compose up --build
 
 Open http://localhost:8088. The guest, kitchen, hall and admin screens are all on that one address (`/guest`, `/kitchen`, `/hall`, `/admin`).
 
-The first start has an empty database. To try the app with the demo menu, tables and staff (every account has the PIN `1234`), set `APP_SEED_DEMO=true` in `.env` before the first start; turn it off, or change every PIN, before real use.
+The first start has an empty database and no staff account. For real use set `BOOTSTRAP_ADMIN_NAME` and `BOOTSTRAP_ADMIN_PIN` (and optionally `BOOTSTRAP_KITCHEN_NAME`/`BOOTSTRAP_KITCHEN_PIN`) in `.env` before the first start: they create the first administrator, and you remove the PINs afterwards (`Documentation/deployment.md`, "First administrator"). To try the app with the demo menu, tables and staff instead, set `APP_SEED_DEMO=true`; its accounts all have the public PIN `1234`, so turn it off before real use.
 
 | Command | What it does |
 |---|---|
