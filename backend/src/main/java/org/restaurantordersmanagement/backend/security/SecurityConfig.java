@@ -74,7 +74,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/guest/menu", "/api/guest/settings", "/api/hall/orders").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/guest/cart/quote", "/api/guest/device/claim", "/api/guest/orders").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/guest/orders/*").permitAll()
+                        // HEAD too: a proxy or a monitor checking that a picture is there asks with HEAD.
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.HEAD, "/images/**").permitAll()
                         // The React app's own files and screens, when the backend serves them (SpaConfig).
                         // HEAD too: a monitor or a proxy checking that the page is there asks with HEAD.
                         .requestMatchers(HttpMethod.GET, SpaPaths.FILES).permitAll()
