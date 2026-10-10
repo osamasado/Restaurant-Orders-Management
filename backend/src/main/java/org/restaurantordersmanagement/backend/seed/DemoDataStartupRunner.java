@@ -1,7 +1,10 @@
 package org.restaurantordersmanagement.backend.seed;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,18 +15,26 @@ import org.springframework.stereotype.Component;
  * on only tops up what is missing and never overwrites an admin's changes. The actual seeding logic lives in
  * {@link DemoDataSeeder} so it can be tested directly without this switch.
  */
+@Slf4j
 @Component
 @ConditionalOnProperty(name = "app.seed.demo", havingValue = "true")
 public class DemoDataStartupRunner implements CommandLineRunner {
 
     private final DemoDataSeeder demoDataSeeder;
+    private final Environment environment;
 
-    public DemoDataStartupRunner(DemoDataSeeder demoDataSeeder) {
+    public DemoDataStartupRunner(DemoDataSeeder demoDataSeeder, Environment environment) {
         this.demoDataSeeder = demoDataSeeder;
+        this.environment = environment;
     }
 
     @Override
     public void run(String... args) {
+        if (environment.acceptsProfiles(Profiles.of("prod"))) {
+            log.warn("The demo data is switched on (APP_SEED_DEMO) in the prod profile: demo staff accounts with the "
+                    + "public PIN 1234 exist. That is for demos only; use BOOTSTRAP_ADMIN_NAME and BOOTSTRAP_ADMIN_PIN "
+                    + "for a real deployment and turn the demo data off.");
+        }
         demoDataSeeder.seedAll();
     }
 

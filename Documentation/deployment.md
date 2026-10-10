@@ -21,7 +21,43 @@ docker compose up --build -d
 
 The backend waits for a healthy database, the web server waits for a healthy backend, and the schema is created by Flyway on the first start. Open `http://localhost:8088` (change `APP_PORT` in `.env`).
 
-A new database is empty and has no staff account, so nobody can sign in. For a demo set `APP_SEED_DEMO=true` before the first start: the demo menu, raw materials, tables and staff (admin `O. Sado`, kitchen `M. Behr`, PIN `1234` for all) are loaded, and each table gets a pairing code (Tables & devices). The seed is idempotent: leaving it on only tops up what is missing and never overwrites an admin's changes. **It is for demos.** For real use turn it off and change every PIN in Staff accounts.
+A new database is empty and has no staff account, so nobody can sign in until you create the first administrator (next section), or load the demo data (the section after it).
+
+## First administrator
+
+For real use, give the backend the first administrator in `.env` before the first start:
+
+```
+BOOTSTRAP_ADMIN_NAME=Your Name
+BOOTSTRAP_ADMIN_PIN=<4 to 8 digits>
+BOOTSTRAP_KITCHEN_NAME=Kitchen          # optional, together with its PIN
+BOOTSTRAP_KITCHEN_PIN=<4 to 8 digits>
+```
+
+On the first start of an **empty** installation the backend creates that administrator, and the kitchen account when both kitchen values are set (both or neither, in one transaction). Sign in at `/login` with the name and PIN, create the waiter and cashier accounts in Staff accounts, **then remove the two PIN lines from `.env`** and restart (`docker compose up -d`). The log says so after the accounts are created.
+
+What it will and will not do:
+
+- **It only creates, and only into an empty installation.** If any staff account exists it creates nothing and changes nothing, so a leftover setting can never overwrite or reset a real account. It says so in one log line.
+- **No settings, no accounts.** Without `BOOTSTRAP_ADMIN_NAME` and `BOOTSTRAP_ADMIN_PIN` an empty installation starts normally and logs one line explaining how to create the first administrator.
+- **Wrong settings stop the start.** A name without a PIN (or the reverse), a PIN that is not 4 to 8 digits, a kitchen account without the administrator, or the same name twice makes the backend exit with a message that names the setting. The PIN is never part of a message and never logged. The PIN rule is the one the Staff accounts screen uses.
+- **It runs before the demo data**, so with both set the administrator you named is the one that exists (the demo seed skips names that are taken).
+
+### Lost the administrator PIN
+
+If every administrator PIN is lost (the sign-in screen locks a name for 15 minutes after five wrong tries, which does not help here), reset one deliberately:
+
+1. In `.env` set `BOOTSTRAP_ADMIN_NAME` to the existing administrator, `BOOTSTRAP_ADMIN_PIN` to a NEW PIN, and `BOOTSTRAP_ADMIN_RESET=true`.
+2. `docker compose up -d` (the backend restarts and sets the PIN).
+3. Sign in, then **remove all three lines again** and restart.
+
+The switch works for **one start only**: leave it on and every restart would reset that PIN again, so the log warns you to remove it. It resets an existing administrator and nothing else: it never creates an account, never promotes anyone and refuses with a message if the name does not exist or is not an administrator. Without the switch these settings never touch an existing account.
+
+## The demo data
+
+For a demo set `APP_SEED_DEMO=true` before the first start: the demo menu, raw materials, tables and staff (admin `O. Sado`, kitchen `M. Behr`, waiter `L. Adler`, cashier `T. Nowak`, PIN `1234` for all) are loaded, and each table gets a pairing code (Tables & devices). The seed is idempotent: leaving it on only tops up what is missing and never overwrites an admin's changes.
+
+**The demo PINs are public: they are in this repository.** Never leave the demo data on for an installation anyone else can reach. For real use turn it off and change every PIN in Staff accounts. The backend logs a warning at every start when the demo data is on together with the `prod` profile (which is what the containers run).
 
 ## Settings (`.env`)
 
@@ -31,7 +67,10 @@ A new database is empty and has no staff account, so nobody can sign in. For a d
 | `POSTGRES_DB`, `POSTGRES_USER` | `restaurant_orders` | The database and its user |
 | `APP_PORT` | `8088` | The port the app is published on |
 | `SESSION_COOKIE_SECURE` | `false` | Set `true` when the app is served over HTTPS, so the session cookie is never sent over plain HTTP |
-| `APP_SEED_DEMO` | `false` | Load the demo data (see above) |
+| `APP_SEED_DEMO` | `false` | Load the demo data (see [The demo data](#the-demo-data); its PINs are public) |
+| `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_PIN` | empty | Create the first administrator of an empty installation (see [First administrator](#first-administrator)); remove the PIN afterwards |
+| `BOOTSTRAP_KITCHEN_NAME`, `BOOTSTRAP_KITCHEN_PIN` | empty | Also create a kitchen account in the same step; both or neither |
+| `BOOTSTRAP_ADMIN_RESET` | `false` | `true` for one start resets the named administrator's PIN (see [Lost the administrator PIN](#lost-the-administrator-pin)) |
 
 The backend container itself reads `SPRING_PROFILES_ACTIVE=prod`, `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `UPLOAD_DIR` (`/data/uploads`) and `SESSION_COOKIE_SECURE`. The `prod` profile has no defaults for the database or the upload folder on purpose, so a missing variable stops the backend at startup instead of quietly using a wrong database.
 

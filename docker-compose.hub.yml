@@ -38,6 +38,12 @@ services:
       UPLOAD_DIR: /data/uploads
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       APP_SEED_DEMO: ${APP_SEED_DEMO:-false}
+      # The first administrator (and kitchen account) of an empty installation; see Documentation/deployment.md.
+      BOOTSTRAP_ADMIN_NAME: ${BOOTSTRAP_ADMIN_NAME:-}
+      BOOTSTRAP_ADMIN_PIN: ${BOOTSTRAP_ADMIN_PIN:-}
+      BOOTSTRAP_ADMIN_RESET: ${BOOTSTRAP_ADMIN_RESET:-false}
+      BOOTSTRAP_KITCHEN_NAME: ${BOOTSTRAP_KITCHEN_NAME:-}
+      BOOTSTRAP_KITCHEN_PIN: ${BOOTSTRAP_KITCHEN_PIN:-}
     volumes:
       - uploads:/data/uploads
     expose:

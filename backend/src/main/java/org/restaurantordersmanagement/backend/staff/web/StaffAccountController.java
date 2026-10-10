@@ -1,7 +1,6 @@
 package org.restaurantordersmanagement.backend.staff.web;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import org.restaurantordersmanagement.backend.staff.model.Role;
 import org.restaurantordersmanagement.backend.staff.security.StaffPrincipal;
 import org.restaurantordersmanagement.backend.staff.service.StaffAccountService;
@@ -23,8 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/staff/accounts")
 public class StaffAccountController {
-
-    private static final Pattern PIN_FORMAT = Pattern.compile("^[0-9]{4,8}$");
 
     private final StaffAccountService staffAccountService;
 
@@ -92,11 +89,9 @@ public class StaffAccountController {
         validatePin(request.pin());
     }
 
-    /** 4 to 8 digits: short enough to type on a tablet, long enough that the sign-in throttle means something. */
+    /** The rule itself (4 to 8 digits) is in the service, shared with the start-up bootstrap. */
     private void validatePin(String pin) {
-        if (pin == null || !PIN_FORMAT.matcher(pin).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "pin must be 4 to 8 digits");
-        }
+        StaffAccountService.requireValidPin(pin);
     }
 
     private void validateUpdate(StaffAccountUpdateRequest request) {
