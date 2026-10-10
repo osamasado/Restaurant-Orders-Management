@@ -3,6 +3,7 @@ package org.restaurantordersmanagement.backend.security;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,14 @@ class SecurityConfigTest {
         mockMvc.perform(get("/api/hall/orders")).andExpect(status().isOk());
         mockMvc.perform(get("/api/guest/menu").param("language", "EN")).andExpect(status().isOk());
         mockMvc.perform(get("/api/guest/settings")).andExpect(status().isOk());
+    }
+
+    @Test
+    void picturesAreOpenToAnonymousGetAndHeadRequests() throws Exception {
+        // The file does not exist, so 404 is the answer: what matters is that it is not 401 (the rule let it through).
+        mockMvc.perform(get("/images/meals/none.png")).andExpect(status().isNotFound());
+        mockMvc.perform(head("/images/meals/none.png")).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/images/meals/none.png")).andExpect(status().isUnauthorized());
     }
 
     @Test
