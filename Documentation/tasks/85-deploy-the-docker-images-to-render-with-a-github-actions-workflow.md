@@ -38,14 +38,16 @@ Bugs the checks found along the way (root cause, fix):
 - **The manifest was served as `application/octet-stream`;** a media-type setting on Spring MVC did not reach the static handler, so the servlet container's mapping is set instead.
 - **The deploy step needed `jq`,** which is not guaranteed; the two characters that need encoding are encoded in bash.
 
-Not done, for a decision (needs you, on Render and GitHub):
-- **The first real deployment.** Create the Blueprint, copy the deploy hook, add the `production` environment (secret `RENDER_DEPLOY_HOOK`, variable `RENDER_PUBLIC_URL`), push a tag and watch the workflow. `render.yaml` and the hook's exact behaviour (the `imgURL` parameter, the free-plan cold start) could not be run from here; the Render CLI was not available to validate the Blueprint.
-- **The workflow only runs from `master`** (a `workflow_run` and manual runs use the default branch's copy), so it can first run after this is merged and a release tag is pushed.
-- **A release must exist first** (`restaurant-orders-app:latest` is created by the next `vX.Y.Z` tag), because the Blueprint pulls `latest` the first time.
+Done afterwards, on the live service (see the sections below and "Measured on the live deployment" in `Documentation/deployment.md`): the Blueprint, the deploy hook and the `production` environment were set up, `v0.2.0` and `v0.2.1` were published and deployed through the workflow, and the demo rehearsal passed 22 of 22 against the Render address.
+
+Not done:
 - **The follow-ups from the issue** (a second `edge` service, a custom domain, monitoring, object storage for photos) are not part of the demo.
+- **The first deploy from the Blueprint and the wake-up of a sleeping service were not timed.**
 
 ## Found after the first deployment
 
 Meal images were broken on the live site after the first redeploy. The demo seed attached an illustration only when a meal had no image path at all, and the database keeps the path while a free Render service loses its files on every sleep and deploy, so the path pointed at a file that no longer existed (the published `0.2.0` image returned 404 for `/images/meals/pumpkin-soup.png` against a database that had already been seeded). The seed now also copies its own illustration again when that file is missing, and never touches an image an admin uploaded (another file name). Tests: `DemoDataSeederTest` (an erased demo image comes back; an admin's own path is left alone). Checked in a container: start, destroy the container, start a new one on the same database, and all 39 images are served again.
 
 Also noticed: the server accepts requests (the health check passes) before the demo seed has finished, so for a few seconds after a start the menu can be empty. It is noted in `Documentation/deployment.md`; making the start wait for the seed would be a separate change.
+
+Measured on the live service (version 0.2.1): the workflow took 2 minutes 37 seconds, 2 minutes 34 seconds of it waiting for the new version to answer; the rehearsal's hand-offs took 1.9 to 5.4 seconds, within the 10 second limit.

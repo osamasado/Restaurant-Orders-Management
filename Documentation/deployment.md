@@ -179,7 +179,7 @@ Add `--provenance=false --sbom=false` to keep the tag list free of extra "unknow
 
 | Free-plan fact | What it means for the demo |
 |---|---|
-| The service sleeps after 15 minutes without traffic and takes about a minute to wake (the app itself needs about 50 s on a 0.5 CPU instance) | The first visit after a quiet period is slow. A kitchen screen left open keeps polling, so it keeps the service awake while it is open |
+| The service sleeps after 15 minutes without traffic and, by Render's own figure, takes about a minute to wake (the app itself needs about 50 s to start on a 0.5 CPU instance, measured in Docker; the wake-up on Render has not been timed) | The first visit after a quiet period is slow. A kitchen screen left open keeps polling, so it keeps the service awake while it is open |
 | Its files are erased on every sleep and deploy, but the database is kept | Photos an admin uploaded are lost (the meal then shows no picture until it is uploaded again). The demo illustrations are copied back at every start, because the seed checks that each demo image file exists (release 0.2.0 did not, and showed broken images after a redeploy; fixed in the release after it) |
 | The server accepts requests while the demo data is still being loaded at a start | For a few seconds after a wake-up the menu can be empty; reload |
 | 750 free instance hours per month for the whole workspace | One service awake all month fits (about 744 hours); a second always-on service would not, which is why the app is one service |
@@ -228,7 +228,21 @@ The image already sets `SPRING_PROFILES_ACTIVE=prod`, `UPLOAD_DIR=/data/uploads`
 
 The free plan is for showing the app. For a restaurant that really uses it: switch the database to a paid plan (it is kept and backed up), the web service to a paid instance (it never sleeps; a 512 MB instance is the smallest, a 2 GB one gives the JVM more room), add a persistent disk mounted at `/data/uploads` so photos survive deploys (a service with a disk runs one instance and stops briefly while deploying), set `APP_SEED_DEMO` to `false` and use the "First administrator" settings. In `render.yaml` that is `plan:` on the service and the database and a `disk:` block; the workflow does not change.
 
+### Measured on the live deployment
+
+From the first release deployed through the workflow (version 0.2.1, 10 October 2026, Frankfurt, free plan):
+
+| What | Result |
+|---|---|
+| The deploy hook accepted the new image tag | in 2 seconds |
+| From the hook call until `/version.txt` returned the new version and `/` and `/api/guest/settings` answered 200 | **2 minutes 34 seconds** (the workflow ran 2 minutes 37 seconds in all); the old version kept answering until then, so there was no gap |
+| The demo rehearsal (`frontend/scripts/demo-rehearsal.mjs`) against the Render address | **22 of 22 checks**; the order reached the kitchen screen in 2.7 s, the hall board in 3.8 s, "Ready" on the board in 4.8 s, "Served" for the guest in 4.9 s; a cancelled order reached the kitchen in 1.9 s and left the hall board in 2.0 s; a meal toggled by the kitchen changed on an open table device in 5.4 s and 5.3 s (the limit is 10 s) |
+| The session cookie | `Secure; HttpOnly; SameSite=Lax` |
+| Every meal picture of the guest menu | served as `image/png` after the release that restores the demo images |
+
+Not timed: the first deploy from the Blueprint and the wake-up of a sleeping service.
+
 ### Limits of this setup
 
-- The checks in this repository ran against the image in Docker with Render's free memory and CPU, and the workflow's steps ran against a local container and a fake deploy hook. The first real deployment on Render (Blueprint creation, the hook's exact behaviour, the cold start) is verified by doing it once.
+- The memory figure above comes from Docker with Render's free memory and CPU, not from Render's own metrics (look at the service's Metrics tab for those).
 - No custom domain, staging environment or monitoring (out of scope).
