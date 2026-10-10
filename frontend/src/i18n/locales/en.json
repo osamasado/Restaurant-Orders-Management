@@ -440,7 +440,24 @@
       "off": "Off",
       "save": "Save",
       "saved": "Settings saved",
-      "error": "Could not save settings"
+      "error": "Could not save settings",
+      "orderNumber": {
+        "title": "Order numbers",
+        "next": "Next order number",
+        "lastReset": "Last restarted {{when}} by {{name}}",
+        "neverReset": "Never restarted",
+        "caption": "Guests, the kitchen and the hall board show this number. Restarting at 001 begins a new series, for example at the start of a day. Every order keeps the number it had.",
+        "alreadyAtStart": "The next order is already 001, so there is nothing to restart.",
+        "restart": "Restart at 001",
+        "dialogTitle": "Restart the order numbers at 001?",
+        "dialogMessage": "The next order will be 001. Orders already placed keep their numbers. The restart is recorded with your name and the time.",
+        "blockedTitle": "The order numbers cannot be restarted now",
+        "blockedMessage": "Open orders: {{count}} (submitted, in preparation or ready). Two open orders must never show the same number, so finish or cancel them first.",
+        "confirm": "Restart at 001",
+        "failed": "Could not restart the order numbers. An order may have been placed just now: check the open orders and try again.",
+        "loadError": "Could not load the order numbers",
+        "restarted": "Order numbers restarted: the next order is 001"
+      }
     },
     "dashboard": {
       "subtitle": "The menu and the newest orders at a glance",

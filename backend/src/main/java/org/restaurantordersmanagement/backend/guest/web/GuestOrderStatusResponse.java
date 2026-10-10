@@ -29,7 +29,7 @@ public record GuestOrderStatusResponse(
                 .toList();
         return new GuestOrderStatusResponse(
                 order.getId(),
-                order.getOrderNumber(),
+                order.getDisplayNumber(),
                 order.getStatus(),
                 order.getPlacedAt(),
                 order.getPaymentMethod(),

@@ -440,7 +440,24 @@
       "off": "Aus",
       "save": "Speichern",
       "saved": "Einstellungen gespeichert",
-      "error": "Einstellungen konnten nicht gespeichert werden"
+      "error": "Einstellungen konnten nicht gespeichert werden",
+      "orderNumber": {
+        "title": "Bestellnummern",
+        "next": "Nächste Bestellnummer",
+        "lastReset": "Zuletzt neu gestartet {{when}} von {{name}}",
+        "neverReset": "Noch nie neu gestartet",
+        "caption": "Gäste, Küche und Hallenanzeige zeigen diese Nummer. Ein Neustart bei 001 beginnt eine neue Serie, zum Beispiel zu Tagesbeginn. Jede Bestellung behält ihre Nummer.",
+        "alreadyAtStart": "Die nächste Bestellung ist bereits 001, es gibt nichts neu zu starten.",
+        "restart": "Bei 001 neu starten",
+        "dialogTitle": "Bestellnummern bei 001 neu starten?",
+        "dialogMessage": "Die nächste Bestellung bekommt die Nummer 001. Bereits aufgegebene Bestellungen behalten ihre Nummern. Der Neustart wird mit Ihrem Namen und der Uhrzeit festgehalten.",
+        "blockedTitle": "Die Bestellnummern können jetzt nicht neu gestartet werden",
+        "blockedMessage": "Offene Bestellungen: {{count}} (aufgegeben, in Zubereitung oder fertig). Zwei offene Bestellungen dürfen nie dieselbe Nummer zeigen, schließen Sie sie also zuerst ab oder stornieren Sie sie.",
+        "confirm": "Bei 001 neu starten",
+        "failed": "Die Bestellnummern konnten nicht neu gestartet werden. Vielleicht wurde gerade eine Bestellung aufgegeben: Prüfen Sie die offenen Bestellungen und versuchen Sie es erneut.",
+        "loadError": "Die Bestellnummern konnten nicht geladen werden",
+        "restarted": "Bestellnummern neu gestartet: Die nächste Bestellung ist 001"
+      }
     },
     "dashboard": {
       "subtitle": "Speisekarte und neueste Bestellungen auf einen Blick",

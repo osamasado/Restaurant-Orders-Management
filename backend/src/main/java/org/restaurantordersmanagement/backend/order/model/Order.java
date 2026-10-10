@@ -49,6 +49,13 @@ public class Order {
      */
     private Integer orderNumber;
 
+    /**
+     * The number shown to guests, the kitchen, the hall board and the admin screens. Assigned together with
+     * {@link #orderNumber} but restarted at 1 when an admin resets the series, so unlike orderNumber it can repeat
+     * across series (never among open orders: the reset is refused while any is open). Null while the order is a DRAFT.
+     */
+    private Integer displayNumber;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "table_id")
     private Table table;

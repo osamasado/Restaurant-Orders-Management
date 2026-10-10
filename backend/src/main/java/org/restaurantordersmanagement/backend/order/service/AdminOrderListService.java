@@ -90,7 +90,7 @@ public class AdminOrderListService {
     private static AdminOrderRowResponse toRow(Order order, List<AdminOrderRowResponse.Item> items) {
         return new AdminOrderRowResponse(
                 order.getId(),
-                order.getOrderNumber(),
+                order.getDisplayNumber(),
                 order.getTable().getTableNumber(),
                 order.getStatus(),
                 order.getPlacedAt(),

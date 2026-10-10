@@ -124,7 +124,7 @@ As built (#62): the two panels are the ones above: In preparation a faint tint o
 
 ## Interactions & behavior
 - Guest: welcome → menu → detail → cart → payment → confirm → status. Back buttons return one step; the cart survives navigation and the language switch.
-- Confirming an order issues the order number, shown with at least three digits (`001`, `002`, ... `999`, then four digits so numbers never repeat), and moves the guest to the status view.
+- Confirming an order issues the order number, shown with at least three digits (`001`, `002`, ... `999`, then four digits). The shown number restarts at `001` when an admin restarts the series from Settings (for example at the start of a day), so it can repeat across series but never among open orders: the restart is refused while any order is open. The server keeps a second, internal number that never repeats, and moves the guest to the status view.
 - Kitchen "Start" → in preparation; "Ready" → ready (the number appears on the hall board); "Picked up by waiter" → served (leaves the boards).
 - Cancel is admin-only and possible from any stage before served; the kitchen shows the red banner until acknowledged.
 - Marking a meal unavailable removes it from every table device; it must not be orderable.

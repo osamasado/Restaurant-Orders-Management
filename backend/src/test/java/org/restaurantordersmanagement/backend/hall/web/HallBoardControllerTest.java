@@ -99,7 +99,7 @@ class HallBoardControllerTest {
     @Test
     void numberMovesFromPreparingToReadyAndLeavesOnceServed() throws Exception {
         Order order = submittedOrder();
-        Integer number = order.getOrderNumber();
+        Integer number = order.getDisplayNumber();
 
         Order preparing = advance(order, OrderStatus.PREPARING);
         mockMvc.perform(get("/api/hall/orders"))
@@ -123,10 +123,10 @@ class HallBoardControllerTest {
         Order cancelled = advance(submittedOrder(), OrderStatus.CANCELLED);
 
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(notStarted.getOrderNumber()))))
-                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(notStarted.getOrderNumber()))))
-                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(cancelled.getOrderNumber()))))
-                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(cancelled.getOrderNumber()))));
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(notStarted.getDisplayNumber()))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(notStarted.getDisplayNumber()))))
+                .andExpect(jsonPath("$.preparing[*].orderNumber").value(not(hasItem(cancelled.getDisplayNumber()))))
+                .andExpect(jsonPath("$.ready[*].orderNumber").value(not(hasItem(cancelled.getDisplayNumber()))));
     }
 
     @Test
@@ -134,7 +134,7 @@ class HallBoardControllerTest {
         Order preparing = advance(submittedOrder(), OrderStatus.PREPARING);
 
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing[?(@.orderNumber == " + preparing.getOrderNumber() + ")].tableNumber")
+                .andExpect(jsonPath("$.preparing[?(@.orderNumber == " + preparing.getDisplayNumber() + ")].tableNumber")
                         .value(contains(preparing.getTable().getTableNumber())));
     }
 

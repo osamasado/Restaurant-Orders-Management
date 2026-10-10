@@ -130,3 +130,25 @@
 .settings-card__toggle-group {
   align-self: flex-start;
 }
+
+/* The displayed order number card: the next number large and in mono (like on every other screen), the restart below. */
+.order-number-card__current {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.order-number-card__value {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text);
+  direction: ltr;
+  unicode-bidi: isolate;
+  align-self: flex-start;
+}
+
+.order-number-card__restart {
+  align-self: flex-start;
+}

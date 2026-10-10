@@ -25,7 +25,7 @@ Every transition is timestamped and records which staff member made it, so the f
 ## What makes this more than a CRUD app
 
 - **A single state machine, not a status field.** No part of the system may set an order's status directly — every change goes through one validated transition function.
-- **Order numbers survive concurrency.** Generated inside a locked transaction so two tables confirming at the same instant can't collide.
+- **Order numbers survive concurrency.** Generated inside a locked transaction so two tables confirming at the same instant can't collide. The number people see restarts at 001 when an admin chooses (Settings, refused while any order is open); an internal number that never repeats stays unique.
 - **Prices are calculated on the server, never on the device.** The guest-visible total is recalculated and verified server-side before an order is accepted.
 - **Orders snapshot what was actually sold.** Meal title, size, and price are copied onto the order line, so later menu edits never rewrite past orders.
 - **Real internationalization.** German, English, and Arabic — Arabic is fully right-to-left, not a mirrored layout — for both UI labels and menu content.

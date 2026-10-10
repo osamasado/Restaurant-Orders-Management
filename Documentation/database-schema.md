@@ -97,10 +97,12 @@ erDiagram
     RESTAURANT_ORDER ||--o{ ORDER_ITEM : has
     RESTAURANT_ORDER ||--o{ ORDER_STATUS_HISTORY : has
     STAFF_ACCOUNT ||--o{ ORDER_STATUS_HISTORY : records
+    STAFF_ACCOUNT ||--o{ ORDER_NUMBER_RESET : resets
 
     RESTAURANT_ORDER {
         bigint id PK
         int order_number
+        int display_number
         bigint table_id FK
         varchar status
         timestamptz placed_at
@@ -122,6 +124,17 @@ erDiagram
         timestamptz changed_at
         bigint staff_account_id FK
     }
+    ORDER_NUMBER_COUNTER {
+        bigint id PK
+        int next_value
+        int next_display_value
+    }
+    ORDER_NUMBER_RESET {
+        bigint id PK
+        timestamptz reset_at
+        bigint staff_account_id FK
+        int previous_next_display
+    }
 ```
 
 ## Notes
@@ -138,4 +151,6 @@ erDiagram
 - **`restaurant_order`**, not `order` — same reserved-SQL-keyword problem as `restaurant_table`.
 - **`order_item`** has **no FK back to `meal`/`meal_size` at all** — `name`/`size`/`unit_price` are copied text/numbers at order time (see `OrderItem.snapshotFrom`), never referenced live, so a later menu edit can never rewrite a historical order.
 - **`order_status_history`** is one row per status the order *reached* (not a from/to pair — the previous state is just the prior row, read back in chronological order via `@OrderBy("changedAt ASC")`). `staff_account_id` is nullable: a guest submitting their own draft has no staff member behind that transition.
-- **`order_number`** is nullable — assigning it is issue #11's concurrency-safe generator, not modeled yet.
+- **`order_number`** is the internal number: nullable (a draft has none), assigned under the row lock of the single `order_number_counter` row when the order is submitted, unique (partial unique index) and **never reset**.
+- **`display_number`** is the number guests, the kitchen, the hall board and the admin screens show (the API calls it `orderNumber`; the internal one is not exposed). It is assigned in the same locked transaction from `order_number_counter.next_display_value` and restarts at 1 when an admin resets the series from Settings, so it can repeat across series (never among open orders: the reset is refused while any order is submitted, in preparation or ready). `V16` gave every existing order `display_number = order_number` and set `next_display_value = next_value`.
+- **`order_number_reset`** is the audit trail of the resets: who (`staff_account_id`), when (`reset_at`) and the displayed number the next order would have got (`previous_next_display`). A reset when the next number is already 1 changes and records nothing.

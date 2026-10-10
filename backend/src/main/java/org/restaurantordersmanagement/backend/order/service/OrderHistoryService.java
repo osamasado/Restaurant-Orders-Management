@@ -43,7 +43,7 @@ public class OrderHistoryService {
      * Newest orders first. Two queries for the page plus its count: the orders,
      * then all of their history rows together - never one query per order.
      *
-     * @param orderNumber when set, only the order with that number
+     * @param orderNumber when set, only the orders showing that number (after a reset of the series that can be several)
      */
     @Transactional(readOnly = true)
     public OrderHistoryPageResponse page(int page, int size, Integer orderNumber) {
@@ -59,7 +59,7 @@ public class OrderHistoryService {
                 page, size, Sort.by(Sort.Order.desc("placedAt").nullsLast(), Sort.Order.desc("id")));
         Page<Order> orders = orderNumber == null
                 ? orderRepository.findAllBy(pageable)
-                : orderRepository.findByOrderNumber(orderNumber, pageable);
+                : orderRepository.findByDisplayNumber(orderNumber, pageable);
 
         Map<Long, List<OrderStatusHistory>> historyByOrder = historyOf(orders.getContent());
 
@@ -95,7 +95,7 @@ public class OrderHistoryService {
 
         return new OrderHistoryResponse(
                 order.getId(),
-                order.getOrderNumber(),
+                order.getDisplayNumber(),
                 order.getTable().getTableNumber(),
                 order.getStatus(),
                 order.getPlacedAt(),
