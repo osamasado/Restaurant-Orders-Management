@@ -16,6 +16,7 @@ public record OrderHistoryResponse(
         Long orderId,
         Integer orderNumber,
         String tableNumber,
+        boolean takeAway,
         OrderStatus status,
         Instant placedAt,
         List<Entry> entries,

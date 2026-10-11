@@ -58,12 +58,12 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Page<Order> findAll(Specification<Order> specification, Pageable pageable);
 
     /**
-     * Only the displayed order number and table number of one status, oldest
+     * Only the displayed order number, table number and take-away flag of one status, oldest
      * first (by the internal number, which never repeats or restarts) - the
-     * hall board's source. A closed projection, so just those two columns are selected: items, prices and everything else on the order
+     * hall board's source. A closed projection, so just those three columns are selected: items, prices and everything else on the order
      * are never even loaded.
      */
-    @Query("select o.displayNumber as orderNumber, o.table.tableNumber as tableNumber "
+    @Query("select o.displayNumber as orderNumber, o.table.tableNumber as tableNumber, o.table.takeAway as takeAway "
             + "from Order o where o.status = :status order by o.orderNumber")
     List<HallBoardRow> findHallBoardRows(@Param("status") OrderStatus status);
 
@@ -72,6 +72,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
         Integer getOrderNumber();
 
         String getTableNumber();
+
+        boolean isTakeAway();
 
     }
 

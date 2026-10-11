@@ -16,6 +16,7 @@ public record AdminOrderRowResponse(
         Long orderId,
         Integer orderNumber,
         String tableNumber,
+        boolean takeAway,
         OrderStatus status,
         Instant placedAt,
         PaymentMethod paymentMethod,
