@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Public, no @PreAuthorize - the device's pairing code identifies the table
- * (in the body for submit, in the X-Device-Code header for status reads).
+ * (in the body for submit), or the order is a take-away one (no table, no code).
+ * A status read proves itself with the order's own secret (X-Order-Token, handed out
+ * when the order was placed), or, for a dine-in order, with the paired device's code
+ * (X-Device-Code).
  */
 @RestController
 @RequestMapping("/api/guest/orders")
@@ -28,14 +31,16 @@ public class GuestOrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GuestOrderResponse submit(@RequestBody GuestOrderRequest request) {
-        return GuestOrderResponse.from(guestOrderService.submit(request));
+        GuestOrderService.PlacedOrder placed = guestOrderService.submit(request);
+        return GuestOrderResponse.from(placed.order(), placed.accessToken());
     }
 
     @GetMapping("/{orderId}")
     public GuestOrderStatusResponse status(
             @PathVariable Long orderId,
-            @RequestHeader("X-Device-Code") String deviceCode) {
-        return guestOrderService.getStatus(orderId, deviceCode);
+            @RequestHeader(value = "X-Order-Token", required = false) String orderToken,
+            @RequestHeader(value = "X-Device-Code", required = false) String deviceCode) {
+        return guestOrderService.getStatus(orderId, orderToken, deviceCode);
     }
 
 }

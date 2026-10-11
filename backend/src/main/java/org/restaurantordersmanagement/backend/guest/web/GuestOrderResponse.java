@@ -6,7 +6,10 @@ import org.restaurantordersmanagement.backend.order.model.Order;
 import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 import org.restaurantordersmanagement.backend.settings.model.PaymentMethod;
 
-/** The authoritative result of a submission - the guest app shows these numbers, not its own preview. */
+/**
+ * The authoritative result of a submission - the guest app shows these numbers, not its own preview. accessToken is
+ * the secret that lets this guest follow this one order (X-Order-Token on the status call); it is handed out only here.
+ */
 public record GuestOrderResponse(
         Long orderId,
         Integer orderNumber,
@@ -15,9 +18,10 @@ public record GuestOrderResponse(
         PaymentMethod paymentMethod,
         BigDecimal subtotal,
         BigDecimal taxAmount,
-        BigDecimal total) {
+        BigDecimal total,
+        String accessToken) {
 
-    public static GuestOrderResponse from(Order order) {
+    public static GuestOrderResponse from(Order order, String accessToken) {
         return new GuestOrderResponse(
                 order.getId(),
                 order.getDisplayNumber(),
@@ -26,7 +30,8 @@ public record GuestOrderResponse(
                 order.getPaymentMethod(),
                 order.getSubtotal(),
                 order.getTaxAmount(),
-                order.getTotal());
+                order.getTotal(),
+                accessToken);
     }
 
 }
