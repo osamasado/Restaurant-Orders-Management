@@ -18,7 +18,7 @@ It checks, for every page: no console error and no unexpected failed request; no
 
 ### Result
 
-**162 of 162 pages pass** on the production build, on the first attempt, with retries turned off: 3 languages x 2 themes x 27 pages (guest 6, kitchen 3, hall 1, admin 17: eight views including the Dashboard, the Orders cancel confirmation, the meal form and the staff form, three dialogs (a delete confirmation, the PIN reset and the pairing code), and three phone pages (the Dashboard, the navigation drawer and an order opened in its dialog)). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time. After the dark, coral restyle (#79) the walk was refined in two ways: it ignores text that is hidden on purpose (`clip-path`) and elements that are off-screen on purpose (a closed drawer, a row inside its own sideways scroller), and the German phone pages found a real bug that was fixed (the "Nicht verfügbar" pill ran out of its meal card).
+**186 of 186 pages pass** on the production build (issue #93; it was 162 of 162 before the new guest start), on a fresh stack: 3 languages x 2 themes x 31 pages (guest 7 including the new eat in / take away screen, guest on an unpaired device and take away 3 (the translated pairing screen, the take-away menu and the take-away confirmation), kitchen 3, hall 1, admin 17: eight views including the Dashboard, the Orders cancel confirmation, the meal form and the staff form, three dialogs (a delete confirmation, the PIN reset and the pairing code), and three phone pages (the Dashboard, the navigation drawer and an order opened in its dialog)). The German, English and Arabic screenshots were reviewed by eye as well; German was reviewed for the first time. After the dark, coral restyle (#79) the walk was refined in two ways: it ignores text that is hidden on purpose (`clip-path`) and elements that are off-screen on purpose (a closed drawer, a row inside its own sideways scroller), and the German phone pages found a real bug that was fixed (the "Nicht verfügbar" pill ran out of its meal card).
 
 What the pass found and fixed:
 
@@ -32,7 +32,7 @@ Observations that are not defects, for a decision:
 - **Order items are in the guest's language.** The kitchen shows each order line as the guest ordered it, so a German kitchen sees English sizes ("Regular", "Half board") on an order placed in English. This is the "order lines snapshot the meal" rule; showing items in the restaurant's language would be a data-model change.
 - **The meal form's category list follows the language tab being edited** (it opens on English), not the interface language. It is deliberate: the form edits one language at a time.
 - **"Restaurant Orders Management"** is the same in all three languages. It is a placeholder name.
-- **The guest pairing screen is not part of the walk** (the walk presets the paired device), so it is a Human row below.
+- **The guest pairing screen is part of the walk** since issue #93 (a device that is not paired, eat in, Back, then take away to confirmation).
 
 ## Per screen
 
@@ -40,7 +40,9 @@ Observations that are not defects, for a decision:
 
 | Check | How | DE | EN | AR |
 |---|---|---|---|---|
-| Pairing screen: a valid code connects, an unknown code is refused with a clear message | Human (the API side is tested) | ⬜ | ⬜ | ⬜ |
+| Pairing screen (after choosing to eat in): translated, a wrong code is explained, Back returns, a valid code opens the menu with the table | `guest-flow-check.mjs` | ✅ | ✅ | ✅ |
+| Eat in or take away: asked in the chosen language, fits a phone; a paired device skips pairing; take away needs no pairing and shows "Take away" in the header, the kitchen, the hall board, the admin Orders list and the history | `guest-flow-check.mjs` (99 checks), Walk | ✅ | ✅ | ✅ |
+| A take-away guest follows their own order and cannot read another (403 / 404); the admin menu opens Guest, Kitchen and Hall in a new tab; the logo goes to the Dashboard | `guest-flow-check.mjs` | ✅ | ✅ | ✅ |
 | Welcome: the language buttons switch the whole screen, and the choice carries on | Walk | ✅ | ✅ | ✅ |
 | Menu: categories, meals, descriptions and prices in the chosen language | Walk (unavailable meals hidden: Test) | ✅ | ✅ | ✅ |
 | Menu: every meal has its picture, and a meal the kitchen marks sold out vanishes from a menu that is already open (refreshes every 5 s) | Walk (pictures) + Rehearsal (`demo-rehearsal.mjs`, gone within 5.4 s) | ✅ | ✅ | ✅ |
@@ -98,7 +100,7 @@ Observations that are not defects, for a decision:
 | Dashboard (the landing page): categories, meal cards, order reports and the order panel render with real data, in both themes, and mirror in Arabic (rail on the right, panel on the left) | Walk | ✅ | ✅ | ✅ |
 | Dashboard: Start moves a submitted order to preparing from the panel, Cancel asks first and "Keep it" leaves it, confirming cancels it; a cancelled order offers no further steps | Browser check (English; the logic is the same as the Orders page) | ⬜ | ✅ | ⬜ |
 | Dashboard: a meal can be marked unavailable and back from its card; the search narrows meals and orders and shows the empty states; a category filters the meals and is announced as pressed | Browser check (English) | ⬜ | ✅ | ⬜ |
-| Guest welcome screen: table badge shows the table from the pairing code, three equal warm-white language buttons (54px, 14px corners), hover beige and lifted, press sinks, the chosen language turns coral and the page switches to it before the menu opens, no scrolling or sideways overflow from 360 x 640 up, the Arabic label is its own right-to-left run, "reduce motion" stops the light, and the text keeps 4.5:1 against the moving light throughout the loop | Browser check (English, with a contrast sampler) + Walk (all pages) + eyes (German light, Arabic dark) | ✅ | ✅ | ✅ |
+| Guest welcome screen: three equal warm-white language buttons (54px, 14px corners), hover beige and lifted, press sinks, the chosen language turns coral and the page switches to it before the menu opens, no scrolling or sideways overflow from 360 x 640 up, the Arabic label is its own right-to-left run, "reduce motion" stops the light, and the text keeps 4.5:1 against the moving light throughout the loop | Browser check (English, with a contrast sampler) + Walk (all pages) + eyes (German light, Arabic dark) | ✅ | ✅ | ✅ |
 | Sliders (Dashboard and guest menu): the number of items per page follows the width, "View more" moves to the next items and the arrow goes back, both are hidden when everything fits, and it works right to left | Browser check (English desktop, Arabic phone) | ⬜ | ✅ | ✅ |
 | Buttons: every button on the Dashboard, Orders, Audit history, Meals, Raw materials, Tables, Staff, Settings, the dialogs and forms, the kitchen and the guest has a surface, rounded corners and a height of 32 to 48px (the exceptions are listed in the script); hover changes how it looks without changing its size; a coloured button sinks when pressed; a keyboard-focused button shows the ring | `scripts/buttons-check.mjs` (English and Arabic, both themes) | ⬜ | ✅ | ✅ |
 | Buttons: primary is coral, success green, warning orange, danger red and secondary gray, so Start preparing is coral, Ready and Served green, Delete and Cancel order red, Edit gray | Eyes (Orders, Meals, Tables, the kitchen) | ⬜ | ✅ | ⬜ |

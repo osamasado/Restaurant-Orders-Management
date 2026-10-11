@@ -6,7 +6,7 @@ Who may do what, per role. This is the checklist for issue #29: every endpoint a
 
 - **Fail closed.** An endpoint is private unless it is on the public list below. A new endpoint nobody remembered to annotate must not become public by accident.
 - **One place per rule.** Roles are checked with `@PreAuthorize` on the controller method; status changes go through `OrderStateMachineService`, which also decides what is legal.
-- **The server resolves identity.** A guest device is identified by its pairing code and the server looks up the table; a client-sent table id or total is never trusted.
+- **The server resolves identity.** A guest device is identified by its pairing code and the server looks up the table; a client-sent table id or total is never trusted. A take-away order carries no table at all: the server places it against the one reserved take-away table.
 - **Public means minimal.** The two public data feeds (guest menu and hall board) return only what their screen shows.
 
 ## Roles
@@ -27,7 +27,7 @@ Waiter and cashier accounts can be created and can sign in, but every staff scre
 
 | Screen | Who | Guard |
 |---|---|---|
-| `/guest` | Anyone holding a paired table device | Pairing code gate |
+| `/guest` | Anyone | Eating in needs a device paired with a table (pairing code gate); take away needs nothing |
 | `/hall` | Anyone in the dining area | None, shows order and table numbers only |
 | `/kitchen` | Kitchen, Admin | Sign-in; other roles see "access denied" |
 | `/admin` | Admin | Sign-in; other roles see "access denied" |
@@ -136,8 +136,8 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 | POST | `/api/guest/cart/quote` | None (public) | Prices computed on the server, nothing stored. |
 | POST | `/api/guest/device/claim` | Device code | Needs a valid pairing code. Returns table number and room only, never the code. |
 | GET | `/api/guest/menu` | None (public) | Available meals only, in one language. |
-| POST | `/api/guest/orders` | Device code | The paired device code in the body identifies the table; the server resolves it, never a client-sent table id. |
-| GET | `/api/guest/orders/{orderId}` | Device code | `X-Device-Code` header; only that device's own table's orders, anything else is a 404. |
+| POST | `/api/guest/orders` | Device code, or `takeAway: true` | The paired device code in the body identifies the table; the server resolves it, never a client-sent table id. A take-away order (`takeAway: true`, no device code; both is a 400) is placed against the reserved take-away table. The answer carries `accessToken`, the secret for following this one order, handed out only here. |
+| GET | `/api/guest/orders/{orderId}` | Order token, or device code | `X-Order-Token`: the order's own secret (stored only as a hash). A dine-in order can also be followed with `X-Device-Code` of its table's paired device (the rule before the secret existed); a take-away order has no device, so only its secret opens it. Neither header is a 403; a wrong secret, or another table's order, is a 404, so an id tells nothing. |
 | GET | `/api/guest/settings` | None (public) | Currency, tax rate, default language, enabled payment methods. |
 | GET | `/api/hall/orders` | None (public) | Order number and table number only. No names, prices or items. |
 | POST | `/api/staff/login` | None (public) | Name and PIN. |
@@ -150,6 +150,7 @@ Allowed roles are exactly the `@PreAuthorize` on each method; an anonymous reque
 - **The admin transition endpoint** accepts only Start, Ready and Served. `CANCELLED` is refused with 403 (use the cancel endpoint) and so is submitting (the guest's own step, which prices the order and takes its number); an illegal step from the order's current status is a 409.
 - **Cancelling** an order is Admin-only (`/api/admin/orders/{id}/cancel`), and the kitchen transition endpoint refuses `CANCELLED` with 403 even for the kitchen's own account.
 - **Restarting the displayed order number** (`POST /api/settings/order-number/reset`) is Admin-only, is refused with 409 while any order is submitted, in preparation or ready, and is recorded with the admin and the time (`order_number_reset`). It restarts only the displayed number; the internal order number is never reset.
+- **The reserved take-away table** (migration V17) is invisible to Tables & devices: not listed, and editing, pairing, unpairing or deleting it answers 404. No pairing code can claim it.
 - **Staff accounts:** only Admin can create, edit or delete. An admin cannot delete their own account (400).
 - **Where the first account comes from:** the API cannot create it (every staff endpoint needs a signed-in admin). On an empty installation the backend creates the first administrator, and optionally a kitchen account, at startup from `BOOTSTRAP_ADMIN_NAME`/`BOOTSTRAP_ADMIN_PIN` (and `BOOTSTRAP_KITCHEN_*`), or the demo seed does (`APP_SEED_DEMO`, public PIN `1234`). The bootstrap never touches an installation that has accounts, except that `BOOTSTRAP_ADMIN_RESET=true` resets the PIN of the one named existing administrator for that start. The PIN rule (4 to 8 digits) is enforced in `StaffAccountService` for the API and the bootstrap alike. See `Documentation/deployment.md`.
 - **Uploaded images** under `/images/**` are public (GET and HEAD), because the guest menu shows them.
