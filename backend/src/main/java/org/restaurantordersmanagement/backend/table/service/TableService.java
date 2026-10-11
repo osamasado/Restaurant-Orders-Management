@@ -24,12 +24,15 @@ public class TableService {
         this.tableRepository = tableRepository;
     }
 
+    /** The tables an admin manages: the reserved take-away table is not one of them. */
     public List<Table> findAll() {
-        return tableRepository.findAll();
+        return tableRepository.findByTakeAwayFalse();
     }
 
+    /** The reserved take-away table is invisible here, so it can never be edited, paired or deleted: 404 like any other id. */
     public Table findById(Long id) {
         return tableRepository.findById(id)
+                .filter(table -> !table.isTakeAway())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Table not found"));
     }
 
@@ -47,6 +50,7 @@ public class TableService {
 
     /** Flushes so a table still referenced by an order (FK NOT NULL) throws here, caught by the controller as 409. */
     public void delete(Long id) {
+        findById(id);
         tableRepository.deleteById(id);
         tableRepository.flush();
     }

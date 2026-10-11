@@ -31,4 +31,10 @@ public class Table {
 
     private Instant lastSeenAt;
 
+    /**
+     * The one reserved table that every take-away order is placed against. It is never paired, edited, deleted or
+     * listed in Tables & devices, and screens show a translated "Take away" label for it instead of its number.
+     */
+    private boolean takeAway;
+
 }

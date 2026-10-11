@@ -38,11 +38,17 @@ public class GuestDeviceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Device not paired"));
     }
 
+    /** The reserved table every take-away order is placed against (see Table#isTakeAway). */
+    public Table takeAwayTable() {
+        return tableRepository.findByTakeAwayTrue()
+                .orElseThrow(() -> new IllegalStateException("The take-away table is missing (migration V17)"));
+    }
+
     private Optional<Table> findPairedTable(String code) {
         if (code == null || code.isBlank()) {
             return Optional.empty();
         }
-        return tableRepository.findByPairedDeviceId(code.trim().toUpperCase(Locale.ROOT));
+        return tableRepository.findByPairedDeviceId(code.trim().toUpperCase(Locale.ROOT)).filter(table -> !table.isTakeAway());
     }
 
 }
