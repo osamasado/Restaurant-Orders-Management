@@ -126,6 +126,8 @@ class AccessControlMatrixTest {
             admin("POST", "/api/staff/accounts/{id}/reset-pin"),
             admin("GET", "/api/settings"),
             admin("PUT", "/api/settings"),
+            admin("GET", "/api/settings/order-number"),
+            admin("POST", "/api/settings/order-number/reset"),
             // Public: guest, hall and sign-in
             publicEndpoint("GET", "/api/guest/menu"),
             publicEndpoint("GET", "/api/guest/settings"),

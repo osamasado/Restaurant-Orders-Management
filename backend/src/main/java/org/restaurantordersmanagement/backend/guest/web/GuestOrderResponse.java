@@ -20,7 +20,7 @@ public record GuestOrderResponse(
     public static GuestOrderResponse from(Order order) {
         return new GuestOrderResponse(
                 order.getId(),
-                order.getOrderNumber(),
+                order.getDisplayNumber(),
                 order.getStatus(),
                 order.getPlacedAt(),
                 order.getPaymentMethod(),

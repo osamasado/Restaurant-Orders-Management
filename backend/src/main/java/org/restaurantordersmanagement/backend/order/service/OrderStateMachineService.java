@@ -50,7 +50,9 @@ public class OrderStateMachineService {
         Instant now = Instant.now();
         if (newStatus == OrderStatus.SUBMITTED) {
             order.setPlacedAt(now);
-            order.setOrderNumber(orderNumberService.assignNextOrderNumber());
+            OrderNumberService.AssignedNumbers numbers = orderNumberService.assignNextOrderNumber();
+            order.setOrderNumber(numbers.orderNumber());
+            order.setDisplayNumber(numbers.displayNumber());
             orderPricingService.applyPricing(order);
         }
         order.recordTransition(newStatus, now, actor);

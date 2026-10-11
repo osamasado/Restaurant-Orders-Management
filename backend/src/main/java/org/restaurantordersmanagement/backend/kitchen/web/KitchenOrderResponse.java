@@ -25,7 +25,7 @@ public record KitchenOrderResponse(
                 .toList();
         return new KitchenOrderResponse(
                 order.getId(),
-                order.getOrderNumber(),
+                order.getDisplayNumber(),
                 order.getTable().getTableNumber(),
                 order.getStatus(),
                 order.getPlacedAt(),

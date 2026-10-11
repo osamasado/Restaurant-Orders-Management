@@ -6,7 +6,7 @@ import org.restaurantordersmanagement.backend.order.model.Order;
 public record CancelledOrderResponse(Long orderId, Integer orderNumber, String tableNumber) {
 
     public static CancelledOrderResponse from(Order order) {
-        return new CancelledOrderResponse(order.getId(), order.getOrderNumber(), order.getTable().getTableNumber());
+        return new CancelledOrderResponse(order.getId(), order.getDisplayNumber(), order.getTable().getTableNumber());
     }
 
 }

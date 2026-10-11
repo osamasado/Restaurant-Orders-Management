@@ -31,7 +31,7 @@ These come directly from the proposal and design doc — they're what makes this
   `ready → served, cancelled`
   `served` / `cancelled` are terminal.
   Every transition is timestamped and records which staff member made it (audit trail).
-- **Order numbers via locked transaction**, not a naive counter — must stay unique under concurrent submissions from multiple tables.
+- **Order numbers via locked transaction**, not a naive counter — must stay unique under concurrent submissions from multiple tables. Two numbers: an internal `orderNumber` that is unique for ever and never reset, and a `displayNumber` (what every screen shows, and what the API's `orderNumber` field carries) that an admin can restart at 001 from Settings. The restart takes the same row lock as an assignment and is refused while any order is submitted, in preparation or ready.
 - **Prices/tax calculated server-side only**, recalculated and verified before an order is accepted. Never trust a client-submitted total.
 - **Order lines snapshot** the meal title/size/price at order time, so later menu edits never rewrite historical orders.
 - **i18n: German, English, Arabic.** Arabic is full RTL layout (not mirrored English), not just translated strings — both UI labels and menu content are translated.

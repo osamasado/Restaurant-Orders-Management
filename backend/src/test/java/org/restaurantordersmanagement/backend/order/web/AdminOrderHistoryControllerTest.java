@@ -139,11 +139,11 @@ class AdminOrderHistoryControllerTest {
         Order ready = orderStateMachineService.transition(preparing, OrderStatus.READY, cook);
         orderStateMachineService.transition(ready, OrderStatus.SERVED, boss);
 
-        String body = history("?orderNumber=" + order.getOrderNumber())
+        String body = history("?orderNumber=" + order.getDisplayNumber())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orders.length()").value(1))
                 .andExpect(jsonPath("$.orders[0].orderId").value(order.getId()))
-                .andExpect(jsonPath("$.orders[0].orderNumber").value(order.getOrderNumber()))
+                .andExpect(jsonPath("$.orders[0].orderNumber").value(order.getDisplayNumber()))
                 .andExpect(jsonPath("$.orders[0].tableNumber").value(order.getTable().getTableNumber()))
                 .andExpect(jsonPath("$.orders[0].status").value("SERVED"))
                 .andExpect(jsonPath("$.orders[0].entries[*].stage")
@@ -172,7 +172,7 @@ class AdminOrderHistoryControllerTest {
         Order order = orderStateMachineService.transition(submittedOrder(), OrderStatus.CANCELLED, boss);
         kitchenOrderService.acknowledgeCancellation(order.getId(), cook.getId());
 
-        history("?orderNumber=" + order.getOrderNumber())
+        history("?orderNumber=" + order.getDisplayNumber())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orders[0].entries[*].stage").value(contains("SUBMITTED", "CANCELLED")))
                 .andExpect(jsonPath("$.orders[0].entries[1].actor").value(boss.getName()))
@@ -184,7 +184,7 @@ class AdminOrderHistoryControllerTest {
     void aCancellationNobodyHasAcknowledgedYetHasNoAcknowledgement() throws Exception {
         Order order = orderStateMachineService.transition(submittedOrder(), OrderStatus.CANCELLED, boss);
 
-        history("?orderNumber=" + order.getOrderNumber())
+        history("?orderNumber=" + order.getDisplayNumber())
                 .andExpect(jsonPath("$.orders[0].status").value("CANCELLED"))
                 .andExpect(jsonPath("$.orders[0].cancellationAcknowledgement").isEmpty());
     }
@@ -193,7 +193,7 @@ class AdminOrderHistoryControllerTest {
     void neverExposesAStaffAccountBeyondItsName() throws Exception {
         Order order = orderStateMachineService.transition(submittedOrder(), OrderStatus.PREPARING, cook);
 
-        String body = history("?orderNumber=" + order.getOrderNumber())
+        String body = history("?orderNumber=" + order.getDisplayNumber())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -208,10 +208,10 @@ class AdminOrderHistoryControllerTest {
         Order wanted = submittedOrder();
         submittedOrder();
 
-        history("?orderNumber=" + wanted.getOrderNumber())
+        history("?orderNumber=" + wanted.getDisplayNumber())
                 .andExpect(jsonPath("$.orders.length()").value(1))
                 .andExpect(jsonPath("$.totalOrders").value(1))
-                .andExpect(jsonPath("$.orders[0].orderNumber").value(wanted.getOrderNumber()));
+                .andExpect(jsonPath("$.orders[0].orderNumber").value(wanted.getDisplayNumber()));
 
         history("?orderNumber=99999999")
                 .andExpect(status().isOk())
@@ -227,14 +227,14 @@ class AdminOrderHistoryControllerTest {
 
         history("?page=0&size=2")
                 .andExpect(jsonPath("$.orders.length()").value(2))
-                .andExpect(jsonPath("$.orders[0].orderNumber").value(third.getOrderNumber()))
-                .andExpect(jsonPath("$.orders[1].orderNumber").value(second.getOrderNumber()))
+                .andExpect(jsonPath("$.orders[0].orderNumber").value(third.getDisplayNumber()))
+                .andExpect(jsonPath("$.orders[1].orderNumber").value(second.getDisplayNumber()))
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalPages").value(greaterThanOrEqualTo(2)));
 
         history("?page=1&size=2")
                 .andExpect(jsonPath("$.page").value(1))
-                .andExpect(jsonPath("$.orders[0].orderNumber").value(first.getOrderNumber()));
+                .andExpect(jsonPath("$.orders[0].orderNumber").value(first.getDisplayNumber()));
     }
 
     @Test

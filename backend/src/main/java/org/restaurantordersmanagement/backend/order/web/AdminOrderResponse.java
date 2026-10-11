@@ -6,7 +6,7 @@ import org.restaurantordersmanagement.backend.order.model.OrderStatus;
 public record AdminOrderResponse(Long orderId, Integer orderNumber, OrderStatus status) {
 
     public static AdminOrderResponse from(Order order) {
-        return new AdminOrderResponse(order.getId(), order.getOrderNumber(), order.getStatus());
+        return new AdminOrderResponse(order.getId(), order.getDisplayNumber(), order.getStatus());
     }
 
 }

@@ -143,6 +143,13 @@ export type ConfigResponse = {
   enabledPaymentMethods: PaymentMethod[]
 }
 
+/** Where the displayed order number stands: the next one, how many orders are open (a restart is refused while there are any), the last restart. */
+export type OrderNumberStatus = {
+  nextDisplayNumber: number
+  openOrders: number
+  lastReset: { resetAt: string; staffName: string } | null
+}
+
 export type GuestMealSizeResponse = {
   id: number
   price: number

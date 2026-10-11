@@ -161,7 +161,7 @@ class AdminOrderListControllerTest {
         assertEquals("SUBMITTED", row.get("status"));
         assertEquals("PAYPAL", row.get("paymentMethod"));
         assertEquals(second.getTable().getTableNumber(), row.get("tableNumber"));
-        assertEquals(second.getOrderNumber(), row.get("orderNumber"));
+        assertEquals(second.getDisplayNumber(), row.get("orderNumber"));
         assertEquals(0, second.getTotal().compareTo(new BigDecimal(row.get("total").toString())));
         assertTrue(row.get("placedAt") != null);
         List<Map<String, Object>> items = JsonPath.read(row, "$.items");

@@ -70,6 +70,7 @@ class OrderStateMachineServiceTest {
         assertEquals(OrderStatus.SUBMITTED, submitted.getStatus());
         assertNotNull(submitted.getPlacedAt());
         assertNotNull(submitted.getOrderNumber());
+        assertNotNull(submitted.getDisplayNumber());
         assertEquals(1, submitted.getHistory().size());
         assertNull(submitted.getHistory().get(0).getChangedBy());
 
