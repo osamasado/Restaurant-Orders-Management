@@ -180,8 +180,9 @@
   gap: var(--space-3);
 }
 
-/* Settings and theme: two small round controls with a muted red-brown surface (the shared button engine, recoloured). */
+/* Settings, theme and the three screens: small round controls with a muted red-brown surface (the shared button engine, recoloured). */
 .admin-sidebar .admin-sidebar__circle,
+.admin-sidebar .admin-sidebar__screen,
 .admin-sidebar__round-controls .theme-toggle--icon {
   --_c: var(--nav-circle-bg);
   --_c-hover: var(--nav-circle-bg-hover);
@@ -197,6 +198,11 @@
   --_press: 1px;
   width: 36px;
   height: 36px;
+}
+
+.admin-sidebar .admin-sidebar__screen {
+  width: 32px;
+  height: 32px;
 }
 
 .admin-sidebar .admin-sidebar__circle[aria-current='page'] {
@@ -361,4 +367,50 @@
   .admin-sidebar__link .icon {
     transition: none;
   }
+}
+
+/* The logo is a link home: the Dashboard. Not a button, so it keeps its own plain focus ring and no surface. */
+.admin-sidebar__logo,
+.admin-topbar__brand {
+  text-decoration: none;
+  border-radius: 12px;
+}
+
+.admin-sidebar__logo {
+  display: inline-flex;
+  padding: 2px;
+}
+
+.admin-sidebar__logo:focus-visible,
+.admin-topbar__brand:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* The three screens that open in a new tab: a small caption and a row of round icons above the language and theme controls. */
+.admin-sidebar__screens {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.admin-sidebar__screens-label {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nav-ink);
+}
+
+[dir='rtl'] .admin-sidebar__screens-label {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-sidebar__screens-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

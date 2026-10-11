@@ -19,6 +19,13 @@ const NAV_ITEMS: { to: string; labelKey: string; icon: IconName }[] = [
   { to: 'staff', labelKey: 'admin.nav.staff', icon: 'staff' },
 ]
 
+/** The other screens of the app, opened in a new tab (they are device screens, so the office keeps its own tab). */
+const SCREEN_LINKS: { href: string; labelKey: string; icon: IconName }[] = [
+  { href: '/guest', labelKey: 'admin.nav.guestScreen', icon: 'utensils' },
+  { href: '/kitchen', labelKey: 'admin.nav.kitchenScreen', icon: 'orders' },
+  { href: '/hall', labelKey: 'admin.nav.hallScreen', icon: 'dashboard' },
+]
+
 type AdminSidebarProps = {
   /** "Name · Role: Admin", shown as the tooltip of Sign out. */
   signedInAs: string
@@ -119,10 +126,10 @@ export function AdminSidebar({ signedInAs, onLogout }: AdminSidebarProps) {
         >
           <Icon name="menu" />
         </button>
-        <span className="admin-topbar__brand">
+        <NavLink to="dashboard" className="admin-topbar__brand" aria-label={t('admin.nav.home')}>
           <BrandMark size={32} />
           {t('admin.eyebrow')}
-        </span>
+        </NavLink>
       </div>
 
       {drawerOpen && <div className="admin-sidebar__scrim" onClick={() => closeDrawer('menu')} aria-hidden="true" />}
@@ -135,7 +142,10 @@ export function AdminSidebar({ signedInAs, onLogout }: AdminSidebarProps) {
         inert={compact && !open}
       >
         <div className="admin-sidebar__top">
-          <BrandMark />
+          {/* The logo goes home: for an admin that is the Dashboard. */}
+          <NavLink to="dashboard" className="admin-sidebar__logo" aria-label={t('admin.nav.home')} onClick={() => closeDrawer('main')}>
+            <BrandMark />
+          </NavLink>
           <span className="admin-sidebar__eyebrow">{t('admin.eyebrow')}</span>
           {compact && (
             <button type="button" className="admin-sidebar__close button button--icon" aria-label={t('common.close')} onClick={() => closeDrawer('menu')}>
@@ -170,6 +180,27 @@ export function AdminSidebar({ signedInAs, onLogout }: AdminSidebarProps) {
         </div>
 
         <div className="admin-sidebar__bottom">
+          <div className="admin-sidebar__screens" role="group" aria-label={t('admin.nav.screens')}>
+            <span className="admin-sidebar__screens-label">{t('admin.nav.screens')}</span>
+            <div className="admin-sidebar__screens-links">
+              {SCREEN_LINKS.map((link) => {
+                const label = `${t(link.labelKey)} (${t('admin.nav.opensInNewTab')})`
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="admin-sidebar__screen button button--icon button--round"
+                    aria-label={label}
+                    title={label}
+                  >
+                    <Icon name={link.icon} size={15} />
+                  </a>
+                )
+              })}
+            </div>
+          </div>
           <LanguageSwitcher />
           <div className="admin-sidebar__round-controls">
             <NavLink
