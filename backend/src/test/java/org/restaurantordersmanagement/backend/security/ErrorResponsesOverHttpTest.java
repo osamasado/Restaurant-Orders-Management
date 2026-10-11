@@ -43,8 +43,8 @@ class ErrorResponsesOverHttpTest {
         assertEquals(404, statusOf(request("/api/guest/device/claim")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"code\":\"ZZZZZZ\"}"))));
-        // Missing required header: 400.
-        assertEquals(400, statusOf(request("/api/guest/orders/1").GET()));
+        // Neither an order token nor a device code: 403.
+        assertEquals(403, statusOf(request("/api/guest/orders/1").GET()));
     }
 
     @Test
