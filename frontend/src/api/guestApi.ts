@@ -31,6 +31,15 @@ export function submitOrder(request: GuestOrderRequest): Promise<GuestOrderRespo
   return apiFetch('/guest/orders', { method: 'POST', body: request })
 }
 
-export function getOrderStatus(orderId: number, deviceCode: string): Promise<GuestOrderStatusResponse> {
-  return apiFetch(`/guest/orders/${orderId}`, { headers: { 'X-Device-Code': deviceCode } })
+/**
+ * What proves this guest may follow this order: the order's own secret (handed out when it was placed), or, for an
+ * order at a table that was placed before the secret existed, the paired device's code.
+ */
+export type OrderCredentials = { token: string | null; deviceCode: string | null }
+
+export function getOrderStatus(orderId: number, credentials: OrderCredentials): Promise<GuestOrderStatusResponse> {
+  const headers: Record<string, string> = {}
+  if (credentials.token) headers['X-Order-Token'] = credentials.token
+  else if (credentials.deviceCode) headers['X-Device-Code'] = credentials.deviceCode
+  return apiFetch(`/guest/orders/${orderId}`, { headers })
 }

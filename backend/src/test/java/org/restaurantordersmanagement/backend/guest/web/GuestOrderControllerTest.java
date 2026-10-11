@@ -330,8 +330,8 @@ class GuestOrderControllerTest {
     }
 
     @Test
-    void missingDeviceHeaderIsRejected() throws Exception {
-        mockMvc.perform(get("/api/guest/orders/1")).andExpect(status().isBadRequest());
+    void aStatusReadWithNeitherAnOrderTokenNorADeviceCodeIsForbidden() throws Exception {
+        mockMvc.perform(get("/api/guest/orders/1")).andExpect(status().isForbidden());
     }
 
 }

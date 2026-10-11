@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { claimDevice, getGuestSettings, submitOrder } from '../../api/guestApi'
 import { ApiError } from '../../api/http'
 import type {
@@ -23,14 +23,22 @@ import { clearDeviceCode, readDeviceCode, writeDeviceCode } from './deviceStorag
 import { MealDetailScreen } from './MealDetailScreen'
 import { MenuScreen } from './MenuScreen'
 import { OrderConfirmationScreen } from './OrderConfirmationScreen'
-import { clearStoredOrderId, readStoredOrderId, writeStoredOrderId } from './orderStorage'
+import { OrderTypeScreen } from './OrderTypeScreen'
+import { clearStoredOrder, readStoredOrder, writeStoredOrder } from './orderStorage'
 import { PairingScreen } from './PairingScreen'
 import { PaymentScreen } from './PaymentScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 import { useCartQuote } from './useCartQuote'
 import './GuestScreen.css'
 
-type GuestStep = 'welcome' | 'ordering' | 'detail' | 'cart' | 'payment' | 'confirmation'
+/**
+ * The visit: language (welcome), then eat in or take away (orderType), then, for eating in on a device that is not
+ * paired with a table yet, the pairing code (pairing), then the menu and everything after it.
+ */
+type GuestStep = 'welcome' | 'orderType' | 'pairing' | 'ordering' | 'detail' | 'cart' | 'payment' | 'confirmation'
+
+/** Eating in needs the device paired with a table; take away needs no table. */
+type OrderMode = 'dineIn' | 'takeAway'
 
 /** 'checking' = a stored code is being re-validated with the server on start. */
 type DeviceStatus = 'checking' | 'paired' | 'unpaired'
@@ -42,14 +50,45 @@ type DeviceStatus = 'checking' | 'paired' | 'unpaired'
  * at the welcome screen; a reload mid-session does not.
  */
 const SESSION_STEP_KEY = 'rom-guest-step'
+/** The same visit's choice between eating in and taking away. */
+const SESSION_MODE_KEY = 'rom-guest-mode'
 
 /** How long to wait before asking the server for the settings again after a failed attempt. */
 const SETTINGS_RETRY_MS = 5000
 
-function readInitialStep(): GuestStep {
-  if (readStoredOrderId() !== null) return 'confirmation'
+function readStoredMode(): OrderMode | null {
   try {
-    return window.sessionStorage.getItem(SESSION_STEP_KEY) === 'ordering' ? 'ordering' : 'welcome'
+    const stored = window.sessionStorage.getItem(SESSION_MODE_KEY)
+    return stored === 'dineIn' || stored === 'takeAway' ? stored : null
+  } catch {
+    return null
+  }
+}
+
+function writeStoredMode(mode: OrderMode) {
+  try {
+    window.sessionStorage.setItem(SESSION_MODE_KEY, mode)
+  } catch {
+    // sessionStorage unavailable - the choice just won't survive a reload.
+  }
+}
+
+/** The menu opens for this visit: a reload from here on stays on it (until the tab closes). */
+function rememberOrdering(chosen: OrderMode) {
+  writeStoredMode(chosen)
+  try {
+    window.sessionStorage.setItem(SESSION_STEP_KEY, 'ordering')
+  } catch {
+    // sessionStorage unavailable (e.g. private browsing) - step still advances for this render, just won't survive a reload.
+  }
+}
+
+function readInitialStep(): GuestStep {
+  if (readStoredOrder() !== null) return 'confirmation'
+  try {
+    return window.sessionStorage.getItem(SESSION_STEP_KEY) === 'ordering' && readStoredMode() !== null
+      ? 'ordering'
+      : 'welcome'
   } catch {
     return 'welcome'
   }
@@ -61,6 +100,7 @@ function GuestScreenContent() {
   // A tablet or a desktop browser shows the cart beside the menu; a phone opens it as a screen of its own.
   const wide = useMediaQuery('(min-width: 1100px)')
   const [step, setStep] = useState<GuestStep>(readInitialStep)
+  const [mode, setMode] = useState<OrderMode | null>(readStoredMode)
   const [selectedMeal, setSelectedMeal] = useState<GuestMealResponse | null>(null)
   // Lives here rather than in a screen so it survives menu/detail/cart
   // navigation and language switches.
@@ -70,12 +110,14 @@ function GuestScreenContent() {
 
   const [deviceCode, setDeviceCode] = useState<string | null>(readDeviceCode)
   const [deviceStatus, setDeviceStatus] = useState<DeviceStatus>(() => (deviceCode ? 'checking' : 'unpaired'))
+  /** The guest chose to eat in while the stored code was still being re-checked. */
+  const eatInPending = useRef(false)
   const [table, setTable] = useState<GuestTableResponse | null>(null)
 
   const [cartNotice, setCartNotice] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [paymentError, setPaymentError] = useState<string | null>(null)
-  const [placedOrderId, setPlacedOrderId] = useState<number | null>(readStoredOrderId)
+  const [placedOrder, setPlacedOrder] = useState(readStoredOrder)
 
   // Re-check a stored code once on start: an admin may have unpaired the table since.
   useEffect(() => {
@@ -87,6 +129,12 @@ function GuestScreenContent() {
         if (cancelled) return
         setTable(claimed)
         setDeviceStatus('paired')
+        if (eatInPending.current) {
+          eatInPending.current = false
+          rememberOrdering('dineIn')
+          setMode('dineIn')
+          setStep('ordering')
+        }
       })
       .catch((err: unknown) => {
         if (cancelled) return
@@ -97,6 +145,12 @@ function GuestScreenContent() {
         } else {
           // Server unreachable right now - keep the device usable; submission re-checks the code anyway.
           setDeviceStatus('paired')
+          if (eatInPending.current) {
+            eatInPending.current = false
+            rememberOrdering('dineIn')
+            setMode('dineIn')
+            setStep('ordering')
+          }
         }
       })
     return () => {
@@ -128,14 +182,31 @@ function GuestScreenContent() {
     }
   }, [])
 
-  const handleLanguageSelected = () => {
-    try {
-      window.sessionStorage.setItem(SESSION_STEP_KEY, 'ordering')
-    } catch {
-      // sessionStorage unavailable (e.g. private browsing) - step still advances for this render, just won't survive a reload.
-    }
+  const startOrdering = (chosen: OrderMode) => {
+    rememberOrdering(chosen)
+    setMode(chosen)
     setStep('ordering')
   }
+
+  const handleLanguageSelected = () => setStep('orderType')
+
+  /**
+   * A device already paired with a table goes straight to the menu; any other is asked for the table's code. While a
+   * stored code is still being re-checked (a moment after the page opened) the choice waits: the check's answer
+   * then decides between the menu and the pairing screen.
+   */
+  const handleEatIn = () => {
+    setMode('dineIn')
+    if (deviceStatus === 'paired') {
+      startOrdering('dineIn')
+      return
+    }
+    eatInPending.current = deviceStatus === 'checking'
+    setStep('pairing')
+  }
+
+  const handleTakeAway = () => startOrdering('takeAway')
+
 
   const handleSelectMeal = (meal: GuestMealResponse) => {
     setSelectedMeal(meal)
@@ -152,6 +223,7 @@ function GuestScreenContent() {
     setDeviceCode(code)
     setTable(claimed)
     setDeviceStatus('paired')
+    startOrdering('dineIn')
   }
 
   const forgetDevice = () => {
@@ -202,18 +274,20 @@ function GuestScreenContent() {
    * flags the affected lines; a 403 means this device was unpaired.
    */
   const handleConfirmOrder = (paymentMethod: PaymentMethod) => {
-    if (!deviceCode || submitting) return
+    if (submitting || (mode !== 'takeAway' && !deviceCode)) return
     setSubmitting(true)
     setPaymentError(null)
     submitOrder({
-      deviceCode,
+      // A take-away order carries no device code; an order at a table carries the paired device's.
+      ...(mode === 'takeAway' ? { takeAway: true } : { deviceCode: deviceCode ?? undefined }),
       language: language.toUpperCase() as ApiLanguage,
       paymentMethod,
       items: cartItems.map((item) => ({ sizeId: item.sizeId, quantity: item.quantity, note: item.note })),
     })
       .then((order) => {
-        writeStoredOrderId(order.orderId)
-        setPlacedOrderId(order.orderId)
+        const stored = { orderId: order.orderId, token: order.accessToken }
+        writeStoredOrder(stored)
+        setPlacedOrder(stored)
         setCartItems([])
         setStep('confirmation')
       })
@@ -222,8 +296,9 @@ function GuestScreenContent() {
           setCartNotice(t('guest.payment.unavailableError'))
           cartQuote.refresh()
           setStep('cart')
-        } else if (err instanceof ApiError && err.status === 403) {
+        } else if (err instanceof ApiError && err.status === 403 && mode !== 'takeAway') {
           forgetDevice()
+          setStep('pairing')
         } else {
           setPaymentError(t('guest.payment.submitError'))
         }
@@ -232,34 +307,48 @@ function GuestScreenContent() {
   }
 
   const handleNewOrder = () => {
-    clearStoredOrderId()
-    setPlacedOrderId(null)
+    clearStoredOrder()
+    setPlacedOrder(null)
     setStep('ordering')
   }
 
-  const tableLabel = table ? t('guest.tableLabel', { number: table.tableNumber }) : t('guest.tableUnknown')
+  const tableLabel =
+    mode === 'takeAway'
+      ? t('common.takeAway')
+      : table
+        ? t('guest.tableLabel', { number: table.tableNumber })
+        : t('guest.tableUnknown')
 
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0)
   const price = (amount: number) =>
     settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
 
-  if (deviceStatus === 'checking') {
+  if (step === 'welcome') {
+    return <WelcomeScreen onLanguageSelected={handleLanguageSelected} />
+  }
+
+  if (step === 'orderType') {
+    return <OrderTypeScreen onEatIn={handleEatIn} onTakeAway={handleTakeAway} />
+  }
+
+  // Eating in needs the device paired with a table: a stored code is re-checked once on start (a moment's wait), and
+  // a device that is not paired (or was unpaired meanwhile) is asked for the table's code, then goes on to the menu.
+  const needsTable = mode !== 'takeAway' && step !== 'confirmation'
+  if (needsTable && deviceStatus === 'checking') {
     return <div className="guest-screen guest-screen__checking">{t('guest.pairing.checking')}</div>
   }
 
-  if (deviceStatus === 'unpaired') {
-    return <PairingScreen onPaired={handlePaired} />
+  if (needsTable && deviceStatus === 'unpaired') {
+    return <PairingScreen onPaired={handlePaired} onBack={() => setStep('orderType')} />
   }
 
-  if (step === 'welcome') {
-    return <WelcomeScreen tableLabel={tableLabel} onLanguageSelected={handleLanguageSelected} />
-  }
-
-  if (step === 'confirmation' && placedOrderId !== null && deviceCode) {
+  if (step === 'confirmation' && placedOrder !== null) {
     return (
       <OrderConfirmationScreen
-        orderId={placedOrderId}
+        orderId={placedOrder.orderId}
+        token={placedOrder.token}
         deviceCode={deviceCode}
+        takeAway={mode === 'takeAway'}
         settings={settings}
         onNewOrder={handleNewOrder}
       />
@@ -321,6 +410,17 @@ function GuestScreenContent() {
             <ThemeToggle />
           </div>
         </header>
+        {/* Eat in or take away, changeable at any time: switching to eating in on a device that is not paired asks for the table's code. */}
+        <div className="guest-mode">
+          <div className="guest-mode__switch segmented" role="group" aria-label={t('guest.orderType.title')}>
+            <button type="button" className="segmented__option" aria-pressed={mode !== 'takeAway'} onClick={handleEatIn}>
+              {t('guest.orderType.eatInShort')}
+            </button>
+            <button type="button" className="segmented__option" aria-pressed={mode === 'takeAway'} onClick={handleTakeAway}>
+              {t('common.takeAway')}
+            </button>
+          </div>
+        </div>
         <main className="guest-screen__content">
           <MenuScreen settings={settings} onSelectMeal={handleSelectMeal} />
         </main>

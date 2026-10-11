@@ -28,7 +28,7 @@ public class HallBoardService {
 
     private List<HallBoardResponse.Entry> numbersWith(OrderStatus status) {
         return orderRepository.findHallBoardRows(status).stream()
-                .map(row -> new HallBoardResponse.Entry(row.getOrderNumber(), row.getTableNumber()))
+                .map(row -> new HallBoardResponse.Entry(row.getOrderNumber(), row.getTableNumber(), row.isTakeAway()))
                 .toList();
     }
 

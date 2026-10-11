@@ -73,6 +73,7 @@ erDiagram
         int seats
         varchar paired_device_id
         timestamptz last_seen_at
+        boolean take_away
     }
     STAFF_ACCOUNT {
         bigint id PK
@@ -103,6 +104,7 @@ erDiagram
         bigint id PK
         int order_number
         int display_number
+        varchar access_token_hash
         bigint table_id FK
         varchar status
         timestamptz placed_at
@@ -149,6 +151,8 @@ erDiagram
 - **`config`** is a singleton table with no DB-level enforcement (e.g. no `CHECK (id = 1)`) — the `V9__config.sql` migration seeds exactly one row and callers are expected to fetch it by convention.
 - **`config_payment_method`** is an `@ElementCollection` of an enum (`Set<PaymentMethod>`), keyed by `(config_id, payment_method)` — unordered, unlike `meal_translation_ingredient`'s ordered list.
 - **`restaurant_order`**, not `order` — same reserved-SQL-keyword problem as `restaurant_table`.
+- **`restaurant_table.take_away`** marks the one reserved take-away table (migration `V17`, a partial unique index allows at most one; its `table_number` is the internal `__TAKE_AWAY__`, never shown). Every take-away order is placed against it, so everything that reads `order.table` keeps working; screens show a translated "Take away" label for it. It is excluded from Tables & devices (not listed; editing, pairing and deleting answer 404) and no pairing code claims it.
+- **`restaurant_order.access_token_hash`** is the SHA-256 (hex) of the secret a guest is handed when the order is placed, which lets that guest follow that one order. Nullable: an order placed before `V17` has none and is followed with the paired device's code. Never exposed.
 - **`order_item`** has **no FK back to `meal`/`meal_size` at all** — `name`/`size`/`unit_price` are copied text/numbers at order time (see `OrderItem.snapshotFrom`), never referenced live, so a later menu edit can never rewrite a historical order.
 - **`order_status_history`** is one row per status the order *reached* (not a from/to pair — the previous state is just the prior row, read back in chronological order via `@OrderBy("changedAt ASC")`). `staff_account_id` is nullable: a guest submitting their own draft has no staff member behind that transition.
 - **`order_number`** is the internal number: nullable (a draft has none), assigned under the row lock of the single `order_number_counter` row when the order is submitted, unique (partial unique index) and **never reset**.

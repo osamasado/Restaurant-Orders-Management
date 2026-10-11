@@ -1,7 +1,9 @@
 import type { KitchenOrderResponse, OrderStatus } from '../../api/types'
+import { Icon } from '../../components/Icon'
 import { useT } from '../../i18n/useT'
 import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import { elapsedMs, timerLevel, formatElapsed } from '../../lib/orderTimer'
+import { tableLabel } from '../../lib/tableLabel'
 import './KitchenOrderCard.css'
 
 /**
@@ -30,10 +32,14 @@ export function KitchenOrderCard({ order, now, busy, onAdvance }: KitchenOrderCa
   const level = timerLevel(elapsed)
 
   return (
-    <article className="kitchen-order-card">
+    <article className={`kitchen-order-card${order.takeAway ? ' kitchen-order-card--take-away' : ''}`}>
       <header className="kitchen-order-card__header">
         <span className={`kitchen-order-card__number kitchen-order-card__number--${order.status.toLowerCase()}`}>{formatOrderNumber(order.orderNumber)}</span>
-        <span className="kitchen-order-card__table">{t('kitchen.table', { number: order.tableNumber })}</span>
+        {/* The table, or "Take away" (this order is packed to go): a chip like the timer's, the take-away one solid coral with a bag. */}
+        <span className={`kitchen-order-card__place${order.takeAway ? ' kitchen-order-card__place--take-away' : ''}`}>
+          {order.takeAway && <Icon name="bag" size={15} />}
+          {tableLabel(t, 'kitchen.table', order)}
+        </span>
         <time
           className={`kitchen-order-card__timer kitchen-order-card__timer--${level}`}
           dateTime={order.placedAt}

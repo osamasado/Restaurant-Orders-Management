@@ -3,6 +3,7 @@ import type { AdminOrderRow, OrderStatus } from '../../../../api/types'
 import { StatusBadge } from '../../../../components/admin/StatusBadge'
 import { useT } from '../../../../i18n/useT'
 import { isolate } from '../../../../lib/bidi'
+import { tableLabel } from '../../../../lib/tableLabel'
 import { formatOrderNumber } from '../../../../lib/formatOrderNumber'
 import { advanceVariant } from '../../../../lib/orderActionVariant'
 import './OrderRow.css'
@@ -78,7 +79,7 @@ export function OrderRow({
         )}
 
         <p className="order-row__meta">
-          <span>{t('admin.orders.table', { number: isolate(order.tableNumber) })}</span>
+          <span>{tableLabel(t, 'admin.orders.table', order, isolate)}</span>
           <span aria-hidden="true">·</span>
           <time dateTime={order.placedAt}>
             <bdi>{formatTime(order.placedAt)}</bdi>

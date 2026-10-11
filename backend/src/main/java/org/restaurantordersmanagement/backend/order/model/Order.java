@@ -56,6 +56,13 @@ public class Order {
      */
     private Integer displayNumber;
 
+    /**
+     * SHA-256 (hex) of the secret a guest was handed when the order was placed; the guest app sends the secret back
+     * to follow the order. Null for orders placed before the secret existed, which follow the paired device's code.
+     * Never exposed.
+     */
+    private String accessTokenHash;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "table_id")
     private Table table;

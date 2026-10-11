@@ -25,12 +25,16 @@ import org.springframework.web.server.ResponseStatusException;
  * transition then assigns the locked order number and the authoritative
  * pricing (OrderStateMachineService), all in this one transaction - a
  * rejected line means no order and no consumed order number.
- * Also serves a paired device the live status of its own table's orders (#22).
+ * Also serves a guest the live status of their own order (#22), proven by the order's secret.
  */
 @Service
 public class GuestOrderService {
 
     static final int MAX_NOTE_LENGTH = 200;
+
+    /** The submitted order and the secret its guest follows it with (the secret is not stored, only its hash). */
+    public record PlacedOrder(Order order, String accessToken) {
+    }
 
     private final GuestDeviceService guestDeviceService;
     private final SettingsService settingsService;
@@ -52,11 +56,11 @@ public class GuestOrderService {
     }
 
     @Transactional
-    public Order submit(GuestOrderRequest request) {
+    public PlacedOrder submit(GuestOrderRequest request) {
         if (request == null) {
             throw badRequest("Request body is required");
         }
-        Table table = guestDeviceService.requirePairedTable(request.deviceCode());
+        Table table = tableFor(request);
 
         if (request.paymentMethod() == null
                 || !settingsService.getConfig().getEnabledPaymentMethods().contains(request.paymentMethod())) {
@@ -70,6 +74,8 @@ public class GuestOrderService {
         Order order = new Order();
         order.setTable(table);
         order.setPaymentMethod(request.paymentMethod());
+        String accessToken = OrderAccessTokens.newToken();
+        order.setAccessTokenHash(OrderAccessTokens.hash(accessToken));
 
         List<Long> unavailableSizeIds = new ArrayList<>();
         for (GuestOrderRequest.Line line : request.items()) {
@@ -88,11 +94,46 @@ public class GuestOrderService {
         }
 
         // null actor: a guest submit has no staff account (OrderStatusHistory.changedBy is nullable for this).
-        return orderStateMachineService.transition(order, OrderStatus.SUBMITTED, null);
+        Order submitted = orderStateMachineService.transition(order, OrderStatus.SUBMITTED, null);
+        return new PlacedOrder(submitted, accessToken);
     }
 
+    /**
+     * A take-away order carries no device code and is placed against the reserved take-away table; any other order
+     * is for the table the device code is paired with. Sending both is a mistake, not a choice.
+     */
+    private Table tableFor(GuestOrderRequest request) {
+        if (!Boolean.TRUE.equals(request.takeAway())) {
+            return guestDeviceService.requirePairedTable(request.deviceCode());
+        }
+        if (request.deviceCode() != null && !request.deviceCode().isBlank()) {
+            throw badRequest("A take-away order carries no device code");
+        }
+        return guestDeviceService.takeAwayTable();
+    }
+
+    /**
+     * The order's own secret always works. A dine-in order can also be followed with the code of the device its table
+     * is paired with (the rule before the secret existed, which keeps a screen that was opened before an update
+     * working); a take-away order has no device, so only its secret opens it. Nothing at all is a 403; a wrong secret
+     * and another table's order are the same 404, so an id tells nothing.
+     */
     @Transactional(readOnly = true)
-    public GuestOrderStatusResponse getStatus(Long orderId, String deviceCode) {
+    public GuestOrderStatusResponse getStatus(Long orderId, String orderToken, String deviceCode) {
+        boolean hasToken = orderToken != null && !orderToken.isBlank();
+        boolean hasDeviceCode = deviceCode != null && !deviceCode.isBlank();
+        if (!hasToken && !hasDeviceCode) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "An order token or a device code is required");
+        }
+
+        if (hasToken) {
+            Order order = orderRepository.findById(orderId).orElseThrow(GuestOrderService::orderNotFound);
+            if (!OrderAccessTokens.matches(orderToken, order.getAccessTokenHash())) {
+                throw orderNotFound();
+            }
+            return GuestOrderStatusResponse.from(order);
+        }
+
         Table deviceTable = guestDeviceService.requirePairedTable(deviceCode);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(GuestOrderService::orderNotFound);

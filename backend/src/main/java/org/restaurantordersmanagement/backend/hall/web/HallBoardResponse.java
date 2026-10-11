@@ -9,7 +9,7 @@ import java.util.List;
  */
 public record HallBoardResponse(List<Entry> preparing, List<Entry> ready) {
 
-    public record Entry(Integer orderNumber, String tableNumber) {
+    public record Entry(Integer orderNumber, String tableNumber, boolean takeAway) {
     }
 
 }

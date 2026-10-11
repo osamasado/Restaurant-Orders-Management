@@ -219,7 +219,7 @@ class AdminOrderListControllerTest {
         String json = list("?size=100").andReturn().getResponse().getContentAsString();
 
         assertEquals(
-                Set.of("orderId", "orderNumber", "tableNumber", "status", "placedAt", "paymentMethod", "total",
+                Set.of("orderId", "orderNumber", "tableNumber", "takeAway", "status", "placedAt", "paymentMethod", "total",
                         "items", "nextStatuses"),
                 rowOf(json, order.getId()).keySet());
         // No staff names, ids or PIN data anywhere in the response.

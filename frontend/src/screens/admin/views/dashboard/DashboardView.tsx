@@ -35,11 +35,11 @@ const ALL_ORDERS: OrdersFilter = { status: null, date: '' }
 /** Without a search the dashboard shows the newest few orders; the full list is one link away. */
 const ORDERS_SHOWN = 8
 
-function orderMatches(order: AdminOrderRow, query: string): boolean {
+function orderMatches(order: AdminOrderRow, query: string, takeAwayText: string): boolean {
   const haystack = [
     formatOrderNumber(order.orderNumber),
     String(order.orderNumber),
-    order.tableNumber,
+    order.takeAway ? takeAwayText : order.tableNumber,
     ...order.items.map((item) => item.name),
   ]
     .join(' ')
@@ -114,7 +114,7 @@ export function DashboardView() {
   )
   const shownMeals = matchingMeals
 
-  const matchingOrders = (orders ?? []).filter((order) => needle === '' || orderMatches(order, needle))
+  const matchingOrders = (orders ?? []).filter((order) => needle === '' || orderMatches(order, needle, t('common.takeAway').toLowerCase()))
   const shownOrders = needle !== '' ? matchingOrders : matchingOrders.slice(0, ORDERS_SHOWN)
 
   // On a wide screen the panel always shows an order (the newest until one is chosen); on a narrow one it opens on a choice.

@@ -24,7 +24,9 @@ export function CancelledOrderBanner({ orders, busyOrderId, onAcknowledge }: Can
         <div key={order.orderId} className="cancelled-banner__row">
           <span className="cancelled-banner__number">{formatOrderNumber(order.orderNumber)}</span>
           <span className="cancelled-banner__text">
-            {t('kitchen.cancelled.banner', { table: order.tableNumber })}
+            {order.takeAway
+              ? t('kitchen.cancelled.bannerTakeAway')
+              : t('kitchen.cancelled.banner', { table: order.tableNumber })}
           </span>
           <button
             type="button"

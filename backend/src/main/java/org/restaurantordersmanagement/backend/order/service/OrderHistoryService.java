@@ -97,6 +97,7 @@ public class OrderHistoryService {
                 order.getId(),
                 order.getDisplayNumber(),
                 order.getTable().getTableNumber(),
+                order.getTable().isTakeAway(),
                 order.getStatus(),
                 order.getPlacedAt(),
                 entries,

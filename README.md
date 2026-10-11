@@ -8,7 +8,7 @@ A table-side restaurant ordering system built to replace the traditional waiter 
 
 | Screen | Where it runs | What it does |
 |---|---|---|
-| **Guest ordering** | Tablet at the table, or the guest's own phone | Browse the menu by category with photos and prices, view meal details, build a cart, choose a payment method, confirm and track the order live |
+| **Guest ordering** | Tablet at the table, or the guest's own phone | Choose a language, then eat in (connect the device to the table once) or take away (no table needed); browse the menu by category with photos and prices, view meal details, build a cart, choose a payment method, confirm and track the order live |
 | **Kitchen display** | Wall monitor in the kitchen | New / In preparation / Ready columns, order cards with items, notes, and a countdown timer |
 | **Hall status board** | Screen in the dining area | Order numbers only (no names, prices, or table numbers) across In preparation / Ready |
 | **Management backend** | Office computer | Menu, raw materials, prices, tables, staff accounts, and full control over every order's status |
@@ -47,7 +47,7 @@ cp .env.example .env        # then set POSTGRES_PASSWORD in .env
 docker compose up --build
 ```
 
-Open http://localhost:8088. The guest, kitchen, hall and admin screens are all on that one address (`/guest`, `/kitchen`, `/hall`, `/admin`).
+Open http://localhost:8088 (it opens the guest start). The guest, kitchen, hall and admin screens are all on that one address (`/guest`, `/kitchen`, `/hall`, `/admin`); the office reaches the guest, kitchen and hall screens from the admin menu.
 
 The first start has an empty database and no staff account. For real use set `BOOTSTRAP_ADMIN_NAME` and `BOOTSTRAP_ADMIN_PIN` (and optionally `BOOTSTRAP_KITCHEN_NAME`/`BOOTSTRAP_KITCHEN_PIN`) in `.env` before the first start: they create the first administrator, and you remove the PINs afterwards (`Documentation/deployment.md`, "First administrator"). To try the app with the demo menu, tables and staff instead, set `APP_SEED_DEMO=true`; its accounts all have the public PIN `1234`, so turn it off before real use.
 

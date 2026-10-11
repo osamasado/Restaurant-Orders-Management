@@ -53,7 +53,7 @@ npm run preview                 # http://localhost:4173
 
 ### 3. Set up the desk
 
-- **Phone** (or a 390 px wide browser window): `/guest`. Enter the pairing code **GULF77** (table 7, Garden room). For a real phone on the same network use `npm run preview -- --host` and open the address it prints. If the phone cannot open that address, see "The phone cannot reach the preview" below. It works for ordering, but **plain HTTP on a network address cannot be installed**: browsers only run the service worker and offer the install on `localhost` or HTTPS. Step 9 below says how to get there.
+- **Phone** (or a 390 px wide browser window): `/guest`. Choose a language and **Eat in the restaurant**, then enter the pairing code **GULF77** (table 7, Garden room) when asked. For a real phone on the same network use `npm run preview -- --host` and open the address it prints. If the phone cannot open that address, see "The phone cannot reach the preview" below. It works for ordering, but **plain HTTP on a network address cannot be installed**: browsers only run the service worker and offer the install on `localhost` or HTTPS. Step 9 below says how to get there.
 - **Kitchen** monitor: `/kitchen`, sign in as M. Behr / 1234.
 - **Hall board**: `/hall`, no sign-in.
 - **Admin** (a fourth window, off to the side): `/admin`, sign in as O. Sado / 1234.
@@ -65,7 +65,7 @@ Two other codes are good for a second device: ALPHA2 (table 1), BRAVE3 (table 2)
 
 1. **The idea (30 s).** Show the three empty screens. "Today an order passes through several hands. Here the guest orders from the table, the kitchen sees it at once, the hall board shows the progress."
 2. **Guest orders (2 min).**
-   - Welcome, choose English. Menu: categories, photos, prices.
+   - Welcome, choose English. Then **Eat in the restaurant** (this phone is already paired with table 7, so it goes straight to the menu; on an unpaired phone it asks for the pairing code first). Menu: categories, photos, prices. Mention **Take away**: it needs no table and shows as "Take away" in the kitchen and on the hall board.
    - Open **Wiener Schnitzel**: description, preparation, ingredients, two sizes with prices. Pick **300 g**, quantity **2**, note "no lingonberries, please". Add to order.
    - Cart: subtotal, VAT, total (calculated and verified on the server). Choose payment, pick a method, **Confirm**.
    - The phone shows the order number, large (`001`), and the status timeline.

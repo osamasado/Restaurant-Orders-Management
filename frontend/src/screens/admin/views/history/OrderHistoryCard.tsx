@@ -1,6 +1,7 @@
 import type { OrderHistory } from '../../../../api/types'
 import { useT } from '../../../../i18n/useT'
 import { isolate } from '../../../../lib/bidi'
+import { tableLabel } from '../../../../lib/tableLabel'
 import { formatOrderNumber } from '../../../../lib/formatOrderNumber'
 import './OrderHistoryCard.css'
 
@@ -22,7 +23,7 @@ export function OrderHistoryCard({ order, formatTime }: OrderHistoryCardProps) {
           {order.orderNumber === null ? '-' : formatOrderNumber(order.orderNumber)}
         </span>
         <span className="history-card__table">
-          {t('admin.history.table', { number: isolate(order.tableNumber) })}
+          {tableLabel(t, 'admin.history.table', order, isolate)}
         </span>
         <span className={`history-card__stage history-card__stage--${order.status.toLowerCase()}`}>
           {t(`admin.history.stages.${order.status}`)}

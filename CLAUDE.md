@@ -40,10 +40,10 @@ These come directly from the proposal and design doc — they're what makes this
 ## Key domain entities
 
 - `Meal` — category, translations, sizes/prices, ingredients, prep method, availability
-- `Order` — number, table, status, timestamps, payment method, items, audit history
+- `Order` — number, table, status, timestamps, payment method, items, audit history, and a secret (stored as a hash) that lets the guest follow that one order
 - `OrderItem` — snapshotted name/size/price/quantity/note
 - `RawMaterial` / `Recipe` — meal size ↔ raw materials
-- `Table` — paired device
+- `Table` — paired device; one reserved, flagged take-away table that every take-away order is placed against (never paired, edited or deleted; screens show "Take away" for it)
 - `StaffAccount` — role (admin, kitchen, waiter, cashier)
 - `Config` — currency code/symbol/position, tax rate, default language, enabled payment methods
 

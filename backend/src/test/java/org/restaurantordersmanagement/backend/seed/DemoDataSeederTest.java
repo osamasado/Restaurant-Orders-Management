@@ -361,7 +361,8 @@ class DemoDataSeederTest {
     private void assertCounts() {
         assertEquals(4, categoryRepository.count());
         assertEquals(8, mealRepository.count());
-        assertEquals(6, tableRepository.count());
+        // The demo tables; the reserved take-away table (migration V17) is not one of them.
+        assertEquals(6, tableRepository.findByTakeAwayFalse().size());
         assertEquals(4, staffAccountRepository.count());
     }
 

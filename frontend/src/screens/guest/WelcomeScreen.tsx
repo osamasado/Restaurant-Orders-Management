@@ -3,6 +3,7 @@ import { BrandMark } from '../../components/admin/BrandMark'
 import type { Language } from '../../i18n/i18n'
 import { useLanguage } from '../../i18n/language-context'
 import { useT } from '../../i18n/useT'
+import { WelcomeBackdrop } from './WelcomeBackdrop'
 import './WelcomeScreen.css'
 
 /**
@@ -24,17 +25,15 @@ const LANGUAGE_ORDER: Language[] = ['de', 'en', 'ar']
 const CHOICE_FEEDBACK_MS = 380
 
 type WelcomeScreenProps = {
-  tableLabel: string
   onLanguageSelected: () => void
 }
 
 /**
- * The first screen a guest sees after scanning the table's code: the table, the restaurant, one line of welcome and
- * the three languages. Choosing one switches the app to it at once (the title and text change language under the
+ * The first screen a guest sees: the restaurant, one line of welcome and the three languages. Choosing one switches the app to it at once (the title and text change language under the
  * guest's finger), marks the button coral, and opens the menu a moment later. The slowly drifting coral and amber
  * light behind it is pure CSS and sits behind a soft veil, so it never competes with the text.
  */
-export function WelcomeScreen({ tableLabel, onLanguageSelected }: WelcomeScreenProps) {
+export function WelcomeScreen({ onLanguageSelected }: WelcomeScreenProps) {
   const { t } = useT()
   const { setLanguage } = useLanguage()
   const [chosen, setChosen] = useState<Language | null>(null)
@@ -51,19 +50,10 @@ export function WelcomeScreen({ tableLabel, onLanguageSelected }: WelcomeScreenP
 
   return (
     <div className="welcome-screen">
-      <div className="welcome-screen__ambient" aria-hidden="true">
-        <span className="welcome-screen__orb welcome-screen__orb--coral" />
-        <span className="welcome-screen__orb welcome-screen__orb--amber" />
-        <span className="welcome-screen__orb welcome-screen__orb--terracotta" />
-        <span className="welcome-screen__orb welcome-screen__orb--blush" />
-      </div>
+      <WelcomeBackdrop />
 
       <main className="welcome-screen__content">
         <BrandMark size={60} />
-        <span className="welcome-screen__table">
-          <span className="welcome-screen__table-dot" aria-hidden="true" />
-          {tableLabel}
-        </span>
         <h1 className="welcome-screen__title">{t('guest.welcome.title')}</h1>
         <p className="welcome-screen__tagline">{t('guest.welcome.tagline')}</p>
 

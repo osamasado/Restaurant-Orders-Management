@@ -33,6 +33,7 @@ const NOT_RAISED = [
   ['.category-chip', 'a round picture with its name'],
   ['.meal-card__open', 'the name of a guest meal, stretched over the whole card'],
   ['.welcome-screen__language-button', 'a full-width row on the welcome screen'],
+  ['.order-type-screen__choice', 'a large icon, title and hint choice on the eat in / take away screen'],
   ['.meal-detail-screen__size-row', 'a size row (a radio choice)'],
   ['.payment-screen__method', 'a payment method row (a radio choice)'],
   ['.meal-detail-screen__back', 'a round control over the meal photo'],
@@ -74,6 +75,7 @@ async function open(viewport, lang, theme, device) {
     if (d) {
       localStorage.setItem('rom-guest-device-code', d)
       sessionStorage.setItem('rom-guest-step', 'ordering')
+      sessionStorage.setItem('rom-guest-mode', 'dineIn')
     }
   }, [lang, theme, device ?? null])
   return { context, page: await context.newPage() }
@@ -229,6 +231,21 @@ for (const theme of THEMES) {
       await staffSignIn(page, '/kitchen', 'M. Behr')
       await page.locator('.kitchen-order-card, .kitchen-screen__column').first().waitFor({ timeout: 20000 })
       await inspect(page, `kitchen ${tag}`)
+      await context.close()
+    }
+    {
+      // The start of a visit on a device that is not paired: language, eat in or take away, and the pairing screen.
+      const { context, page } = await open({ width: 1366, height: 860 }, lang, theme)
+      await page.goto(`${BASE}/guest`)
+      await page.waitForSelector('.welcome-screen__language-button')
+      await inspect(page, `guest ${tag} language`)
+      await page.locator('.welcome-screen__language-button').nth(['de', 'en', 'ar'].indexOf(lang)).click()
+      await page.locator('.order-type-screen__choice').first().waitFor()
+      await page.waitForTimeout(700)
+      await inspect(page, `guest ${tag} eat in or take away`)
+      await page.locator('.order-type-screen__choice').first().click()
+      await page.locator('.pairing-screen__form').waitFor()
+      await inspect(page, `guest ${tag} pairing`)
       await context.close()
     }
     if (deviceCode) {

@@ -244,6 +244,9 @@ for (const lang of LANGUAGES) {
       await page.waitForSelector('.welcome-screen__language-button')
       await audit(page, `guest ${tag} welcome`, lang, consoleProblems); await shot(page, `guest-${tag}-1-welcome`)
       await page.locator('.welcome-screen__language-button').nth(ALL_LANGUAGES.indexOf(lang)).click()
+      await page.waitForSelector('.order-type-screen__choice'); await page.waitForTimeout(700)
+      await audit(page, `guest ${tag} eat in or take away`, lang, consoleProblems); await shot(page, `guest-${tag}-1b-order-type`)
+      await page.locator('.order-type-screen__choice').nth(0).click() // eat in: this device is paired with table 7
       await page.waitForSelector('.meal-card'); await page.waitForTimeout(500)
       await audit(page, `guest ${tag} menu`, lang, consoleProblems); await shot(page, `guest-${tag}-2-menu`)
       await page.locator('.meal-card').nth(2).click()
@@ -259,6 +262,32 @@ for (const lang of LANGUAGES) {
       await page.getByRole('button', { name: new RegExp(tr(dict, 'guest.payment.confirm')) }).click()
       await page.waitForSelector('.order-confirmation-screen__number'); await page.waitForTimeout(1200)
       await audit(page, `guest ${tag} confirmation`, lang, consoleProblems); await shot(page, `guest-${tag}-6-confirmation`)
+      await context.close()
+    })
+
+    // A device that is not paired: eat in asks for the table's code (and Back returns); take away needs no table.
+    await step(`guest take away ${tag}`, async () => {
+      const { context, page, consoleProblems } = await open({ width: 390, height: 844 }, lang, theme)
+      await page.goto(`${BASE}/guest`)
+      await page.waitForSelector('.welcome-screen__language-button')
+      await page.locator('.welcome-screen__language-button').nth(ALL_LANGUAGES.indexOf(lang)).click()
+      await page.waitForSelector('.order-type-screen__choice'); await page.waitForTimeout(500)
+      await page.locator('.order-type-screen__choice').nth(0).click()
+      await page.waitForSelector('.pairing-screen__form'); await page.waitForTimeout(300)
+      await audit(page, `guest ${tag} pairing (translated)`, lang, consoleProblems); await shot(page, `guest-${tag}-7-pairing`)
+      await page.getByRole('button', { name: tr(dict, 'guest.pairing.back') }).click()
+      await page.waitForSelector('.order-type-screen__choice')
+      await page.locator('.order-type-screen__choice').nth(1).click() // take away: no pairing, no table
+      await page.waitForSelector('.meal-card'); await page.waitForTimeout(500)
+      await audit(page, `guest ${tag} take away menu`, lang, consoleProblems); await shot(page, `guest-${tag}-8-takeaway-menu`)
+      await page.locator('.meal-card').nth(2).click()
+      await page.getByRole('button', { name: tr(dict, 'guest.detail.addToOrder') }).click()
+      await page.click('.guest-screen__cart-bar')
+      await page.getByRole('button', { name: new RegExp(tr(dict, 'guest.cart.choosePayment')) }).click()
+      await page.waitForSelector('.payment-screen__method'); await page.locator('.payment-screen__method').first().click()
+      await page.getByRole('button', { name: new RegExp(tr(dict, 'guest.payment.confirm')) }).click()
+      await page.waitForSelector('.order-confirmation-screen__number'); await page.waitForTimeout(1200)
+      await audit(page, `guest ${tag} take away confirmation`, lang, consoleProblems); await shot(page, `guest-${tag}-9-takeaway-confirmation`)
       await context.close()
     })
 

@@ -11,7 +11,11 @@ import './OrderConfirmationScreen.css'
 
 type OrderConfirmationScreenProps = {
   orderId: number
-  deviceCode: string
+  /** The order's own secret; null for an order stored before it existed (then the device code follows it). */
+  token: string | null
+  deviceCode: string | null
+  /** A take-away guest collects by the number: the guidance says where. */
+  takeAway: boolean
   settings: ConfigResponse | null
   onNewOrder: () => void
 }
@@ -21,10 +25,10 @@ type OrderConfirmationScreenProps = {
  * timeline (polled via useOrderStatus), and the server's totals. Everything
  * comes from the server, never from the cart preview.
  */
-export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOrder }: OrderConfirmationScreenProps) {
+export function OrderConfirmationScreen({ orderId, token, deviceCode, takeAway, settings, onNewOrder }: OrderConfirmationScreenProps) {
   const { t } = useT()
   const { language } = useLanguage()
-  const { status, connectionLost } = useOrderStatus(orderId, deviceCode)
+  const { status, connectionLost } = useOrderStatus(orderId, { token, deviceCode })
 
   const price = (amount: number) =>
     settings ? formatMoney(amount, language, settings.currencySymbol, settings.symbolPosition) : ''
@@ -53,7 +57,9 @@ export function OrderConfirmationScreen({ orderId, deviceCode, settings, onNewOr
         <span className="order-confirmation-screen__number" dir="ltr">
           {formatOrderNumber(status.orderNumber)}
         </span>
-        <p className="order-confirmation-screen__guidance">{t('guest.confirmation.guidance')}</p>
+        <p className="order-confirmation-screen__guidance">
+          {takeAway ? t('guest.confirmation.takeAwayGuidance') : t('guest.confirmation.guidance')}
+        </p>
       </section>
 
       <main className="guest-screen__content">

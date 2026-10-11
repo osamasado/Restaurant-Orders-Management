@@ -139,11 +139,12 @@ class HallBoardControllerTest {
     }
 
     @Test
-    void boardExposesNothingButOrderAndTableNumbers() throws Exception {
+    void boardExposesNothingButOrderAndTableNumbersAndWhetherItIsTakeAway() throws Exception {
         advance(submittedOrder(), OrderStatus.PREPARING);
 
         mockMvc.perform(get("/api/hall/orders"))
-                .andExpect(jsonPath("$.preparing[0].length()").value(2))
+                .andExpect(jsonPath("$.preparing[0].length()").value(3))
+                .andExpect(jsonPath("$.preparing[0].takeAway").value(false))
                 .andExpect(jsonPath("$.preparing[0].orderNumber").isNumber())
                 .andExpect(jsonPath("$.preparing[0].tableNumber").isString())
                 .andExpect(jsonPath("$..items").doesNotExist())
