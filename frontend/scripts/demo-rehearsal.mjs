@@ -112,6 +112,8 @@ const g = guest.page
 await g.goto(`${BASE}/guest`)
 await g.waitForSelector('.welcome-screen__language-button')
 await g.locator('.welcome-screen__language-button').nth(1).click() // English
+await g.waitForSelector('.order-type-screen__choice')
+await g.locator('.order-type-screen__choice').nth(0).click() // eat in: this phone is already paired with table 7, so it goes straight to the menu
 await g.waitForSelector('.meal-card')
 const photos = await g.locator('.meal-card__photo').count()
 check('the menu shows a photo on every meal card', photos === (await g.locator('.meal-card').count()) && photos >= 7, `${photos} photos`)
@@ -207,6 +209,8 @@ const phone = await open({ width: 390, height: 844 }, deviceCode)
 await phone.page.goto(`${BASE}/guest`)
 await phone.page.waitForSelector('.welcome-screen__language-button')
 await phone.page.locator('.welcome-screen__language-button').nth(1).click()
+await phone.page.waitForSelector('.order-type-screen__choice')
+await phone.page.locator('.order-type-screen__choice').nth(0).click()
 await phone.page.waitForSelector('.meal-card')
 const radlerCard = phone.page.locator('.meal-card', { hasText: 'Radler' })
 check('Radler is on the open guest menu', (await radlerCard.count()) === 1)
