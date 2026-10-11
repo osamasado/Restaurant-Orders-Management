@@ -26,13 +26,14 @@
       "previous": "Vorherige Einträge",
       "viewMore": "Mehr anzeigen",
       "range": "{{from}} bis {{to}} von {{total}} angezeigt"
-    }
+    },
+    "takeAway": "Zum Mitnehmen"
   },
   "guest": {
     "tableLabel": "Tisch {{number}}",
     "welcome": {
       "title": "Restaurant Orders Management",
-      "tagline": "Bestellen Sie direkt von Ihrem Tisch. Die Küche sieht die Bestellung, sobald Sie bestätigen."
+      "tagline": "Bestellen Sie direkt hier. Die Küche sieht die Bestellung, sobald Sie bestätigen."
     },
     "menu": {
       "loading": "Speisekarte wird geladen...",
@@ -92,7 +93,8 @@
       "connecting": "Wird verbunden...",
       "unknownCode": "Dieser Code ist mit keinem Tisch gekoppelt.",
       "error": "Server nicht erreichbar, bitte erneut versuchen.",
-      "checking": "Verbindung zum Restaurant wird hergestellt..."
+      "checking": "Verbindung zum Restaurant wird hergestellt...",
+      "back": "Zurück"
     },
     "payment": {
       "title": "Wie möchtest du bezahlen?",
@@ -126,7 +128,8 @@
       "eyebrow": "Deine Bestellnummer",
       "guidance": "Achte auf diese Nummer an der Anzeigetafel im Speisesaal.",
       "paymentMethod": "Zahlung: {{method}}",
-      "newOrder": "Neue Bestellung starten"
+      "newOrder": "Neue Bestellung starten",
+      "takeAwayGuidance": "Zum Mitnehmen: Hole deine Bestellung an der Theke ab, sobald deine Nummer auf der Anzeigetafel als fertig erscheint."
     },
     "status": {
       "title": "Status",
@@ -139,6 +142,14 @@
       "loading": "Deine Bestellung wird geladen...",
       "loadError": "Diese Bestellung konnte nicht geladen werden.",
       "reconnecting": "Verbindung unterbrochen, neuer Versuch..."
+    },
+    "orderType": {
+      "title": "Wie möchten Sie bestellen?",
+      "hint": "Wählen Sie eine Möglichkeit. Sie können sie später ändern.",
+      "eatIn": "Im Restaurant essen",
+      "eatInHint": "Bestellen Sie an Ihren Tisch. Dieses Gerät wird einmal mit dem Tisch verbunden.",
+      "takeAwayHint": "Kein Tisch nötig. Holen Sie Ihre Bestellung an der Theke ab.",
+      "eatInShort": "Im Restaurant"
     }
   },
   "kitchen": {
@@ -157,7 +168,8 @@
     },
     "cancelled": {
       "banner": "Vom Admin storniert · Tisch {{table}} · Arbeit einstellen",
-      "acknowledge": "Bestätigen"
+      "acknowledge": "Bestätigen",
+      "bannerTakeAway": "Vom Admin storniert · zum Mitnehmen · Arbeit einstellen"
     },
     "table": "Tisch {{number}}",
     "onShift": "{{name}} im Dienst",
@@ -196,7 +208,13 @@
       "staff": "Personalkonten",
       "settings": "Einstellungen",
       "openMenu": "Menü öffnen",
-      "label": "Navigation der Verwaltung"
+      "label": "Navigation der Verwaltung",
+      "screens": "Bildschirme",
+      "guestScreen": "Gästebestellung",
+      "kitchenScreen": "Küchenanzeige",
+      "hallScreen": "Statusanzeige im Saal",
+      "opensInNewTab": "öffnet in einem neuen Tab",
+      "home": "Zur Übersicht"
     },
     "auth": {
       "title": "Anmelden",
@@ -502,14 +520,5 @@
   },
   "notFound": {
     "message": "Seite nicht gefunden"
-  },
-  "home": {
-    "title": "Restaurant Orders Management",
-    "links": {
-      "guest": "Gästebestellung",
-      "kitchen": "Küchenanzeige",
-      "hall": "Statusanzeige im Saal",
-      "admin": "Verwaltungsbereich"
-    }
   }
 }

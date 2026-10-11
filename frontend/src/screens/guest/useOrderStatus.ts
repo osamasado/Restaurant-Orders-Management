@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getOrderStatus } from '../../api/guestApi'
+import { getOrderStatus, type OrderCredentials } from '../../api/guestApi'
 import { ApiError } from '../../api/http'
 import type { GuestOrderStatusResponse, OrderStatus } from '../../api/types'
 
@@ -20,7 +20,8 @@ type OrderStatusState = {
  * scope this iteration). Stops at a terminal status; keeps the last good
  * response when a poll fails.
  */
-export function useOrderStatus(orderId: number, deviceCode: string): OrderStatusState {
+export function useOrderStatus(orderId: number, credentials: OrderCredentials): OrderStatusState {
+  const { token, deviceCode } = credentials
   const [state, setState] = useState<OrderStatusState>({ status: null, connectionLost: false })
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function useOrderStatus(orderId: number, deviceCode: string): OrderStatus
     let timer: number | undefined
 
     const poll = () => {
-      getOrderStatus(orderId, deviceCode)
+      getOrderStatus(orderId, { token, deviceCode })
         .then((response) => {
           if (cancelled) return
           setState({ status: response, connectionLost: false })
@@ -50,7 +51,7 @@ export function useOrderStatus(orderId: number, deviceCode: string): OrderStatus
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [orderId, deviceCode])
+  }, [orderId, token, deviceCode])
 
   return state
 }

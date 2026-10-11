@@ -10,7 +10,6 @@ import { StaffView } from './screens/admin/views/staff/StaffView'
 import { SettingsView } from './screens/admin/views/settings/SettingsView'
 import { GuestScreen } from './screens/guest/GuestScreen'
 import { HallScreen } from './screens/hall/HallScreen'
-import { HomeScreen } from './screens/home/HomeScreen'
 import { KitchenScreen } from './screens/kitchen/KitchenScreen'
 import { NotFoundScreen } from './screens/NotFoundScreen'
 
@@ -18,7 +17,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomeScreen />} />
+        {/* The app opens on the guest start (language, then eat in or take away); the staff screens are reached from the admin menu. */}
+        <Route path="/" element={<Navigate to="/guest" replace />} />
         <Route path="/guest" element={<GuestScreen />} />
         <Route path="/kitchen" element={<KitchenScreen />} />
         <Route path="/hall" element={<HallScreen />} />

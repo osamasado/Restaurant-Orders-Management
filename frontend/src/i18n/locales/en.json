@@ -26,13 +26,14 @@
       "previous": "Previous items",
       "viewMore": "View more",
       "range": "Showing {{from}} to {{to}} of {{total}}"
-    }
+    },
+    "takeAway": "Take away"
   },
   "guest": {
     "tableLabel": "Table {{number}}",
     "welcome": {
       "title": "Restaurant Orders Management",
-      "tagline": "Order from your table. The kitchen sees it the moment you confirm."
+      "tagline": "Order here. The kitchen sees it the moment you confirm."
     },
     "menu": {
       "loading": "Loading menu...",
@@ -92,7 +93,8 @@
       "connecting": "Connecting...",
       "unknownCode": "This code is not paired with any table.",
       "error": "Could not reach the server, please try again.",
-      "checking": "Connecting to the restaurant..."
+      "checking": "Connecting to the restaurant...",
+      "back": "Back"
     },
     "payment": {
       "title": "How would you like to pay?",
@@ -126,7 +128,8 @@
       "eyebrow": "Your order number",
       "guidance": "Watch for this number on the board in the dining hall.",
       "paymentMethod": "Payment: {{method}}",
-      "newOrder": "Start a new order"
+      "newOrder": "Start a new order",
+      "takeAwayGuidance": "Take away: collect your order at the counter when your number shows as ready on the board."
     },
     "status": {
       "title": "Status",
@@ -139,6 +142,14 @@
       "loading": "Loading your order...",
       "loadError": "We could not load this order.",
       "reconnecting": "Connection lost, trying again..."
+    },
+    "orderType": {
+      "title": "How would you like to order?",
+      "hint": "Choose one. You can change it later.",
+      "eatIn": "Eat in the restaurant",
+      "eatInHint": "Order to your table. This device connects to the table once.",
+      "takeAwayHint": "No table needed. Collect your order at the counter.",
+      "eatInShort": "Eat in"
     }
   },
   "kitchen": {
@@ -157,7 +168,8 @@
     },
     "cancelled": {
       "banner": "Cancelled by admin · table {{table}} · stop work",
-      "acknowledge": "Acknowledge"
+      "acknowledge": "Acknowledge",
+      "bannerTakeAway": "Cancelled by admin · take away · stop work"
     },
     "table": "Table {{number}}",
     "onShift": "{{name}} on shift",
@@ -196,7 +208,13 @@
       "staff": "Staff accounts",
       "settings": "Settings",
       "openMenu": "Open menu",
-      "label": "Admin navigation"
+      "label": "Admin navigation",
+      "screens": "Screens",
+      "guestScreen": "Guest ordering",
+      "kitchenScreen": "Kitchen display",
+      "hallScreen": "Hall status board",
+      "opensInNewTab": "opens in a new tab",
+      "home": "Go to the dashboard"
     },
     "auth": {
       "title": "Sign in",
@@ -502,14 +520,5 @@
   },
   "notFound": {
     "message": "Page not found"
-  },
-  "home": {
-    "title": "Restaurant Orders Management",
-    "links": {
-      "guest": "Guest ordering",
-      "kitchen": "Kitchen display",
-      "hall": "Hall status board",
-      "admin": "Management backend"
-    }
   }
 }

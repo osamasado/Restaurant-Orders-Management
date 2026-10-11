@@ -37,10 +37,22 @@
 
 .guest-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-5);
+  gap: var(--space-4) var(--space-5);
   padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+/* The title may be as narrow as its longest word; when even that leaves no room beside the language and theme
+   controls (a long label such as "Zum Mitnehmen" on a phone), the controls drop under it instead of off the screen. */
+.guest-header > div:first-child {
+  flex: 1 1 0;
+  min-width: min-content;
+}
+
+.guest-header .guest-screen__header-controls {
+  margin-inline-start: auto;
 }
 
 .guest-header__title {
@@ -55,6 +67,15 @@
   margin: 0;
   font-size: 13px;
   color: var(--text-secondary);
+}
+
+/* Eat in or take away, changeable: its own row under the header (the header has no room for it on a phone). */
+.guest-mode {
+  padding: 0 var(--space-6) var(--space-4);
+}
+
+.guest-dashboard--wide .guest-mode {
+  padding-inline: 0;
 }
 
 .guest-screen .search-bar {

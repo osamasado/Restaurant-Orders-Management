@@ -7,10 +7,15 @@ import './PairingScreen.css'
 
 type PairingScreenProps = {
   onPaired: (code: string, table: GuestTableResponse) => void
+  /** Back to the choice between eating in and taking away. */
+  onBack: () => void
 }
 
-/** Shown once per device, typically by staff setting up the tablet, before any guest sees the welcome screen. */
-export function PairingScreen({ onPaired }: PairingScreenProps) {
+/**
+ * Shown when a guest chooses to eat in and this device is not paired with a table yet (a paired tablet skips it).
+ * The language is already chosen, so it reads in the guest's language.
+ */
+export function PairingScreen({ onPaired, onBack }: PairingScreenProps) {
   const { t } = useT()
   const [code, setCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -49,6 +54,9 @@ export function PairingScreen({ onPaired }: PairingScreenProps) {
         {error && <p className="pairing-screen__error">{error}</p>}
         <button type="submit" className="pairing-screen__submit button button--primary button--large" disabled={submitting || !code.trim()}>
           {submitting ? t('guest.pairing.connecting') : t('guest.pairing.connect')}
+        </button>
+        <button type="button" className="pairing-screen__back button button--block" onClick={onBack} disabled={submitting}>
+          {t('guest.pairing.back')}
         </button>
       </form>
     </div>

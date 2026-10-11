@@ -1,6 +1,6 @@
 /*
  * The guest welcome screen. A charcoal canvas (or warm paper in the light theme) with slow coral, amber, terracotta
- * and blush light behind a centred column: brand mark, table badge, title, welcome line, and the language buttons.
+ * and blush light behind a centred column: brand mark, title, welcome line, and the language buttons.
  * The light is four big radial gradients that only move with transform (no blur filters, no images, no video), so it
  * stays smooth on a phone; a soft veil sits behind the text so the glow never lowers its contrast. Colours are the
  * --welcome-* tokens, which follow the guest's theme; "reduce motion" freezes the light.
@@ -145,36 +145,6 @@
     opacity: 0;
     transform: translateY(14px);
   }
-}
-
-.welcome-screen__table {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: var(--space-4);
-  padding: 7px 14px;
-  border: 1px solid var(--welcome-line);
-  border-radius: var(--radius-pill);
-  background: var(--welcome-chip-bg);
-  color: var(--welcome-ink);
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-[dir='rtl'] .welcome-screen__table {
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.welcome-screen__table-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--welcome-coral);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--welcome-coral) 24%, transparent);
 }
 
 .welcome-screen__title {

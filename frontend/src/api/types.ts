@@ -196,7 +196,10 @@ export type GuestTableResponse = {
 
 /** No prices or table id: the server resolves both itself. */
 export type GuestOrderRequest = {
-  deviceCode: string
+  /** The paired device's code, for an order at a table. A take-away order carries none. */
+  deviceCode?: string
+  /** True for a take-away order: placed against the reserved take-away table, no device code. */
+  takeAway?: boolean
   language: Language
   paymentMethod: PaymentMethod
   items: { sizeId: number; quantity: number; note: string | undefined }[]
@@ -212,6 +215,8 @@ export type GuestOrderResponse = {
   subtotal: number
   taxAmount: number
   total: number
+  /** The secret that lets this guest follow this order; handed out only here, kept for the visit. */
+  accessToken: string
 }
 
 /** Live status of one of this device's orders - polled by the confirmation screen (#22). */
@@ -232,6 +237,8 @@ export type KitchenOrderResponse = {
   orderId: number
   orderNumber: number
   tableNumber: string
+  /** True for a take-away order: screens show "Take away" instead of a table number. */
+  takeAway: boolean
   status: OrderStatus
   placedAt: string
   items: { name: string; size: string; quantity: number; note: string | null }[]
@@ -246,6 +253,8 @@ export type AdminOrderRow = {
   orderId: number
   orderNumber: number
   tableNumber: string
+  /** True for a take-away order: screens show "Take away" instead of a table number. */
+  takeAway: boolean
   status: OrderStatus
   placedAt: string
   paymentMethod: PaymentMethod
@@ -273,6 +282,8 @@ export type CancelledOrderResponse = {
   orderId: number
   orderNumber: number
   tableNumber: string
+  /** True for a take-away order: screens show "Take away" instead of a table number. */
+  takeAway: boolean
 }
 
 /** One chip of the kitchen's "ran out?" footer - every translated name, so the screen picks its own language. */
@@ -286,6 +297,8 @@ export type KitchenMealResponse = {
 export type HallBoardEntry = {
   orderNumber: number
   tableNumber: string
+  /** True for a take-away order: screens show "Take away" instead of a table number. */
+  takeAway: boolean
 }
 
 export type HallBoardResponse = {
@@ -305,6 +318,8 @@ export type OrderHistory = {
   orderId: number
   orderNumber: number | null
   tableNumber: string
+  /** True for a take-away order: screens show "Take away" instead of a table number. */
+  takeAway: boolean
   status: OrderStatus
   placedAt: string | null
   entries: OrderHistoryEntry[]

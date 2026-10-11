@@ -23,6 +23,8 @@ export type IconName =
   | 'check'
   | 'plus'
   | 'utensils'
+  | 'bag'
+  | 'external'
 
 const PATHS: Record<IconName, ReactNode> = {
   dashboard: (
@@ -132,6 +134,19 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M5 3v7a2 2 0 0 0 4 0V3M7 3v18" />
       <path d="M16 3c-1.7 1.7-2.5 4-2.5 7h2.5v11" />
+    </>
+  ),
+  bag: (
+    <>
+      <path d="M5 8h14l-1 12H6z" />
+      <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+    </>
+  ),
+  external: (
+    <>
+      <path d="M14 4h6v6" />
+      <path d="M20 4l-9 9" />
+      <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
     </>
   ),
 }
