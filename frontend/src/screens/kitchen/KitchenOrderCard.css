@@ -28,12 +28,36 @@
   color: var(--success-text);
 }
 
-.kitchen-order-card__table {
+/* Where the order goes: a chip like the timer's. A table is neutral; take away is solid coral with a bag, so a cook sees at a glance that it is packed to go. */
+.kitchen-order-card__place {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-chip);
+  background: var(--hairline);
+  color: var(--text);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 14px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+}
+
+[dir='rtl'] .kitchen-order-card__place {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.kitchen-order-card__place--take-away {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+/* A take-away card is marked as a whole too: a coral edge and a faint coral wash, so it stands out in a column of table orders. */
+.kitchen-order-card--take-away {
+  border-inline-start: 6px solid var(--accent-fill);
+  background-image: linear-gradient(var(--tint-accent), var(--tint-accent));
 }
 
 .kitchen-order-card__items {

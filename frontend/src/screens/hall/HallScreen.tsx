@@ -9,6 +9,7 @@ import { ThemeProvider } from '../../theme/ThemeProvider'
 import { ThemeToggle } from '../../theme/ThemeToggle'
 import type { HallBoardEntry } from '../../api/types'
 import { useFitScale } from './useFitScale'
+import { tableLabel } from '../../lib/tableLabel'
 import { useHallBoard } from './useHallBoard'
 import './HallScreen.css'
 
@@ -44,7 +45,7 @@ function HallPanel({ panelKey, label, entries }: HallPanelProps) {
             <span className="hall-screen__number" dir="ltr">
               {formatOrderNumber(entry.orderNumber)}
             </span>
-            <span className="hall-screen__table">{t('hall.table', { number: entry.tableNumber })}</span>
+            <span className="hall-screen__table">{tableLabel(t, 'hall.table', entry)}</span>
           </li>
         ))}
       </ul>

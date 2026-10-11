@@ -1,6 +1,7 @@
 import type { AdminOrderRow, OrderStatus } from '../../api/types'
 import { useT } from '../../i18n/useT'
 import { isolate } from '../../lib/bidi'
+import { tableLabel } from '../../lib/tableLabel'
 import { formatOrderNumber } from '../../lib/formatOrderNumber'
 import { advanceVariant } from '../../lib/orderActionVariant'
 import { EmptyState } from './EmptyState'
@@ -70,7 +71,7 @@ export function OrderPanel({
         <h3 className="order-panel__eyebrow">{t('admin.dashboard.panel.details')}</h3>
         <p className="order-panel__detail">
           <Icon name="table" size={18} />
-          <span>{t('admin.orders.table', { number: isolate(order.tableNumber) })}</span>
+          <span>{tableLabel(t, 'admin.orders.table', order, isolate)}</span>
         </p>
         <p className="order-panel__detail">
           <Icon name="clock" size={18} />

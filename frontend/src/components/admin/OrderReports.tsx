@@ -53,7 +53,7 @@ export function OrderReports({ orders, selectedId, onSelect, formatTime, formatT
                   </button>
                 </td>
                 <td data-label={t('admin.dashboard.columns.table')}>
-                  <bdi>{order.tableNumber}</bdi>
+                  <bdi>{order.takeAway ? t('common.takeAway') : order.tableNumber}</bdi>
                 </td>
                 <td data-label={t('admin.dashboard.columns.items')} className="order-reports__items">
                   {order.items.map((item, index) => (
