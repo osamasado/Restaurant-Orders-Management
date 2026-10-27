@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Restaurant Orders Management",
-  "short_name": "Restaurant",
+  "name": "Sufra",
+  "short_name": "Sufra",
   "description": "Table-side ordering for guests, with live boards for the kitchen and the dining hall.",
   "start_url": "/guest",
   "scope": "/",
